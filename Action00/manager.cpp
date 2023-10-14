@@ -1,0 +1,496 @@
+//===========================================================================================
+//
+// [manager.cpp]
+// Author : Takeru Ogasawara
+//
+//===========================================================================================
+#include"renderer.h"
+#include "object.h"
+#include "manager.h"
+#include "input.h"
+#include "debugproc.h"
+#include "sound.h"
+#include "camera.h"
+#include "light.h"
+#include "texture.h"
+
+#include "title.h"
+#include "game.h"
+#include "result.h"
+#include "fade.h"
+
+#include "object3D.h"
+
+//静的メンバ変数宣言
+CRenderer *CManager::m_pRenderer = nullptr;
+CInputKeyboard *CManager::m_pInputKeyboard = nullptr;
+CInputMouse *CManager::m_pInputMouse = nullptr;
+CInputJoyPad *CManager::m_pInputJoyPad = nullptr;
+CDebugProc *CManager::m_pDebugProc = nullptr;
+CSound *CManager::m_pSound = nullptr;
+CCamera *CManager::m_pCamera = nullptr;
+CLight *CManager::m_pLight = nullptr;
+CTexture *CManager::m_pTexture = nullptr;
+bool CManager::m_bUse = false;
+CScene *CManager::m_pScene = nullptr;
+
+CScene::MODE CScene::m_mode = CScene::MODE_GAME;
+CFade *CManager::m_pFade = nullptr;
+
+//===========================================================================================
+// コンストラクタ
+//===========================================================================================
+CManager::CManager()
+{
+
+}
+
+//===========================================================================================
+// デストラクタ
+//===========================================================================================
+CManager::~CManager()
+{
+
+}
+
+//===========================================================================================
+// 初期化処理
+//===========================================================================================
+HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
+{
+	//---------------------------
+	// インスタンス生成
+	//---------------------------
+	//レンダラー
+	if (m_pRenderer == nullptr)
+	{
+		m_pRenderer = new CRenderer;
+
+		if (m_pRenderer != nullptr)
+		{
+			//レンダラーの初期化処理
+			if (FAILED(m_pRenderer->Init(hWnd, TRUE)))
+			{
+				return E_FAIL;
+			}
+		}
+	}
+	//キーボード
+	if (m_pInputKeyboard == nullptr)
+	{
+		m_pInputKeyboard = new CInputKeyboard;
+
+		if (m_pInputKeyboard != nullptr)
+		{
+			//キーボードの初期化処理
+			if (FAILED(m_pInputKeyboard->Init(hInstance, hWnd)))
+			{
+				return E_FAIL;
+			}
+		}
+	}
+	//マウス
+	if (m_pInputMouse == nullptr)
+	{
+		m_pInputMouse = new CInputMouse;
+
+		if (m_pInputMouse != nullptr)
+		{
+			//マウスの初期化処理
+			if (FAILED(m_pInputMouse->Init(hInstance, hWnd)))
+			{
+				return E_FAIL;
+			}
+		}
+	}
+	//ジョイパッド
+	if (m_pInputJoyPad == nullptr)
+	{
+		m_pInputJoyPad = new CInputJoyPad;
+
+		if (m_pInputJoyPad != nullptr)
+		{
+			//マウスの初期化処理
+			if (FAILED(m_pInputJoyPad->Init()))
+			{
+				return E_FAIL;
+			}
+		}
+	}
+	//サウンド
+	//if (m_pSound == nullptr)
+	//{
+	//	m_pSound = new CSound;
+
+	//	if (m_pSound != nullptr)
+	//	{
+	//		//マウスの初期化処理
+	//		m_pSound->Init(hWnd);
+	//	}
+	//}
+	// デバッグ表示の生成
+	if (m_pDebugProc == nullptr)
+	{
+		m_pDebugProc = new CDebugProc;
+
+		//初期化処理
+		if (m_pDebugProc != nullptr)
+		{
+			m_pDebugProc->Init();
+		}
+	}
+	//カメラの生成
+	if (m_pCamera == nullptr)
+	{
+		m_pCamera = new CCamera;
+
+		//初期化処理
+		if (m_pCamera != nullptr)
+		{
+			m_pCamera->Init();
+		}
+	}
+	//ライトの生成
+	if (m_pLight == nullptr)
+	{
+		m_pLight = new CLight;
+
+		//初期化処理
+		if (m_pLight != nullptr)
+		{
+			m_pLight->Init();
+		}
+	}
+	//テクスチャの生成
+	if (m_pTexture == nullptr)
+	{
+		m_pTexture = new CTexture;
+
+		//初期化処理
+		if (m_pTexture != nullptr)
+		{
+			m_pTexture->Load();
+		}
+	}
+
+	//m_pSound->PlaySound(CSound::LABEL_BGM000);
+
+	//モード設定
+	SetMode(GetMode());
+	
+	return S_OK;
+}
+
+//===========================================================================================
+// 終了処理
+//===========================================================================================
+void CManager::Uninit(void)
+{
+	//全オブジェクトの破棄(+終了処理)
+	CObject::ReleaseAll();
+
+	//キーボードの終了処理、破棄
+	if (m_pInputKeyboard != nullptr)
+	{
+		//キーボードの終了処理
+		m_pInputKeyboard->Uninit();
+
+		//メモリの開放
+		delete m_pInputKeyboard;
+		m_pInputKeyboard = nullptr;
+	}
+	//マウスの終了処理、破棄
+	if (m_pInputMouse != nullptr)
+	{
+		//キーボードの終了処理
+		m_pInputMouse->Uninit();
+
+		//メモリの開放
+		delete m_pInputMouse;
+		m_pInputMouse = nullptr;
+	}
+	//マウスの終了処理、破棄
+	if (m_pInputJoyPad != nullptr)
+	{
+		//キーボードの終了処理
+		m_pInputJoyPad->Uninit();
+
+		//メモリの開放
+		delete m_pInputJoyPad;
+		m_pInputJoyPad = nullptr;
+	}
+	//デバッグプロックの終了、破棄
+	if (m_pDebugProc != nullptr)
+	{
+		//デバッグプロックの終了処理
+		m_pDebugProc->Uninit();
+
+		//メモリの開放
+		delete m_pDebugProc;
+		m_pDebugProc = nullptr;
+	}
+	//レンダラーの終了処理、破棄
+	if (m_pRenderer != nullptr)
+	{
+		//レンダラーの終了処理
+		m_pRenderer->Uninit();
+
+		//メモリの開放
+		delete m_pRenderer;
+		m_pRenderer = nullptr;
+	}
+	//サウンドの終了、破棄
+	//if (m_pSound != nullptr)
+	//{
+	//	//サウンドの終了処理
+	//	m_pSound->Stop();
+	//	m_pSound->Uninit();
+
+	//	delete m_pSound;
+	//	m_pSound = nullptr;
+	//}
+	//カメラの終了、破棄
+	if (m_pCamera != nullptr)
+	{
+		//カメラの終了処理
+		m_pCamera->Uninit();
+		m_pCamera->Uninit();
+
+		delete m_pCamera;
+		m_pCamera = nullptr;
+	}
+	//ライトの終了、破棄
+	if (m_pLight != nullptr)
+	{
+		//ライトの終了処理
+		m_pLight->Uninit();
+
+		delete m_pLight;
+		m_pLight = nullptr;
+	}
+	//テクスチャの終了、破棄
+	if (m_pTexture != nullptr)
+	{
+		//テクスチャの終了処理
+		m_pTexture->Unload();
+
+		delete m_pTexture;
+		m_pTexture = nullptr;
+	}
+	//シーンの終了、破棄
+	if (m_pScene != nullptr)
+	{
+		//シーンの終了処理
+		m_pScene->Uninit();
+		delete m_pScene;
+		m_pScene = nullptr;
+	}
+	
+	if (m_pFade != nullptr)
+	{
+		m_pFade = nullptr;
+	}
+}
+
+//===========================================================================================
+// 更新処理
+//===========================================================================================
+void CManager::Update(void)
+{
+	CManager::GetDebugProc()->Print("FPS[%d]\n", GetFps());
+	CManager::GetDebugProc()->Print("オブジェクト総数[%d]\n\n", CObject::GetNumAll());
+
+	m_pDebugProc->Print("【 操作方法 】\n");
+	m_pDebugProc->Print("F1 : デバッグ表示[ON/OFF]\nF2 : 法線表示[ON/OFF]\n");
+
+	//デバッグプロックの更新処理
+	if (CManager::GetDebugProc() != nullptr)
+	{
+		CManager::GetDebugProc()->Update();
+	}
+
+	//キーボードの更新処理
+	if (m_pInputKeyboard != nullptr)
+	{
+		m_pInputKeyboard->Update();
+	}
+
+	//マウスの更新処理
+	if (m_pInputMouse != nullptr)
+	{
+		m_pInputMouse->Update();
+	}
+
+	//ジョイパッドの更新処理
+	if (m_pInputJoyPad != nullptr)
+	{
+		m_pInputJoyPad->Update();
+	}
+
+	//シーンの更新
+	if (m_pScene != nullptr)
+	{
+		m_pScene->Update();
+	} 
+}
+
+//===========================================================================================
+// 描画処理
+//===========================================================================================
+void CManager::Draw(void)
+{
+	//レンダラーの描画処理
+	m_pScene->Draw();
+}
+
+//===========================================================================================
+// モードの設定
+//===========================================================================================
+void CManager::SetMode(CScene::MODE mode)
+{
+	//サウンドの停止
+	//if (m_pSound != nullptr)
+	//{
+	//	m_pSound->Stop();
+	//}
+
+	//現在のモードを破棄
+	if (m_pScene != nullptr)
+	{
+		m_pScene->Uninit();
+		delete m_pScene;
+		m_pScene = nullptr;
+	}
+
+	CObject::ReleaseAll();
+
+	//テクスチャの終了、破棄
+	if (m_pTexture != nullptr)
+	{
+		//テクスチャの終了処理
+		m_pTexture->Unload();
+
+		delete m_pTexture;
+		m_pTexture = nullptr;
+
+		//テクスチャの生成
+		if (m_pTexture == nullptr)
+		{
+			m_pTexture = new CTexture;
+
+			//初期化処理
+			if (m_pTexture != nullptr)
+			{
+				m_pTexture->Load();
+			}
+		}
+	}
+	
+	//フェードの削除
+	m_pFade = nullptr;
+
+	//新しいモードの生成
+	m_pScene = CScene::Create(mode);
+	m_pScene->SetMode(mode);
+
+	if (m_pScene != nullptr)
+	{
+		m_pScene->Init();
+	}
+
+	//フェードの生成
+	if (m_pFade == nullptr)
+	{
+		m_pFade = CFade::Create(mode);
+	}
+}
+
+//===========================================================================================
+// コンストラクタ
+//===========================================================================================
+CScene::CScene()
+{
+	
+}
+
+//===========================================================================================
+// デストラクタ
+//===========================================================================================
+CScene::~CScene()
+{
+
+}
+
+//===========================================================================================
+// シーンの生成
+//===========================================================================================
+CScene *CScene::Create(MODE mode)
+{
+	CScene *pScene = nullptr;
+
+	if (pScene == nullptr)
+	{
+		//モード別の生成
+		switch (mode)
+		{
+		case MODE_TITLE:
+			pScene = new CTitle;
+			break;
+
+		case MODE_GAME:
+			pScene = new CGame;
+			break;
+
+		case MODE_RESULT:
+			pScene = new CResult;
+			break;
+		}
+	}
+
+	return pScene;
+}
+
+//===========================================================================================
+// 初期化処理
+//===========================================================================================
+HRESULT CScene::Init(void)
+{
+	return S_OK;
+}
+
+//===========================================================================================
+// 終了処理
+//===========================================================================================
+void CScene::Uninit(void)
+{
+
+}
+
+//===========================================================================================
+// 更新処理
+//===========================================================================================
+void CScene::Update(void)
+{
+	//カメラの更新処理
+	if (CManager::GetCamera() != nullptr)
+	{
+		CManager::GetCamera()->Update();
+	}
+
+	//レンダラーの更新処理
+	if (CManager::GetRenderer() != nullptr)
+	{
+		CManager::GetRenderer()->Update();
+	}
+}
+
+//===========================================================================================
+// 描画処理
+//===========================================================================================
+void CScene::Draw(void)
+{
+	if (CManager::GetRenderer() != nullptr)
+	{
+		CManager::GetRenderer()->Draw();
+	}
+}

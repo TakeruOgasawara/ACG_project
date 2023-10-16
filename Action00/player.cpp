@@ -16,7 +16,7 @@
 #include "collision.h"
 
 //マクロ定義
-#define SIZE			(D3DXVECTOR2(10.0f, 10.0f))
+#define SIZE			(D3DXVECTOR2(5.0f, 10.0f))
 
 #define MOVE			(3.5f)			//移動量
 #define ATT				(0.3f)			//減衰
@@ -27,10 +27,7 @@
 
 //ジャンプ
 #define FILSTJUMP_POWER		(20.4f)			//ジャンプ力
-#define SECONDJUMP_POWER	(30.0f)		//
-#define ACC_COUNTUP			(10.1f)				//1フレームに増える量(加速度計算に必要)
-
-//#define SIZE		(5.0f)			//当たり判定用
+#define SECONDJUMP_POWER	(30.0f)			//
 
 //===========================================================================================
 // コンストラクタ
@@ -127,7 +124,7 @@ HRESULT CPlayer::Init(void)
 
 	// ビルボード(プレイヤー本体
 	CBillboard::Init();
-	//SetSize(D3DXVECTOR2(SIZE.x, SIZE.y));
+ 	SetSize(D3DXVECTOR2(SIZE.x, SIZE.y));
 	BindTexture("data\\TEXTURE\\player.png");
 
 	// 矢印
@@ -138,9 +135,7 @@ HRESULT CPlayer::Init(void)
 	m_pArrowAround->SetPosition(D3DXVECTOR3(GetPosition().x, GetPosition().y + 50.0f, 0.0f));
 
 	// カメラ
-	//m_pCamera->SetPosition_V(D3DXVECTOR3(0.0f, 0.0f, -600.0f));
-	//m_pCamera->SetPosition_R(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-	m_pCamera->SetValue(40.0f, 150.0f, 0.0f);
+	//m_pCamera->SetValue(500.0f, D3DXVECTOR3(0.0f, 10.0f, 500.0f), D3DXVECTOR3(0.0f, 10.0f, 50.0f));
 
 	// 当たり判定
 	m_pCollision = CCollision::Create();
@@ -189,7 +184,6 @@ void CPlayer::Update(void)
 	D3DXVECTOR3 posOld = pos;
 	D3DXVECTOR3 rot = GetRotation();
 
-
 	//重力
 	m_move.y -= GRAVITY;
 
@@ -218,13 +212,17 @@ void CPlayer::Update(void)
 	//移動量の代入
 	pos += m_move;
 
-	//矢印
-	Arrow(pos);
-
 	if (m_pCollision != nullptr)
 	{
-		m_pCollision->CollisionObjectX(&pos, &posOld, &m_move, SIZE.x);
+		if (m_pCollision->CollisionObjectX(&pos, &posOld, &m_move, SIZE.x) == true)
+		{
+			m_bFirstJump = false;
+			m_bSecondJump = false;
+		}
 	}
+
+	//矢印
+	Arrow(pos);
 
 	//位置の設定
 	SetPosition(pos);
@@ -327,7 +325,9 @@ void CPlayer::CameraRelationship(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 {
 	if (m_pCamera != nullptr)
 	{
-		m_pCamera->Follow(pos, rot, 0.0f, 0.0f);
+		m_pCamera->SetLength(300.0f);
+		m_pCamera->SetHeight(200.0f, 200.0f);
+		m_pCamera->Follow2D_x_axisDedicated(pos);
 	}
 }
 
@@ -336,10 +336,7 @@ void CPlayer::CameraRelationship(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 //===========================================================================================
 void CPlayer::Arrow(D3DXVECTOR3 pos)
 {
-	CInputMouse *pInputMouse = CManager::GetInputMouse();
-
-	float a = sinf(pos.x - D3DX_PI) * 20.0f;
-	float b = cosf(pos.y - D3DX_PI) * 20.0f;
+	CInputMouse* pInputMouse = CManager::GetInputMouse();
 
 	//プレイヤーのスクリーン座標を取得
 	D3DXVECTOR3 screemPos = GetScreenPosition();
@@ -356,6 +353,10 @@ void CPlayer::Arrow(D3DXVECTOR3 pos)
 		//向き
 		m_pArrowAround->SetRotation(D3DXVECTOR3(0.0f, 0.0f, fAngle));
 	}
+
+	CManager::GetDebugProc()->Print("\n\n【矢印】\n");
+	CManager::GetDebugProc()->Print("位置 x:%f y:%f z%f\n", m_pArrowAround->GetPosition().x, m_pArrowAround->GetPosition().y, m_pArrowAround->GetPosition().z);
+	CManager::GetDebugProc()->Print("向き x:%f y:%f z%f\n", m_pArrowAround->GetRotation().x, m_pArrowAround->GetRotation().y, m_pArrowAround->GetRotation().z);
 }
 
 //===========================================================================================

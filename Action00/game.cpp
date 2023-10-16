@@ -38,6 +38,7 @@ CEdit *CGame::m_pEdit = nullptr;
 CGame::CGame()
 {
 	m_pSound = nullptr;
+	m_bEdit = false;
 }
 
 //===========================================================================================
@@ -53,10 +54,13 @@ CGame::~CGame()
 //===========================================================================================
 HRESULT CGame::Init()
 {
+	/*CObject3D *pObject3D = CObject3D::Create(D3DXVECTOR3(0.0f, 200.0f, 10.0f), CObject3D::TYPE_WALL);
+	pObject3D->SetSize_wall(640.0f, 360.0f);*/
+
 	//°
 	CObject3D::Create(D3DXVECTOR3(0.0f, -5.0f, 0.0f), "data\\TEXTURE\\floor.png");
 
-	CObjectX::Create("data\\MODEL\\object\\floor00.x", D3DXVECTOR3(0.0f, 30.0f, 0.0f));
+	//CObjectX::Create("data\\MODEL\\object\\floor00.x", D3DXVECTOR3(0.0f, 250.0f, 0.0f));
 
 	//ƒvƒŒƒCƒ„[
 	CPlayer::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
@@ -90,6 +94,8 @@ void CGame::Update()
 	int Rand_If = 0;
 	int RandPosx = 0;
 	int RadPosz = 0;
+
+	Edit();
 
 	/*if (pInputKey->GetTrigger(DIK_P) == true)
 	{
@@ -137,7 +143,10 @@ void CGame::Draw()
 		m_pPause->Draw();
 	}
 
-	
+	if (m_pEdit != nullptr)
+	{
+		m_pEdit->Draw();
+	}
 }
 
 //===========================================================================================
@@ -145,13 +154,36 @@ void CGame::Draw()
 //===========================================================================================
 void CGame::Edit(void)
 {
-	if (m_pEdit == nullptr)
+	CInputKeyboard* pInputKey = CManager::GetInputKeyboard();
+
+	if (pInputKey->GetTrigger(DIK_F3) == true)
 	{
-		m_pEdit = new CEdit;
+		m_bEdit = m_bEdit ? false : true;
+
+		if (m_bEdit == true)
+		{
+			if (m_pEdit == nullptr)
+			{
+				m_pEdit = CEdit::Create();
+			}
+		}
+		else
+		{
+			if (m_pEdit != nullptr)
+			{
+				delete m_pEdit;
+				m_pEdit = nullptr;
+
+			}
+		}
 	}
 
 	if (m_pEdit != nullptr)
 	{
 		m_pEdit->Update();
+
+		return;
 	}
+
+
 }

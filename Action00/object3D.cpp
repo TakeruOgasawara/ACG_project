@@ -11,8 +11,7 @@
 #include "texture.h"
 
 //マクロ定義
-#define SIZE			(D3DXVECTOR3(1500.0f, 0.0f, 1500.0f))
-#define SIZE_WALL		(150.0f)
+#define SIZE			(D3DXVECTOR3(500.0f, 0.0f, 500.0f))
 
 //===========================================================================================
 // コンストラクタ
@@ -22,9 +21,8 @@ CObject3D::CObject3D()
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f);
+	m_size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_pVtxBuff = nullptr;
-	fSize_x = 0.0f;
-	fSize_z = 0.0f;
 	m_nTextureIdx = 0;
 	m_type = TYPE_NONE;
 }
@@ -175,7 +173,7 @@ CObject3D *CObject3D::Create(D3DXVECTOR3 pos, D3DXVECTOR2 size, const char * cTe
 
 			pObject3D->SetPosition(pos);	//位置設定
 
-			pObject3D->SetSize(size.x, size.y);
+			pObject3D->SetSize_field(size.x, size.y);
 
 			//テクスチャの割り当て
 			pObject3D->BindTexture(pTexture->Regist(cTexName));
@@ -209,7 +207,7 @@ CObject3D *CObject3D::Create(D3DXVECTOR3 pos, D3DXVECTOR2 size, D3DXCOLOR col, c
 
 			pObject3D->SetPosition(pos);	//位置設定
 
-			pObject3D->SetSize(size.x, size.y);	//大きさ設定
+			pObject3D->SetSize_field(size.x, size.y);	//大きさ設定
 
 			pObject3D->SetColor(col);
 
@@ -248,10 +246,14 @@ HRESULT CObject3D::Init(void)
 	switch (m_type)
 	{
 	case TYPE_FIELD:
+		m_size.x = SIZE.x;
+		m_size.z = SIZE.z;
 		SetVerTex_field();
 		break;
 
 	case TYPE_WALL:
+		m_size.x = SIZE.x;
+		m_size.z = SIZE.y;
 		SetVerTex_wall();
 		break;
 
@@ -362,10 +364,10 @@ void CObject3D::SetVerTex_field(void)
 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
 	//頂点座標の設定
-	pVtx[0].pos = D3DXVECTOR3(-SIZE.x, 0.0f, +SIZE.z);
-	pVtx[1].pos = D3DXVECTOR3(+SIZE.x, 0.0f, +SIZE.z);
-	pVtx[2].pos = D3DXVECTOR3(-SIZE.x, 0.0f, -SIZE.z);
-	pVtx[3].pos = D3DXVECTOR3(+SIZE.x, 0.0f, -SIZE.z);
+	pVtx[0].pos = D3DXVECTOR3(-m_size.x, 0.0f, +m_size.z);
+	pVtx[1].pos = D3DXVECTOR3(+m_size.x, 0.0f, +m_size.z);
+	pVtx[2].pos = D3DXVECTOR3(-m_size.x, 0.0f, -m_size.z);
+	pVtx[3].pos = D3DXVECTOR3(+m_size.x, 0.0f, -m_size.z);
 
 	//法線ベクトルの設定
 	pVtx[0].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
@@ -403,10 +405,10 @@ void CObject3D::SetVerTex_wall(void)
 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
 	//頂点座標の設定
-	pVtx[0].pos = D3DXVECTOR3(-SIZE_WALL, +SIZE_WALL, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(+SIZE_WALL, +SIZE_WALL, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(-SIZE_WALL, -SIZE_WALL, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(+SIZE_WALL, -SIZE_WALL, 0.0f);
+	pVtx[0].pos = D3DXVECTOR3(-m_size.x, +m_size.y, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(+m_size.x, +m_size.y, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(-m_size.x, -m_size.y, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(+m_size.x, -m_size.y, 0.0f);
 
 	//法線ベクトルの設定
 	pVtx[0].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
@@ -432,30 +434,22 @@ void CObject3D::SetVerTex_wall(void)
 	pos = m_pos;
 }
 
-void CObject3D::SetPosition(D3DXVECTOR3 pos)
+//===========================================================================================
+// 大きさ設定(フィールド)
+//===========================================================================================
+void CObject3D::SetSize_field(float x, float z)
 {
-	m_pos = pos;
+	m_size.x = x;
+	m_size.z = z;
 }
 
 //===========================================================================================
-// 大きさ設定
+// 大きさ設定(ウォール)
 //===========================================================================================
-void CObject3D::SetSize(float x, float z)
+void CObject3D::SetSize_wall(float x, float y)
 {
-	//頂点情報へのポインタ
-	VERTEX_3D *pVtx;
-
-	//頂点バッファをロックし、頂点情報へのポインタを取得
-	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
-
-	//頂点座標の設定
-	pVtx[0].pos = D3DXVECTOR3(-x, 0.0f, z);
-	pVtx[1].pos = D3DXVECTOR3(x, 0.0f, z);
-	pVtx[2].pos = D3DXVECTOR3(-x, 0.0f, -z);
-	pVtx[3].pos = D3DXVECTOR3(x, 0.0f, -z);
-
-	//頂点バッファをアンロックする
-	m_pVtxBuff->Unlock();
+	m_size.x = x;
+	m_size.y = y;
 }
 
 //===========================================================================================

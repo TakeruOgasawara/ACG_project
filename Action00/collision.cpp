@@ -7,9 +7,8 @@
 #include "collision.h"
 #include "objectX.h"
 
-#define LIMIT_POS_X			(700.0f)
-#define LIMIT_POS_Z			(700.0f)
-#define SIZE				(5.0f)
+const float LIMIT_POS_X = 700.0f;
+const float  LIMIT_POS_Z = 700.0f;
 
 //========================================================================
 // コンストラクタ
@@ -188,7 +187,7 @@ bool CCollision::CollisionObjectX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXV
 
 			if (pPos->y + size > pos.y + vtxMin.y &&
 				pPos->y + size < pos.y + vtxMax.y)
-			{//上下の当たり判定
+			{//オブジェクトの幅(y)に入った場合
 				if (pPos->x + size > pos.x + vtxMin.x &&
 					pPos->x - size < pos.x + vtxMax.x)
 				{//左右の当たり幅の指定
@@ -207,10 +206,9 @@ bool CCollision::CollisionObjectX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXV
 						bUse = true;
 					}
 				}
-
 				if (pPos->z + size > pos.z + vtxMin.z &&
 					pPos->z - size < pos.z + vtxMax.z)
-				{//上下の当たり幅の指定
+				{//オブジェクトの幅(z)に入った場合
 					if (pPosOld->x + size <= pos.x + vtxMin.x &&
 						pPos->x + size >= pos.x + vtxMin.x)
 					{//左の当たり判定
@@ -225,25 +223,28 @@ bool CCollision::CollisionObjectX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXV
 						pMove->x = 0.0f;			//移動量を0へ
 						bUse = true;
 					}
+				}
+			}
 
-					if (pPos->y + size > pos.y + vtxMin.y &&
-						pPos->y - size < pos.y + vtxMax.y)
-					{//上下の当たり幅の指定
-						if (pPosOld->y + size <= pos.y + vtxMin.y &&
-							pPos->y + size >= pos.y + vtxMin.y)
-						{//左の当たり判定
-							pPos->y = pos.y + vtxMin.y - size;
-							pMove->y = 0.0f;			//移動量を0へ
-							bUse = true;
-						}
-						if (pPosOld->y - size >= pos.y + vtxMax.y &&
-							pPos->y - size <= pos.y + vtxMax.y)
-						{//右の当たり判定
-							pPos->y = pos.y + vtxMax.y + size;
-							pMove->y = 0.0f;			//移動量を0へ
-							bUse = true;
-						}
-					}
+			//yの当たり判定
+			if (pPos->z + size > pos.z + vtxMin.z &&
+				pPos->z - size < pos.z + vtxMax.z &&
+				pPos->x + size > pos.x + vtxMin.x &&
+				pPos->x - size < pos.x + vtxMax.x)
+			{//ブロックの範囲ないの場合
+				if (pPosOld->y + size <= pos.y + vtxMin.y &&
+					pPos->y + size >= pos.y + vtxMin.y)
+				{//上の当たり判定
+					pPos->y = pos.y + vtxMin.y - size;
+					pMove->y = 0.0f;			//移動量を0へ
+					bUse = true;
+				}
+				if (pPosOld->y - size >= pos.y + vtxMax.y &&
+					pPos->y - size <= pos.y + vtxMax.y)
+				{//下の当たり判定
+					pPos->y = pos.y + vtxMax.y + size;
+					pMove->y = 0.0f;			//移動量を0へ
+					bUse = true;
 				}
 			}
 		}

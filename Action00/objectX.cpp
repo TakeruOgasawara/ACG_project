@@ -15,6 +15,8 @@
 //===========================================================================================
 CObjectX::CObjectX(int nPriority) : CObject(nPriority)
 {
+	m_dwNumMat = NULL;
+	
 	m_pBuffMat = nullptr;
 	m_pMesh = nullptr;
 	m_pVtxBuff = nullptr;
@@ -24,6 +26,8 @@ CObjectX::CObjectX(int nPriority) : CObject(nPriority)
 	m_vtxMax = D3DXVECTOR3(-10000.0f, -10000.0f, -10000.0f);
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_nModelIdx = 0;
+	m_nTextureIdx = 0;
 }
 
 //===========================================================================================
@@ -120,7 +124,7 @@ HRESULT CObjectX::Init(void)
 		if (pMat[nCntMat].pTextureFilename != NULL)
 		{
 			//ファイルからテクスチャを読み込む
-			nTextureIdx = pTexture->Regist(pMat[nCntMat].pTextureFilename);
+			m_nTextureIdx = pTexture->Regist(pMat[nCntMat].pTextureFilename);
 		}
 	}
 
@@ -156,7 +160,7 @@ HRESULT CObjectX::Init(const char *c_pFileName, D3DXVECTOR3 pos)
 		if (pMat[nCntMat].pTextureFilename != NULL)
 		{
 			//ファイルからテクスチャを読み込む
-			nTextureIdx = pTexture->Regist(pMat[nCntMat].pTextureFilename);
+			m_nTextureIdx = pTexture->Regist(pMat[nCntMat].pTextureFilename);
 		}
 	}
 
@@ -284,10 +288,10 @@ void CObjectX::Draw(void)
 			//マテリアルの設定
 			pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
-			if (pMat[nCntMat].pTextureFilename != NULL && nTextureIdx > 0)
+			if (pMat[nCntMat].pTextureFilename != NULL && m_nTextureIdx > 0)
 			{
 				//テクスチャの設定
-				pDevice->SetTexture(0, pTexture->GetAddress(nTextureIdx));
+				pDevice->SetTexture(0, pTexture->GetAddress(m_nTextureIdx));
 			}
 			else
 			{
@@ -379,28 +383,4 @@ bool CObjectX::Collision(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *p
 	}
 
 	return bUse;
-}
-
-//===========================================================================================
-// 位置の設定
-//===========================================================================================
-void CObjectX::SetPosition(D3DXVECTOR3 pos)
-{
-	m_pos = pos;
-}
-
-//===========================================================================================
-// 向きの設定
-//===========================================================================================
-void CObjectX::SetRotation(D3DXVECTOR3 rot)
-{
-	m_rot = rot;
-}
-
-//===========================================================================================
-//モデル番号の設定
-//===========================================================================================
-void CObjectX::SetModelIdx(int nIdx)
-{
-	m_nModelIdx = nIdx;
 }

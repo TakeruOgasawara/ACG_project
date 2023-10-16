@@ -31,21 +31,34 @@ public:
 	HRESULT Init();
 	void Uninit(void);
 	void Update(void);
+
+	//========================
+	// メンバ関数
+	//========================
 	void Follow(D3DXVECTOR3 pos, D3DXVECTOR3 rot);			//追従
 	void Follow(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fHeightV, float fHeightR);			//追従
+	void Follow2D_x_axisDedicated(D3DXVECTOR3 pos);
+
 	void Back(D3DXVECTOR3 pos, D3DXVECTOR3 rot);			//背後
 
 	void V_Move(void);
 	void R_Move(void);
 	void Zoom(void);			//ズーム
 
+	//========================
+	// 設定用メンバ関数
+	//========================
 	void SetCamera(void);
 	void SetLength(float fLength) { m_fLength = fLength; }
 	void SetPosition_V(D3DXVECTOR3 pos) { m_posV = pos; }
 	void SetPosition_R(D3DXVECTOR3 pos) { m_posR = pos; }
 	void SetRotation(D3DXVECTOR3 rot) { m_rot = rot; }
-	void SetValue(float fDistance, float fPosV, float fPosR);
+	void SetValue(float fDistance, D3DXVECTOR3 posV, D3DXVECTOR3 posR);
+	void SetHeight(float fHeightV, float fHeightR) { m_fHeightV = fHeightV, m_fHeightR = fHeightR; }
 
+	//========================
+	// 取得用メンバ関数
+	//========================
 	D3DXVECTOR3 GetPosition_V(void) { return m_posV; }
 	D3DXVECTOR3 GetPosition_R(void) { return m_posR; }
 	D3DXVECTOR3 GetRotation(void) { return m_rot; }
@@ -68,7 +81,7 @@ private:
 	float m_fLength;
 	float m_fHeightV;
 	float m_fHeightR;
-	Circle m_circle;
+	//Circle m_circle;
 };
 
 #endif

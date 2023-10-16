@@ -41,9 +41,10 @@ public:
 	//ê›íËóp
 	void SetVerTex_field(void);
 	void SetVerTex_wall(void);
-	void SetPosition(D3DXVECTOR3 pos); /*{ m_pos = pos; }*/
+	void SetPosition(D3DXVECTOR3 pos) { m_pos = pos; }
 	void SetRotation(D3DXVECTOR3 rot) { m_rot = rot; }
-	void SetSize(float x, float z);
+	void SetSize_field(float x, float z);
+	void SetSize_wall(float x, float y);
 	void SetColor(D3DXCOLOR col);
 	void SetType(TYPE type) { m_type = type; }
 
@@ -60,8 +61,7 @@ private:
 	D3DXVECTOR3 m_pos;					//à íu
 	D3DXVECTOR3 m_rot;					//å¸Ç´
 	D3DXCOLOR m_col;
-	float fSize_x;
-	float fSize_z;
+	D3DXVECTOR3 m_size;
 	int m_nTextureIdx;
 	TYPE m_type;
 };

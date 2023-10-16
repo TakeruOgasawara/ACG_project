@@ -42,6 +42,8 @@ private:
 	static CPause *m_pPause;
 	static CEdit *m_pEdit;
 	CSound *m_pSound;
+
+	bool m_bEdit;
 };
 
 #endif

@@ -89,21 +89,8 @@ void CCamera::Update(void)
 	//V_Move_Mouse();
 	R_Move_Mouse();
 
-	////カメラ上限設定
-	//if (m_rot.z > D3DX_PI * CAMERA_ROT_LIMIT_DOWN)
-	//{//上側上限
-	//	m_rot.z = D3DX_PI * CAMERA_ROT_LIMIT_DOWN;
-	//}
-	//if (m_rot.z < -D3DX_PI * CAMERA_ROT_LIMIT_UP)
-	//{//下側条件
-	//	m_rot.z = -D3DX_PI * CAMERA_ROT_LIMIT_UP;
-	//}
-
-	////地面判定
-	//if (m_posV.y <= 0.0f)
-	//{
-	//	m_posV.y = 0.0f;
-	//}
+	V_Move();
+	R_Move();
 
 	//カメラの向きを修正する
 	FixOrientation();
@@ -136,7 +123,7 @@ void CCamera::SetCamera(void)
 	D3DXMatrixOrthoLH(&m_mtxProjection,
 		(float)SCREEN_WIDTH,				//視野角
 		(float)SCREEN_HEIGHT,				//画面のアスペクト比
-		10.0f,				//z値の最小値
+		1.0f,				//z値の最小値
 		1000.0f);			//z値の最大値
 
 	//プロジェクションマトリックスの設定
@@ -153,16 +140,6 @@ void CCamera::SetCamera(void)
 
 	//ビューマトリックスの設定
 	pDevice->SetTransform(D3DTS_VIEW, &m_mtxView);
-}
-
-//===========================================================================================
-// カメラの設定(数値) : SetValue(視点と注視点の距離、視点の高さ、注視点の高さ)
-//===========================================================================================
-void CCamera::SetValue(float fDistance, float fPosV, float fPosR)
-{
-	m_fLength = fDistance;
-	m_posV.y = fPosV;
-	m_posR.y = fPosR;
 }
 
 //===========================================================================================
@@ -212,16 +189,14 @@ void CCamera::V_Move_Mouse(void)
 	{
 		m_rot.z += -pInputMouse->GetMovement().y * MOUSE_SENSITIVITY;
 		m_rot.y += pInputMouse->GetMovement().x * MOUSE_SENSITIVITY;
+
+		//マウスの移動量から視点を動かす
+		V_Move();
 	}
 
 	//パッド
 	/*m_rot.z += pInpuJoyPad->GetJoyStickRY(0) * PAD_SENSITIVITY;
 	m_rot.y += pInpuJoyPad->GetJoyStickRX(0) * PAD_SENSITIVITY;*/
-
-	//これなくストよさげ
-	m_posV.x = m_posR.x + (cosf(m_rot.z) * sinf(m_rot.y)) * -m_fLength;
-	m_posV.y = m_posR.y + sinf(m_rot.z) * -m_fLength;
-	m_posV.z = m_posR.z + (cosf(m_rot.z) * cosf(m_rot.y)) * -m_fLength;
 }
 
 //===========================================================================================
@@ -235,14 +210,13 @@ void CCamera::R_Move_Mouse(void)
 	//視点の移動
 	if (pInputMouse->GetPress(pInputMouse->MOUSE_RIGHT))
 	{
-		//視点の移動
+		//マウスの移動量から注視点を動かす
 		m_rot.z += -pInputMouse->GetMovement().y * MOUSE_SENSITIVITY;
 		m_rot.y += pInputMouse->GetMovement().x * MOUSE_SENSITIVITY;
-	}
 
-	m_posR.x = m_posV.x + (cosf(m_rot.z) * sinf(m_rot.y)) * m_fLength;
-	m_posR.y = m_posV.y + sinf(m_rot.z) * m_fLength;
-	m_posR.z = m_posV.z + (cosf(m_rot.z) * cosf(m_rot.y)) * m_fLength;
+		//注視点の移動
+		R_Move();
+	}
 }
 
 //===========================================================================================
@@ -300,11 +274,11 @@ void CCamera::Follow(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 {
 	//目的の視点/注視点を設定(初期値)
 	//注視点
-	m_posRDest = 
-	{ 
+	m_posRDest =
+	{
 		pos.x + sinf(m_rot.y - D3DX_PI) * -R_FOLLOW_MAE.x,
 		pos.y + m_fHeightR,
-		pos.z + cosf(m_rot.y - D3DX_PI) * -R_FOLLOW_MAE.z 
+		pos.z + cosf(m_rot.y - D3DX_PI) * -R_FOLLOW_MAE.z
 	};
 
 	//視点
@@ -332,7 +306,7 @@ void CCamera::Follow(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fHeightV, float fHe
 	m_posRDest =
 	{
 		pos.x + sinf(m_rot.y - D3DX_PI) * -R_FOLLOW_MAE.x,
-		pos.y + m_fHeightR,
+		m_fHeightR,
 		pos.z + cosf(m_rot.y - D3DX_PI) * -R_FOLLOW_MAE.z
 	};
 
@@ -340,7 +314,33 @@ void CCamera::Follow(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fHeightV, float fHe
 	m_posVDest =
 	{
 		m_posRDest.x + (cosf(m_rot.z) * sinf(m_rot.y)) * -m_fLength,
-		pos.y + m_fHeightV,
+		m_fHeightV,
+		m_posRDest.z + (cosf(m_rot.z) * cosf(m_rot.y)) * -m_fLength
+	};
+
+	m_posR += (m_posRDest - m_posR) * OFFSET_R;			//注視点を補正
+	m_posV += (m_posVDest - m_posV) * OFFSET_R;			//視点を補正
+}
+
+//====================================================================
+// 横スク(x軸)専用追従処理
+//====================================================================
+void CCamera::Follow2D_x_axisDedicated(D3DXVECTOR3 pos)
+{
+	//目的の視点/注視点を設定(初期値)
+//注視点
+	m_posRDest =
+	{
+		pos.x + sinf(m_rot.y - D3DX_PI),
+		/*pos.y + */m_fHeightR,
+		pos.z + cosf(m_rot.y - D3DX_PI)
+	};
+
+	//視点
+	m_posVDest =
+	{
+		m_posRDest.x + (cosf(m_rot.z) * sinf(m_rot.y)) * -m_fLength,
+		/*pos.y + */m_fHeightV,
 		m_posRDest.z + (cosf(m_rot.z) * cosf(m_rot.y)) * -m_fLength
 	};
 
@@ -384,4 +384,15 @@ void  CCamera::Back(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 	m_posVDest.x = pos.x + (cosf(m_rot.z) * sinf(m_rot.y)) * -m_fLength;
 	m_posVDest.y = pos.y + sinf(m_rot.z) * -m_fLength;			//視点Y
 	m_posVDest.z = pos.z + (cosf(m_rot.z) * cosf(m_rot.y)) * -m_fLength;
+}
+
+//===========================================================================================
+// カメラの設定(数値) : SetValue(視点と注視点の距離、視点の高さ、注視点の高さ)
+//===========================================================================================
+void CCamera::SetValue(float fDistance, D3DXVECTOR3 posV, D3DXVECTOR3 posR)
+{
+	m_fLength = fDistance;
+	m_posV = posV;
+	m_fHeightV = posV.y;
+	m_posR = posR;
 }

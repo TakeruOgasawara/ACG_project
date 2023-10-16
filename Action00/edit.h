@@ -8,7 +8,7 @@
 #define _EDIT_H_				//2重インクルード防止のマクロを定義
 
 #include "main.h"
-#include "objectX.h"
+#include "object.h"
 
 //前方宣言
 class CObjectX;
@@ -33,17 +33,19 @@ public:
 	CEdit();
 	~CEdit();
 
+	static CEdit* Create(void);
+
 	static HRESULT Load(void);
 	void Save(void);
 
-	HRESULT Init(D3DXVECTOR3 pos);
+	HRESULT Init(void);
 	void Uninit(void);
 	void Update(void);
 	void Draw(void);
 
 private:
-	CObjectX *m_objectX;
-	//STATE m_state;
+	CObjectX *m_pObjectX;
+	D3DXVECTOR3 m_pos;
 	int m_nTypeIdx;
 	int m_nIdx;
 	bool m_bUse;

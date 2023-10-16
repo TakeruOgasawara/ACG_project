@@ -157,7 +157,7 @@ void CBillboard::Uninit(void)
 	if (m_pVtxBuff != NULL)
 	{
 		m_pVtxBuff->Release();
-		m_pVtxBuff = NULL;
+		m_pVtxBuff = nullptr;
 	}
 
 	//”jŠü
@@ -169,7 +169,7 @@ void CBillboard::Uninit(void)
 //===========================================================================================
 void CBillboard::Update(void)
 {
-	//SetverTex();
+	
 }
 
 //===========================================================================================

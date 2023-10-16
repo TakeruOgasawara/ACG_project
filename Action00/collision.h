@@ -12,6 +12,11 @@
 
 class CCollision
 {
+private:
+
+
+	const float SIZE = 5.0f;
+
 public:
 	CCollision();
 	~CCollision();

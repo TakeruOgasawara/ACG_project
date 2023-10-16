@@ -14,18 +14,14 @@
 #include "debugproc.h"
 
 //マクロ定義
-#define MAX_OBJ			(6) 
-#define SPEED			(5.0f)
+#define MAX_OBJ			(2) 
+#define SPEED			(50.0f)
 
 //オブジェクトファイル名
 const char *c_Obj[MAX_OBJ] =
 {
-	"data\\MODEL\\object\\kihon.x",
-	"data\\MODEL\\object\\kihon1.x",
-	"data\\MODEL\\object\\coin.x",
-	"data\\MODEL\\object\\mitumisi.x",
-	"data\\MODEL\\object\\TanukiShop.x",
-	"data\\MODEL\\object\\tree.x",
+	"data\\MODEL\\object\\floor00.x",
+	"data\\MODEL\\object\\blockTile00.x",
 };
 
 //===========================================================================================
@@ -37,8 +33,8 @@ CEdit::CEdit()
 	m_nTypeIdx = 0;
 	m_bUse = false;
 	//m_state = STATE_OFF;
-
-	m_objectX = nullptr;
+	m_pos = { 0.0f, 0.0f, 0.0f };
+	m_pObjectX = nullptr;
 }
 
 //===========================================================================================
@@ -47,6 +43,25 @@ CEdit::CEdit()
 CEdit::~CEdit()
 {
 
+}
+
+//===========================================================================================
+// 生成
+//===========================================================================================
+CEdit* CEdit::Create(void)
+{
+	CEdit* pEdit = nullptr;
+
+	if (pEdit == nullptr)
+	{
+		pEdit = new CEdit;
+
+		pEdit->Init();
+
+		return pEdit;
+	}
+
+	return nullptr;
 }
 
 //===========================================================================================
@@ -116,7 +131,7 @@ void CEdit::Save(void)
 	FILE *pFile = NULL;			//ファイルポインタを宣言
 
 	//ファイルを開く
-	pFile = fopen("data\\TXT\\MAP\\stage.txt", "w");
+	pFile = fopen("data\\TXT\\stage\\stage.txt", "w");
 
 	if (pFile != NULL)
 	{
@@ -153,10 +168,10 @@ void CEdit::Save(void)
 //===========================================================================================
 // 初期化処理
 //===========================================================================================
-HRESULT CEdit::Init(D3DXVECTOR3 pos)
+HRESULT CEdit::Init(void)
 {
 	//オブジェクトの初期化
-	m_objectX = CObjectX::Create(c_Obj[m_nTypeIdx], pos);
+	m_pObjectX = CObjectX::Create(c_Obj[m_nTypeIdx], m_pos);
 
 	return S_OK;
 }
@@ -166,8 +181,11 @@ HRESULT CEdit::Init(D3DXVECTOR3 pos)
 //===========================================================================================
 void CEdit::Uninit(void)
 {
-	//オブジェクトの終了処理
-	//CObjectX::Uninit();
+	if (m_pObjectX != nullptr)
+	{
+		delete m_pObjectX;
+		m_pObjectX = nullptr;
+	}
 }
 
 //===========================================================================================
@@ -179,19 +197,9 @@ void CEdit::Update(void)
 	CInputKeyboard *pInputKey = CManager::GetInputKeyboard();
 	CDebugProc *pDebug = CManager::GetDebugProc();
 
-	D3DXVECTOR3 pos;
+	CManager::GetDebugProc()->Print("\n\nデバッグモード中\n\n");
 
-	if (pInputKey->GetTrigger(DIK_F3))
-	{
-		m_bUse = m_bUse ? false : true;			//使用するかの有無
-	}
-
-	if (m_bUse == true)
-	{
-		//オブジェクトの初期化
-		m_objectX->Init(c_Obj[m_nTypeIdx], m_objectX->GetPosition());
-	}
-	else
+	if (m_pObjectX == nullptr)
 	{
 		return;
 	}
@@ -201,46 +209,38 @@ void CEdit::Update(void)
 	{
 		m_nTypeIdx++;
 
-		//オブジェクトの初期化
-		m_objectX->Init(c_Obj[m_nTypeIdx], m_objectX->GetPosition());
-
 		m_nTypeIdx %= MAX_OBJ;			//繰り返し
+
+		//オブジェクトの初期化
+		m_pObjectX->Init(c_Obj[m_nTypeIdx], m_pObjectX->GetPosition());
 	}
 
 	//移動
-	if (pInputKey->GetPress(DIK_UP))
+	if (pInputKey->GetTrigger(DIK_UP))
 	{
-		pos.z += 1.0f;
+		m_pos.y += SPEED;
 	}
-	if (pInputKey->GetPress(DIK_DOWN))
+	if (pInputKey->GetTrigger(DIK_DOWN))
 	{
-		pos.z -= 1.0f;
+		m_pos.y -= SPEED;
 	}
-	if (pInputKey->GetPress(DIK_LEFT))
+	if (pInputKey->GetTrigger(DIK_LEFT))
 	{
-		pos.x -= 1.0f;
+		m_pos.x -= SPEED;
 	}
-	if (pInputKey->GetPress(DIK_RIGHT))
+	if (pInputKey->GetTrigger(DIK_RIGHT))
 	{
-		pos.x += 1.0f;
-	}
-	if (pInputKey->GetPress(DIK_LSHIFT))
-	{
-		pos.y += 1.0f;
-	}
-	if (pInputKey->GetPress(DIK_LCONTROL))
-	{
-		pos.y -= 1.0f;
+		m_pos.x += SPEED;
 	}
 
 	//位置の更新
-	m_objectX->SetPosition(pos);
+	m_pObjectX->SetPosition(m_pos);
 
 	//オブジェクトの設置
 	if (pInputKey->GetTrigger(DIK_RETURN))
 	{
 		//生成
-		m_objectX = CObjectX::Create(c_Obj[m_nTypeIdx], pos);
+		m_pObjectX = CObjectX::Create(c_Obj[m_nTypeIdx], m_pos);
 
 		m_nIdx++;
 	}
@@ -258,8 +258,8 @@ void CEdit::Update(void)
 void CEdit::Draw(void)
 {
 	//オブジェクトの描画
-	if (m_objectX != nullptr)
+	if (m_pObjectX != nullptr)
 	{
-		m_objectX->Draw();
+		m_pObjectX->Draw();
 	}
 }

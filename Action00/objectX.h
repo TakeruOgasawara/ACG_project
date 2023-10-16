@@ -35,9 +35,9 @@ public:
 	bool Collision(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *pMove, D3DXVECTOR3 pVtxMax, D3DXVECTOR3 pVtxMin);
 
 	//設定用
-	void SetPosition(D3DXVECTOR3 pos);
-	void SetRotation(D3DXVECTOR3 rot);
-	void SetModelIdx(int nIdx);
+	void SetPosition(D3DXVECTOR3 pos) { m_pos = pos; }
+	void SetRotation(D3DXVECTOR3 rot) { m_rot = rot; };
+	void SetModelIdx(int nIdx) { m_nModelIdx = nIdx; }
 
 	//取得用
 	D3DXVECTOR3 GetPosition(void) { return m_pos; }
@@ -54,7 +54,7 @@ private:
 	LPD3DXBUFFER m_pBuffMat;			//頂点カラー情報
 	DWORD m_dwNumMat;					//カラーの数
 	D3DXVECTOR3 m_vtxMin, m_vtxMax;		//オブジェクトの最大値・最小値
-	int nTextureIdx;			//テクスチャ番号
+	int m_nTextureIdx;			//テクスチャ番号
 	D3DXVECTOR3 m_pos;			//位置
 	D3DXVECTOR3 m_rot;			//向き
 	int m_nModelIdx;			//モデル番号

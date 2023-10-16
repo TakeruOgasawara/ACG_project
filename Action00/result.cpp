@@ -38,7 +38,7 @@ CResult::~CResult()
 //===========================================================================================
 HRESULT CResult::Load(void)
 {
-	CTexture *pTexture = CManager::GetTexture();
+	CTexture *pTexture = CManager::GetInstance()->GetTexture();
 
 	//テクスチャ
 	m_nTextureIdx = pTexture->Regist("data\\TEXTURE\\result-1.png");
@@ -75,12 +75,12 @@ void CResult::Uninit()
 //===========================================================================================
 void CResult::Update()
 {
-	CInputKeyboard *pInputKey = CManager::GetInputKeyboard();
-	CInputJoyPad *pJoyPad = CManager::GetInputJoyPad();
+	CInputKeyboard *pInputKey = CManager::GetInstance()->GetInputKeyboard();
+	CInputJoyPad *pJoyPad = CManager::GetInstance()->GetInputJoyPad();
 
 	if (pInputKey->GetTrigger(DIK_RETURN) || pJoyPad->GetTrigger(pJoyPad->BUTTON_A, 0))
 	{
-		CManager::GetFade()->Set(MODE_TITLE);
+		CManager::GetInstance()->GetFade()->Set(MODE_TITLE);
 	}
 
 	CScene::Update();

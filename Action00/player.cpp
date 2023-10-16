@@ -117,8 +117,8 @@ CPlayer *CPlayer::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 //===========================================================================================
 HRESULT CPlayer::Init(void)
 {
-	CTexture *pTexture = CManager::GetTexture();
-	m_pCamera = CManager::GetCamera();
+	CTexture *pTexture = CManager::GetInstance()->GetTexture();
+	m_pCamera = CManager::GetInstance()->GetCamera();
 
 	CObject::SetType(CObject::TYPE_PLAYER3D);
 
@@ -136,9 +136,6 @@ HRESULT CPlayer::Init(void)
 
 	// カメラ
 	//m_pCamera->SetValue(500.0f, D3DXVECTOR3(0.0f, 10.0f, 500.0f), D3DXVECTOR3(0.0f, 10.0f, 50.0f));
-
-	// 当たり判定
-	m_pCollision = CCollision::Create();
 
 	return S_OK;
 }
@@ -161,12 +158,6 @@ void CPlayer::Uninit(void)
 	if (m_pCamera != nullptr)
 	{
 		m_pCamera = nullptr;
-	}
-
-	if (m_pCollision != nullptr)
-	{
-		delete m_pCollision;
-		m_pCollision = nullptr;
 	}
 
 	CBillboard::Uninit();
@@ -212,14 +203,13 @@ void CPlayer::Update(void)
 	//移動量の代入
 	pos += m_move;
 
-	if (m_pCollision != nullptr)
+	
+	if (CollisionObjectX(&pos, &posOld, &m_move, SIZE.x) == true)
 	{
-		if (m_pCollision->CollisionObjectX(&pos, &posOld, &m_move, SIZE.x) == true)
-		{
-			m_bFirstJump = false;
-			m_bSecondJump = false;
-		}
+		m_bFirstJump = false;
+		m_bSecondJump = false;
 	}
+	
 
 	//矢印
 	Arrow(pos);
@@ -228,10 +218,10 @@ void CPlayer::Update(void)
 	SetPosition(pos);
 
 	//デバッグ表示
-	CManager::GetDebugProc()->Print("\n\n【プレイヤー情報】");
-	CManager::GetDebugProc()->Print("\n位置： x:%f y:%f z:%f", pos.x, pos.y, pos.z);
-	CManager::GetDebugProc()->Print("\n向き： x:%f y:%f z:%f", rot.x, rot.y, rot.z);
-	CManager::GetDebugProc()->Print("\n移動量： x:%f y:%f z:%f\n", m_move.x, m_move.y, m_move.z);
+	CManager::GetInstance()->GetDebugProc()->Print("\n\n【プレイヤー情報】");
+	CManager::GetInstance()->GetDebugProc()->Print("\n位置： x:%f y:%f z:%f", pos.x, pos.y, pos.z);
+	CManager::GetInstance()->GetDebugProc()->Print("\n向き： x:%f y:%f z:%f", rot.x, rot.y, rot.z);
+	CManager::GetInstance()->GetDebugProc()->Print("\n移動量： x:%f y:%f z:%f\n", m_move.x, m_move.y, m_move.z);
 }
 
 //===========================================================================================
@@ -240,7 +230,7 @@ void CPlayer::Update(void)
 void CPlayer::Draw(void)
 {
 	//デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
 
 	//ライティングの有効/無効の設定
 	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
@@ -256,8 +246,8 @@ void CPlayer::Draw(void)
 //===========================================================================================
 void CPlayer::InputMove(void)
 {
-	CInputKeyboard *pInputKeyboard = CManager::GetInputKeyboard();
-	CInputJoyPad *pInpuJoyPad = CManager::GetInputJoyPad();
+	CInputKeyboard *pInputKeyboard = CManager::GetInstance()->GetInputKeyboard();
+	CInputJoyPad *pInpuJoyPad = CManager::GetInstance()->GetInputJoyPad();
 
 	//キー入力で移動する処理
 	if (pInputKeyboard->GetPress(DIK_A) == true || pInpuJoyPad->GetJoyStickLX(0) < 0)
@@ -278,9 +268,9 @@ void CPlayer::InputMove(void)
 //===========================================================================================
 void CPlayer::Jump(void)
 {
-	CInputKeyboard *pInputKeyboard = CManager::GetInputKeyboard();
-	CInputJoyPad *pInpuJoyPad = CManager::GetInputJoyPad();
-	CInputMouse *pInputMouse = CManager::GetInputMouse();
+	CInputKeyboard *pInputKeyboard = CManager::GetInstance()->GetInputKeyboard();
+	CInputJoyPad *pInpuJoyPad = CManager::GetInstance()->GetInputJoyPad();
+	CInputMouse *pInputMouse = CManager::GetInstance()->GetInputMouse();
 
 	//ジャンプできるか確認
 	if (m_bFirstJump == false && m_bSecondJump == false)
@@ -336,7 +326,7 @@ void CPlayer::CameraRelationship(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 //===========================================================================================
 void CPlayer::Arrow(D3DXVECTOR3 pos)
 {
-	CInputMouse* pInputMouse = CManager::GetInputMouse();
+	CInputMouse* pInputMouse = CManager::GetInstance()->GetInputMouse();
 
 	//プレイヤーのスクリーン座標を取得
 	D3DXVECTOR3 screemPos = GetScreenPosition();
@@ -354,9 +344,9 @@ void CPlayer::Arrow(D3DXVECTOR3 pos)
 		m_pArrowAround->SetRotation(D3DXVECTOR3(0.0f, 0.0f, fAngle));
 	}
 
-	CManager::GetDebugProc()->Print("\n\n【矢印】\n");
-	CManager::GetDebugProc()->Print("位置 x:%f y:%f z%f\n", m_pArrowAround->GetPosition().x, m_pArrowAround->GetPosition().y, m_pArrowAround->GetPosition().z);
-	CManager::GetDebugProc()->Print("向き x:%f y:%f z%f\n", m_pArrowAround->GetRotation().x, m_pArrowAround->GetRotation().y, m_pArrowAround->GetRotation().z);
+	CManager::GetInstance()->GetDebugProc()->Print("\n\n【矢印】\n");
+	CManager::GetInstance()->GetDebugProc()->Print("位置 x:%f y:%f z%f\n", m_pArrowAround->GetPosition().x, m_pArrowAround->GetPosition().y, m_pArrowAround->GetPosition().z);
+	CManager::GetInstance()->GetDebugProc()->Print("向き x:%f y:%f z%f\n", m_pArrowAround->GetRotation().x, m_pArrowAround->GetRotation().y, m_pArrowAround->GetRotation().z);
 }
 
 //===========================================================================================
@@ -373,7 +363,7 @@ D3DXVECTOR3 CPlayer::GetScreenPosition(void)
 	D3DVIEWPORT9 viewport;
 
 	//デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
 	pDevice->GetTransform(D3DTS_PROJECTION, &mtxProjection);
 	pDevice->GetTransform(D3DTS_VIEW, &mtxView);
 	pDevice->GetViewport(&viewport);

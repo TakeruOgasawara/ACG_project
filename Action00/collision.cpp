@@ -11,46 +11,9 @@ const float LIMIT_POS_X = 700.0f;
 const float  LIMIT_POS_Z = 700.0f;
 
 //========================================================================
-// コンストラクタ
-//========================================================================
-CCollision::CCollision()
-{
-
-}
-
-//========================================================================
-// デストラクタ
-//========================================================================
-CCollision::~CCollision()
-{
-
-}
-
-//========================================================================
-// インスタンス生成
-//========================================================================
-CCollision *CCollision::Create(void)
-{
-	CCollision *pCollision = nullptr;
-
-	if (pCollision == nullptr)
-	{
-		pCollision = new CCollision;
-
-		return pCollision;
-	}
-	else
-	{
-		return nullptr;
-	}
-
-	return pCollision;
-}
-
-//========================================================================
 // 円の当たり判定 x軸 z軸 (同類との当たり)
 //========================================================================
-bool CCollision::ClsCircleXZAllies(D3DXVECTOR3 *pPos1, D3DXVECTOR3 *pPos2, float fLength1, float fLength2, int MaxCnt)
+bool CollisionCircleXZAllies(D3DXVECTOR3 *pPos1, D3DXVECTOR3 *pPos2, float fLength1, float fLength2, int MaxCnt)
 {
 	float fLength;				//半径の計算結果の保存用
 	bool bUse = false;			//falseに初期化(判定用)
@@ -71,9 +34,9 @@ bool CCollision::ClsCircleXZAllies(D3DXVECTOR3 *pPos1, D3DXVECTOR3 *pPos2, float
 }
 
 //========================================================================
-// 大人の壁処理 : ClsAdultWall(判定するオブジェクト(位置)、判定するオブジェクトの幅)
+// 大人の壁処理 : CollisionAdultWall(判定するオブジェクト(位置)、判定するオブジェクトの幅)
 //========================================================================
-bool CCollision::ClsAdultWall(D3DXVECTOR3 *pPos, float fWidth)
+bool CollisionAdultWall(D3DXVECTOR3 *pPos, float fWidth)
 {
 	bool bAdultWall = false;
 
@@ -102,9 +65,9 @@ bool CCollision::ClsAdultWall(D3DXVECTOR3 *pPos, float fWidth)
 }
 
 //========================================================================
-// 大人の壁処理 : ClsAdultWall(判定するオブジェクト(位置)、判定するオブジェクトの幅、大人の壁x、大人の壁z)
+// 大人の壁処理 : CollisionAdultWall(判定するオブジェクト(位置)、判定するオブジェクトの幅、大人の壁x、大人の壁z)
 //========================================================================
-bool CCollision::ClsAdultWall(D3DXVECTOR3 *pPos, float fWidth, float fLimitWallx, float fLimitWallz)
+bool CollisionAdultWall(D3DXVECTOR3 *pPos, float fWidth, float fLimitWallx, float fLimitWallz)
 {
 	bool bAdultWall = false;
 
@@ -135,7 +98,7 @@ bool CCollision::ClsAdultWall(D3DXVECTOR3 *pPos, float fWidth, float fLimitWallx
 //========================================================================
 // 外積の当たり判定
 //========================================================================
-bool CCollision::ClsCross(void)
+bool CollisionCross(void)
 {
 	//D3DXVec3Cross();
 
@@ -145,7 +108,7 @@ bool CCollision::ClsCross(void)
 //========================================================================
 // 内積の当たり判定
 //========================================================================
-bool CCollision::ClsInner(void)
+bool ollisionInner(void)
 {
 	return false;
 }
@@ -153,7 +116,7 @@ bool CCollision::ClsInner(void)
 //===========================================================================================
 // 当たり判定 : CollisionObjectX(位置、過去位置、移動量、大きさ)
 //===========================================================================================
-bool CCollision::CollisionObjectX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *pMove, float size)
+bool CollisionObjectX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *pMove, float size)
 {
 	bool bUse = false;
 

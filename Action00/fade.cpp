@@ -102,7 +102,7 @@ void CFade::Update(void)
 				m_col.a = 1.0f;
 
 				//ƒ‚[ƒh‚ÌÝ’è(ŽŸ‚Ì‰æ–Ê‚ÉˆÚ“®)
-				CManager::SetMode(m_modeNext);
+				CManager::GetInstance()->SetMode(m_modeNext);
 
 				return;
 			}

@@ -128,7 +128,7 @@ HRESULT CBillboard::Init(void)
 	m_col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
 	//デバイスの取得
-	CRenderer *pRenderer = CManager::GetRenderer();
+	CRenderer *pRenderer = CManager::GetInstance()->GetRenderer();
 	LPDIRECT3DDEVICE9 pDevice = pRenderer->GetDevice();
 
 	//頂点バッファの生成
@@ -178,9 +178,9 @@ void CBillboard::Update(void)
 void CBillboard::Draw(void)
 {
 	//デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
 	//テクスチャポインタの取得
-	CTexture *pTexture = CManager::GetTexture();
+	CTexture *pTexture = CManager::GetInstance()->GetTexture();
 
 	D3DXMATRIX mtxRot, mtxTrans;			//計算用マトリックス
 	D3DXMATRIX mtxView;				//ビューマトリックスの取得用
@@ -324,7 +324,7 @@ void CBillboard::BindTexture(int nIdx)
 //===========================================================================================
 void CBillboard::BindTexture(const char *texName)
 {
-	CTexture *pTexture = CManager::GetTexture();
+	CTexture *pTexture = CManager::GetInstance()->GetTexture();
 
 	//テクスチャ番号に変換
 	m_nTextureIdx = pTexture->Regist(texName);

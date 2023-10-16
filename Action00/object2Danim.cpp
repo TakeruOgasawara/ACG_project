@@ -116,7 +116,7 @@ CObject2Danim *CObject2Danim::Create(D3DXVECTOR3 pos)
 HRESULT CObject2Danim::Init(void)
 {
 	//デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
 
 	//テクスチャの読み込み
 	if (FAILED(D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\bomb0.png", &m_pTexture)))

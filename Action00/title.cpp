@@ -41,7 +41,7 @@ HRESULT CTitle::Init()
 {
 	col_a = 0.0f;
 
-	CTexture *pTexture = CManager::GetTexture();
+	CTexture *pTexture = CManager::GetInstance()->GetTexture();
 
 	for (int nCnt = 0; nCnt < 2; nCnt++)
 	{
@@ -83,8 +83,8 @@ void CTitle::Uninit()
 //===========================================================================================
 void CTitle::Update()
 {
-	CInputKeyboard *pInputKey = CManager::GetInputKeyboard();
-	CInputJoyPad *pJoyPad = CManager::GetInputJoyPad();
+	CInputKeyboard *pInputKey = CManager::GetInstance()->GetInputKeyboard();
+	CInputJoyPad *pJoyPad = CManager::GetInstance()->GetInputJoyPad();
 
 	if (m_state == STATE_IN)
 	{//フェードイン状態
@@ -113,7 +113,7 @@ void CTitle::Update()
 
 	if (pInputKey->GetTrigger(DIK_RETURN) || pJoyPad->GetTrigger(pJoyPad->BUTTON_A, 0))
 	{
-		CManager::GetFade()->Set(MODE_GAME);
+		CManager::GetInstance()->GetFade()->Set(MODE_GAME);
 	}
 
 	CScene::Update();

@@ -101,8 +101,8 @@ CObjectX *CObjectX::Create(const char *c_pFileName, D3DXVECTOR3 pos)
 HRESULT CObjectX::Init(void)
 {
 	//デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
-	CTexture *pTexture = CManager::GetTexture();
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
+	CTexture *pTexture = CManager::GetInstance()->GetTexture();
 
 	D3DXMATERIAL *pMat;			//マテリアルへのポインタ
 
@@ -137,8 +137,8 @@ HRESULT CObjectX::Init(void)
 HRESULT CObjectX::Init(const char *c_pFileName, D3DXVECTOR3 pos)
 {
 	//デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
-	CTexture *pTexture = CManager::GetTexture();
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
+	CTexture *pTexture = CManager::GetInstance()->GetTexture();
 
 	D3DXMATERIAL *pMat;			//マテリアルへのポインタ
 
@@ -254,58 +254,55 @@ void CObjectX::Update(void)
 void CObjectX::Draw(void)
 {
 	//デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
-	CTexture *pTexture = CManager::GetTexture();
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
+	CTexture *pTexture = CManager::GetInstance()->GetTexture();
 
 	D3DXMATRIX mtxRot, mtxTrans;				//計算用マトリックス
 	D3DMATERIAL9 matDef;						//現在のマテリアル保存用
 	D3DXMATERIAL *pMat;							//マテリアルデータへのポインタ
 
-	if (m_pMesh != nullptr)
+	//ワールドマトリックスの初期化
+	D3DXMatrixIdentity(&m_mtxWorld);
+
+	//向きを反映
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, m_rot.y, m_rot.x, m_rot.z);
+	D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxRot);
+
+	//位置を反映
+	D3DXMatrixTranslation(&mtxTrans, m_pos.x, m_pos.y, m_pos.z);
+	D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxTrans);
+
+	//ワールドマトリックスの設定
+	pDevice->SetTransform(D3DTS_WORLD, &m_mtxWorld);
+
+	//現在のマテリアルを取得
+	pDevice->GetMaterial(&matDef);
+
+	//マテリアルへのポインタを取得
+	pMat = (D3DXMATERIAL*)m_pBuffMat->GetBufferPointer();
+
+	for (int nCntMat = 0; nCntMat < (int)m_dwNumMat; nCntMat++)
 	{
-		//ワールドマトリックスの初期化
-		D3DXMatrixIdentity(&m_mtxWorld);
+		//マテリアルの設定
+		pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
-		//向きを反映
-		D3DXMatrixRotationYawPitchRoll(&mtxRot, m_rot.y, m_rot.x, m_rot.z);
-		D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxRot);
-
-		//位置を反映
-		D3DXMatrixTranslation(&mtxTrans, m_pos.x, m_pos.y, m_pos.z);
-		D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxTrans);
-
-		//ワールドマトリックスの設定
-		pDevice->SetTransform(D3DTS_WORLD, &m_mtxWorld);
-
-		//現在のマテリアルを取得
-		pDevice->GetMaterial(&matDef);
-
-		//マテリアルへのポインタを取得
-		pMat = (D3DXMATERIAL*)m_pBuffMat->GetBufferPointer();
-
-		for (int nCntMat = 0; nCntMat < (int)m_dwNumMat; nCntMat++)
+		if (pMat[nCntMat].pTextureFilename != NULL && m_nTextureIdx > 0)
 		{
-			//マテリアルの設定
-			pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
-
-			if (pMat[nCntMat].pTextureFilename != NULL && m_nTextureIdx > 0)
-			{
-				//テクスチャの設定
-				pDevice->SetTexture(0, pTexture->GetAddress(m_nTextureIdx));
-			}
-			else
-			{
-				//テクスチャの設定
-				pDevice->SetTexture(0, NULL);
-			}
-
-			//オブジェクト(パーツ)の描画
-			m_pMesh->DrawSubset(nCntMat);
+			//テクスチャの設定
+			pDevice->SetTexture(0, pTexture->GetAddress(m_nTextureIdx));
+		}
+		else
+		{
+			//テクスチャの設定
+			pDevice->SetTexture(0, NULL);
 		}
 
-		//保存されていたマテリアルを戻す
-		pDevice->SetMaterial(&matDef);
+		//オブジェクト(パーツ)の描画
+		m_pMesh->DrawSubset(nCntMat);
 	}
+
+	//保存されていたマテリアルを戻す
+	pDevice->SetMaterial(&matDef);
 }
 
 //===========================================================================================

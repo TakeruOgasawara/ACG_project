@@ -95,10 +95,10 @@ void CCamera::Update(void)
 	//カメラの向きを修正する
 	FixOrientation();
 
-	CManager::GetDebugProc()->Print("\n\n【カメラ情報】");
-	CManager::GetDebugProc()->Print("\n視点： x:%f y:%f z:%f", m_posV.x, m_posV.y, m_posV.z);
-	CManager::GetDebugProc()->Print("\n注視点： x:%f y:%f z:%f", m_posR.x, m_posR.y, m_posR.z);
-	CManager::GetDebugProc()->Print("\n向き： x:%f, y:%f z:%f\n", m_rot.z, m_rot.y, m_rot.z);
+	CManager::GetInstance()->GetDebugProc()->Print("\n\n【カメラ情報】");
+	CManager::GetInstance()->GetDebugProc()->Print("\n視点： x:%f y:%f z:%f", m_posV.x, m_posV.y, m_posV.z);
+	CManager::GetInstance()->GetDebugProc()->Print("\n注視点： x:%f y:%f z:%f", m_posR.x, m_posR.y, m_posR.z);
+	CManager::GetInstance()->GetDebugProc()->Print("\n向き： x:%f, y:%f z:%f\n", m_rot.z, m_rot.y, m_rot.z);
 }
 
 //===========================================================================================
@@ -107,7 +107,7 @@ void CCamera::Update(void)
 void CCamera::SetCamera(void)
 {
 	//デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
 
 	//プロジェクションマトリックスの初期化
 	D3DXMatrixIdentity(&m_mtxProjection);
@@ -180,9 +180,9 @@ void CCamera::FixOrientation(void)
 void CCamera::V_Move_Mouse(void)
 {
 	//インプット情報の取得
-	CInputKeyboard *pInputKeyboard = CManager::GetInputKeyboard();
-	CInputMouse *pInputMouse = CManager::GetInputMouse();
-	CInputJoyPad *pInpuJoyPad = CManager::GetInputJoyPad();
+	CInputKeyboard *pInputKeyboard = CManager::GetInstance()->GetInputKeyboard();
+	CInputMouse *pInputMouse = CManager::GetInstance()->GetInputMouse();
+	CInputJoyPad *pInpuJoyPad = CManager::GetInstance()->GetInputJoyPad();
 
 	//視点の移動
 	if (pInputMouse->GetPress(pInputMouse->MOUSE_LEFT))
@@ -204,8 +204,8 @@ void CCamera::V_Move_Mouse(void)
 //===========================================================================================
 void CCamera::R_Move_Mouse(void)
 {
-	CInputKeyboard *pInputKeyboard = CManager::GetInputKeyboard();
-	CInputMouse *pInputMouse = CManager::GetInputMouse();
+	CInputKeyboard *pInputKeyboard = CManager::GetInstance()->GetInputKeyboard();
+	CInputMouse *pInputMouse = CManager::GetInstance()->GetInputMouse();
 
 	//視点の移動
 	if (pInputMouse->GetPress(pInputMouse->MOUSE_RIGHT))
@@ -244,8 +244,8 @@ void CCamera::R_Move(void)
 //===========================================================================================
 void CCamera::Zoom(void)
 {
-	CInputKeyboard *pInputKeyboard = CManager::GetInputKeyboard();
-	CInputMouse *pInputMouse = CManager::GetInputMouse();
+	CInputKeyboard *pInputKeyboard = CManager::GetInstance()->GetInputKeyboard();
+	CInputMouse *pInputMouse = CManager::GetInstance()->GetInputMouse();
 
 	//if (pInputMouse->GetPress(pInputMouse->MOUSE_HWEEL) == true)
 	//{

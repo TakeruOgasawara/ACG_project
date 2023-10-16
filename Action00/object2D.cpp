@@ -163,7 +163,7 @@ CObject2D *CObject2D::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 CObject2D * CObject2D::Create(D3DXVECTOR3 pos, const char *name)
 {
 	CObject2D *pObject2D = nullptr;
-	CTexture *pTex = CManager::GetTexture();
+	CTexture *pTex = CManager::GetInstance()->GetTexture();
 
 	if (pObject2D == nullptr)
 	{
@@ -196,7 +196,7 @@ CObject2D * CObject2D::Create(D3DXVECTOR3 pos, const char *name)
 HRESULT CObject2D::Init(void)
 {
 	//デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
 
 	//位置(デフォルト)
 	m_pos = D3DXVECTOR3(SCREEN_WIDTH * 0.5, SCREEN_HEIGHT * 0.5, 0.0f);
@@ -253,10 +253,10 @@ void CObject2D::Update(void)
 void CObject2D::Draw(void)
 {
 	//デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
 
 	//テクスチャ情報の取得
-	CTexture *pTexture = CManager::GetTexture();
+	CTexture *pTexture = CManager::GetInstance()->GetTexture();
 	
 	//頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);

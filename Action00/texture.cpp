@@ -19,7 +19,6 @@ CTexture::Tex CTexture::m_Texture[MAX_TEXTURE] = {};
 CTexture::CTexture()
 {
 	m_nTextureIdx = 0;
-	m_type = TYPE_NONE;
 	ZeroMemory(&m_Texture[0], sizeof(Tex) * MAX_TEXTURE);
 }
 
@@ -42,9 +41,6 @@ HRESULT CTexture::Load(void)
 		"data\\TEXTURE\\none.jpg",
 		"data\\TEXTURE\\murabito.png",
 	};
-
-	//デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
 
 	for (int nCntTex = 0; nCntTex < MAX_TEXTURE; nCntTex++)
 	{
@@ -86,7 +82,7 @@ void CTexture::Unload(void)
 int CTexture::Regist(const char *pTextureName)
 {
 	//デバイスの取得
-	CRenderer *pRenderer = CManager::GetRenderer();
+	CRenderer *pRenderer = CManager::GetInstance()->GetRenderer();
 	LPDIRECT3DDEVICE9 pDevice = pRenderer->GetDevice();
 
 	//変数宣言

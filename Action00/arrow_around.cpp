@@ -83,7 +83,7 @@ void CArrowAround::Upadate(void)
 void CArrowAround::Draw(void)
 {
 	//デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
 
 	//ライティングの有効/無効の設定
 	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);

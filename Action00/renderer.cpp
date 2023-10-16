@@ -17,8 +17,8 @@
 //===========================================================================================
 CRenderer::CRenderer()
 {
-	m_pD3D = NULL;				//Directx3Dオブジェクトへのポインタ
-	m_pD3DDevice = NULL;		//Directx3Dへのデバイスへのポインタ
+	m_pD3D = nullptr;	//Directx3Dオブジェクトへのポインタ
+	m_pD3DDevice = nullptr;	//Directx3Dへのデバイスへのポインタ
 }
 
 //===========================================================================================
@@ -124,16 +124,16 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 void CRenderer::Uninit(void)
 {
 	//Direct3Dデバイスの破棄
-	if (m_pD3DDevice != NULL)
+	if (m_pD3DDevice != nullptr)
 	{
 		m_pD3DDevice->Release();
-		m_pD3DDevice = NULL;
+		m_pD3DDevice = nullptr;
 	}
 	//Direct3Dオブジェクトの破棄
-	if (m_pD3D != NULL)
+	if (m_pD3D != nullptr)
 	{
 		m_pD3D->Release();
-		m_pD3D = NULL;
+		m_pD3D = nullptr;
 	}
 }
 
@@ -143,10 +143,9 @@ void CRenderer::Uninit(void)
 void CRenderer::Update(void)
 {
 	//デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
-	CInputKeyboard *pInputKey = CManager::GetInputKeyboard();
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
+	CInputKeyboard *pInputKey = CManager::GetInstance()->GetInputKeyboard();
 
-#if DEBUG
 	if (pInputKey->GetTrigger(DIK_F2) == true)
 	{//ワイヤーフレーム表示処理
 		if (m_bWireframe == true)
@@ -158,7 +157,6 @@ void CRenderer::Update(void)
 			m_bWireframe = true;
 		}
 	}
-#endif
 
 	if (m_bWireframe == true)
 	{//ワイヤーフレームを表示する
@@ -178,7 +176,7 @@ void CRenderer::Update(void)
 //===========================================================================================
 void CRenderer::Draw(void)
 {
-	CDebugProc *pDebugProc = CManager::GetDebugProc();
+	CDebugProc *pDebugProc = CManager::GetInstance()->GetDebugProc();
 
 	//画面をクリア(バックバッファとZバッファのクリア)
 	m_pD3DDevice->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), D3DCOLOR_RGBA(0, 0, 0, 255), 1.0f, 0);

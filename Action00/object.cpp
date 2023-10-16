@@ -84,7 +84,7 @@ void CObject::UpdateAll(void)
 void CObject::DrawAll(void)
 {
 	//カメラ情報の取得
-	CCamera *pCamera = CManager::GetCamera();
+	CCamera *pCamera = CManager::GetInstance()->GetCamera();
 
 	//カメラのセット
 	pCamera->SetCamera();

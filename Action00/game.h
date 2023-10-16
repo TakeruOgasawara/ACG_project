@@ -17,6 +17,7 @@ class CUI_Manager;
 class CPause;
 class CSound;
 class CEdit;
+class CXfile;
 
 //タイトルクラス
 class CGame : public CScene
@@ -32,6 +33,7 @@ public:
 
 	static CPlayer3D *GetPlayer3D(void) { return m_pPlayer3D; }
 	static CPause *GetPause(void) { return m_pPause; }
+	static CXfile* GetXfile(void) { return m_pXfile; }
 
 private:
 	void Edit(void);
@@ -41,6 +43,7 @@ private:
 	static CUI_Manager *m_pUIManager;
 	static CPause *m_pPause;
 	static CEdit *m_pEdit;
+	static CXfile* m_pXfile;
 	CSound *m_pSound;
 
 	bool m_bEdit;

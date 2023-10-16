@@ -131,7 +131,7 @@ void CEdit::Save(void)
 	FILE *pFile = NULL;			//ファイルポインタを宣言
 
 	//ファイルを開く
-	pFile = fopen("data\\TXT\\stage\\stage.txt", "w");
+	pFile = fopen("data\\TXT\\stage\\stage0.txt", "w");
 
 	if (pFile != NULL)
 	{
@@ -194,10 +194,10 @@ void CEdit::Uninit(void)
 void CEdit::Update(void)
 {
 	//キーボード情報の取得
-	CInputKeyboard *pInputKey = CManager::GetInputKeyboard();
-	CDebugProc *pDebug = CManager::GetDebugProc();
+	CInputKeyboard *pInputKey = CManager::GetInstance()->GetInputKeyboard();
+	CDebugProc *pDebug = CManager::GetInstance()->GetDebugProc();
 
-	CManager::GetDebugProc()->Print("\n\nデバッグモード中\n\n");
+	CManager::GetInstance()->GetDebugProc()->Print("\n\nデバッグモード中\n\n");
 
 	if (m_pObjectX == nullptr)
 	{

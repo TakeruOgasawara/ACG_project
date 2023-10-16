@@ -22,6 +22,7 @@
 #include "fade.h"
 #include "pause.h"
 #include "edit.h"
+#include "xfile.h"
 
 #include "player.h"
 
@@ -31,6 +32,7 @@ CMap *CGame::m_pMap = nullptr;
 CUI_Manager *CGame::m_pUIManager = nullptr;
 CPause *CGame::m_pPause = nullptr;
 CEdit *CGame::m_pEdit = nullptr;
+CXfile* CGame::m_pXfile = nullptr;
 
 //===========================================================================================
 // コンストラクタ
@@ -54,6 +56,14 @@ CGame::~CGame()
 //===========================================================================================
 HRESULT CGame::Init()
 {
+	if (m_pXfile == nullptr)
+	{
+		m_pXfile = new CXfile;
+
+		//	xファイルの読み込み
+		m_pXfile->Load();
+	}
+
 	/*CObject3D *pObject3D = CObject3D::Create(D3DXVECTOR3(0.0f, 200.0f, 10.0f), CObject3D::TYPE_WALL);
 	pObject3D->SetSize_wall(640.0f, 360.0f);*/
 
@@ -79,6 +89,13 @@ void CGame::Uninit()
 		delete m_pPause;
 		m_pPause = nullptr;
 	}
+
+	if (m_pXfile != nullptr)
+	{
+		m_pXfile->Unload();
+		delete m_pXfile;
+		m_pXfile = nullptr;
+	}
 }
 
 //===========================================================================================
@@ -87,15 +104,14 @@ void CGame::Uninit()
 void CGame::Update()
 {
 	//ポインタの取得
-	CDebugProc *pDebug = CManager::GetDebugProc();
-	CInputKeyboard *pInputKey = CManager::GetInputKeyboard();
-	CFade *pFade = CManager::GetFade();
-	int pos_x = 0, pos_z = 0;
-	int Rand_If = 0;
-	int RandPosx = 0;
-	int RadPosz = 0;
+	CDebugProc *pDebug = CManager::GetInstance()->GetDebugProc();
+	CInputKeyboard *pInputKey = CManager::GetInstance()->GetInputKeyboard();
+	CFade *pFade = CManager::GetInstance()->GetFade();
 
+	//エディット
 	Edit();
+
+
 
 	/*if (pInputKey->GetTrigger(DIK_P) == true)
 	{
@@ -117,7 +133,7 @@ void CGame::Update()
 
 		if (m_pPause->GetPause() == true)
 		{
-			CManager::GetFade()->Update();
+			CManager::GetInstance()->GetFade()->Update();
 
 			return;
 		}
@@ -154,7 +170,7 @@ void CGame::Draw()
 //===========================================================================================
 void CGame::Edit(void)
 {
-	CInputKeyboard* pInputKey = CManager::GetInputKeyboard();
+	CInputKeyboard* pInputKey = CManager::GetInstance()->GetInputKeyboard();
 
 	if (pInputKey->GetTrigger(DIK_F3) == true)
 	{
@@ -184,6 +200,4 @@ void CGame::Edit(void)
 
 		return;
 	}
-
-
 }

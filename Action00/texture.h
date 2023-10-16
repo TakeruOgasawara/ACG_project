@@ -15,15 +15,6 @@
 //テクスチャクラス
 class CTexture
 {
-public:
-	enum TYPE
-	{
-		TYPE_NONE = 0,
-		TYPE_MURABITO,
-		TYPE_BULLET,
-		TYPE_CHAINBULLET,
-	};
-
 private:
 	struct Tex
 	{
@@ -35,16 +26,19 @@ public:
 	CTexture();
 	~CTexture();
 
-	HRESULT Load(void);
-	void Unload(void);
+	//メンバ関数
+	HRESULT Load(void);	//読み込み
+	void Unload(void);	//削除
+	int Regist(const char *pTextureName);	//登録
 
-	int Regist(const char *pTextureName);
-	LPDIRECT3DTEXTURE9 GetAddress(int nIdx);
+	//取得用メンバ関数
+	LPDIRECT3DTEXTURE9 GetAddress(int nIdx);	//アドレス取得
+
+	//メンバ変数
 	int m_nTextureIdx;
 
 private:
 	static Tex m_Texture[MAX_TEXTURE];
-	TYPE m_type;
 	static int m_nNumAll;
 };
 

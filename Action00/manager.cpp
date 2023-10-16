@@ -22,27 +22,28 @@
 #include "object3D.h"
 
 //静的メンバ変数宣言
-CRenderer *CManager::m_pRenderer = nullptr;
-CInputKeyboard *CManager::m_pInputKeyboard = nullptr;
-CInputMouse *CManager::m_pInputMouse = nullptr;
-CInputJoyPad *CManager::m_pInputJoyPad = nullptr;
-CDebugProc *CManager::m_pDebugProc = nullptr;
-CSound *CManager::m_pSound = nullptr;
-CCamera *CManager::m_pCamera = nullptr;
-CLight *CManager::m_pLight = nullptr;
-CTexture *CManager::m_pTexture = nullptr;
-bool CManager::m_bUse = false;
-CScene *CManager::m_pScene = nullptr;
-
-CScene::MODE CScene::m_mode = CScene::MODE_GAME;
-CFade *CManager::m_pFade = nullptr;
+CManager* CManager::m_pManager = nullptr;
 
 //===========================================================================================
 // コンストラクタ
 //===========================================================================================
 CManager::CManager()
 {
-
+	m_pRenderer = nullptr;
+	m_pInputKeyboard = nullptr;
+	m_pInputMouse = nullptr;
+	m_pInputJoyPad = nullptr;
+	m_pDebugProc = nullptr;
+	m_pSound = nullptr;
+	m_pCamera = nullptr;
+	m_pLight = nullptr;
+	m_pTexture = nullptr;
+	m_bUse = false;
+	m_pScene = nullptr;
+	m_pTitle = nullptr;
+	m_pGame = nullptr;
+	m_pResult = nullptr;
+	m_pFade = nullptr;
 }
 
 //===========================================================================================
@@ -51,6 +52,41 @@ CManager::CManager()
 CManager::~CManager()
 {
 
+}
+
+//===========================================================================================
+// シングルトン
+//===========================================================================================
+CManager *CManager::GetInstance(void)
+{
+	if (m_pManager == nullptr)
+	{//nullだった場合
+
+		return m_pManager = new CManager;
+	}
+	else
+	{
+		return m_pManager;
+	}
+}
+
+//===========================================================================================
+// 破棄
+//===========================================================================================
+void CManager::Release(void)
+{
+	if (m_pManager == nullptr)
+	{//nullだった場合
+
+		return;
+	}
+	else
+	{
+		m_pManager->Uninit();
+
+		delete m_pManager;
+		m_pManager = nullptr;
+	}
 }
 
 //===========================================================================================
@@ -176,7 +212,7 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	//m_pSound->PlaySound(CSound::LABEL_BGM000);
 
 	//モード設定
-	SetMode(GetMode());
+	SetMode(CScene::MODE_GAME);
 	
 	return S_OK;
 }
@@ -340,7 +376,10 @@ void CManager::Update(void)
 void CManager::Draw(void)
 {
 	//レンダラーの描画処理
-	m_pScene->Draw();
+	if (m_pScene != nullptr)
+	{
+		m_pScene->Draw();
+	}
 }
 
 //===========================================================================================
@@ -410,7 +449,7 @@ void CManager::SetMode(CScene::MODE mode)
 //===========================================================================================
 CScene::CScene()
 {
-	
+	m_mode = CScene::MODE_GAME;
 }
 
 //===========================================================================================
@@ -472,15 +511,15 @@ void CScene::Uninit(void)
 void CScene::Update(void)
 {
 	//カメラの更新処理
-	if (CManager::GetCamera() != nullptr)
+	if (CManager::GetInstance()->GetCamera() != nullptr)
 	{
-		CManager::GetCamera()->Update();
+		CManager::GetInstance()->GetCamera()->Update();
 	}
 
 	//レンダラーの更新処理
-	if (CManager::GetRenderer() != nullptr)
+	if (CManager::GetInstance()->GetRenderer() != nullptr)
 	{
-		CManager::GetRenderer()->Update();
+		CManager::GetInstance()->GetRenderer()->Update();
 	}
 }
 
@@ -489,8 +528,8 @@ void CScene::Update(void)
 //===========================================================================================
 void CScene::Draw(void)
 {
-	if (CManager::GetRenderer() != nullptr)
+	if (CManager::GetInstance()->GetRenderer() != nullptr)
 	{
-		CManager::GetRenderer()->Draw();
+		CManager::GetInstance()->GetRenderer()->Draw();
 	}
 }

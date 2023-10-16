@@ -20,6 +20,7 @@
 CPause::CPause()
 {
 	m_menu = MENU_CONTINUE;
+
 	for (int nCntMenu = 0; nCntMenu < MENU_MAX; nCntMenu++)
 	{
 		m_aMenuInfo[nCntMenu] = {};
@@ -78,15 +79,15 @@ void CPause::Init()
 			switch (nCnt)
 			{
 			case MENU_CONTINUE:
-				m_aMenuInfo[nCnt].pObject2D->BindTexture(CManager::GetTexture()->Regist("data\\TEXTURE\\pause_0.png"));
+				m_aMenuInfo[nCnt].pObject2D->BindTexture(CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\pause_0.png"));
 				break;
 
 			case MENU_RETRY:
-				m_aMenuInfo[nCnt].pObject2D->BindTexture(CManager::GetTexture()->Regist("data\\TEXTURE\\pause_1.png"));
+				m_aMenuInfo[nCnt].pObject2D->BindTexture(CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\pause_1.png"));
 				break;
 
 			case MENU_QUIT:
-				m_aMenuInfo[nCnt].pObject2D->BindTexture(CManager::GetTexture()->Regist("data\\TEXTURE\\pause_2.png"));
+				m_aMenuInfo[nCnt].pObject2D->BindTexture(CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\pause_2.png"));
 				break;
 			}
 		
@@ -120,9 +121,9 @@ void CPause::Uninit()
 //======================================================================================
 void CPause::Update()
 {
-	CInputKeyboard *pInputKey = CManager::GetInputKeyboard();
-	CInputJoyPad *pjoyPad = CManager::GetInputJoyPad();
-	CFade *pFade = CManager::GetFade();
+	CInputKeyboard *pInputKey = CManager::GetInstance()->GetInputKeyboard();
+	CInputJoyPad *pjoyPad = CManager::GetInstance()->GetInputJoyPad();
+	CFade *pFade = CManager::GetInstance()->GetFade();
 
 	if (pFade->GetState() != CFade::STATE_NONE)
 	{// ‰Ÿ‚³‚ê‚½ó‘Ô‚Ìê‡

@@ -107,14 +107,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR LpCmadLin
 	ShowWindow(hWnd, nCmdShow);			//ウィンドウの表示状態を設定
 	UpdateWindow(hWnd);					//クライアント領域を更新
 
-	//マネージャのポインタ宣言
-	CManager *pManager = nullptr;
-
-	//マネージャの生成
-	pManager = new CManager;
 
 	//マネージャの初期化
-	pManager->Init(hInstance, hWnd, TRUE);
+	CManager::GetInstance()->Init(hInstance, hWnd, TRUE);
 
 	//メッセージループ
 	while (1)
@@ -149,26 +144,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR LpCmadLin
 				dwExecLastTime = dwCurrentTime;				//処理開始の時刻(現在時刻)を保存
 
 				//マネージャの更新処理
-				pManager->Update();
+				CManager::GetInstance()->Update();
 
 				//マネージャの描画処理
-				pManager->Draw();
+				CManager::GetInstance()->Draw();
 
 				dwFrameCount++;					//フレームカウントを加算
 			}
 		}
 	}
 
-	//レンダラーの破棄
-	if (pManager != NULL)
-	{
-		//レンダラーの終了処理
-		pManager->Uninit();
-
-		//メモリの開放
-		delete pManager;
-		pManager = NULL;
-	}
+	//マネージャーの破棄
+	CManager::Release();
 	
 	//分解能を戻す
 	timeEndPeriod(1);

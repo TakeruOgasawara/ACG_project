@@ -97,7 +97,7 @@ CObject3D *CObject3D::Create(D3DXVECTOR3 pos)
 //===========================================================================================
 CObject3D * CObject3D::Create(D3DXVECTOR3 pos, TYPE type)
 {
-	CTexture *pTexture = CManager::GetTexture();
+	CTexture *pTexture = CManager::GetInstance()->GetTexture();
 	CObject3D *pObject3D = nullptr;
 
 	if (pObject3D == nullptr)
@@ -128,7 +128,7 @@ CObject3D * CObject3D::Create(D3DXVECTOR3 pos, TYPE type)
 //===========================================================================================
 CObject3D * CObject3D::Create(D3DXVECTOR3 pos, const char *cTexName)
 {
-	CTexture *pTexture = CManager::GetTexture();
+	CTexture *pTexture = CManager::GetInstance()->GetTexture();
 	CObject3D *pObject3D = nullptr;
 
 	if (pObject3D == nullptr)
@@ -160,7 +160,7 @@ CObject3D * CObject3D::Create(D3DXVECTOR3 pos, const char *cTexName)
 //===========================================================================================
 CObject3D *CObject3D::Create(D3DXVECTOR3 pos, D3DXVECTOR2 size, const char * cTexName)
 {
-	CTexture *pTexture = CManager::GetTexture();
+	CTexture *pTexture = CManager::GetInstance()->GetTexture();
 	CObject3D *pObject3D = nullptr;
 
 	if (pObject3D == nullptr)
@@ -194,7 +194,7 @@ CObject3D *CObject3D::Create(D3DXVECTOR3 pos, D3DXVECTOR2 size, const char * cTe
 //===========================================================================================
 CObject3D *CObject3D::Create(D3DXVECTOR3 pos, D3DXVECTOR2 size, D3DXCOLOR col, const char *cTexName)
 {
-	CTexture *pTexture = CManager::GetTexture();
+	CTexture *pTexture = CManager::GetInstance()->GetTexture();
 	CObject3D *pObject3D = nullptr;
 
 	if (pObject3D == nullptr)
@@ -231,7 +231,7 @@ CObject3D *CObject3D::Create(D3DXVECTOR3 pos, D3DXVECTOR2 size, D3DXCOLOR col, c
 HRESULT CObject3D::Init(void)
 {
 	//デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
 
 	//種類の設定
 	CObject::SetType(CObject::TYPE_OBJECT3D);
@@ -305,9 +305,9 @@ void CObject3D::Update(void)
 	}
 
 	//デバッグ表示
-	CManager::GetDebugProc()->Print("\n\n[オブジェクト3D情報]");
-	CManager::GetDebugProc()->Print("\n位置： x:%f y:%f z:%f", m_pos.x, m_pos.y, m_pos.z);
-	CManager::GetDebugProc()->Print("\n向き： x:%f y:%f z:%f", m_rot.x, m_rot.y, m_rot.z);
+	CManager::GetInstance()->GetDebugProc()->Print("\n\n[オブジェクト3D情報]");
+	CManager::GetInstance()->GetDebugProc()->Print("\n位置： x:%f y:%f z:%f", m_pos.x, m_pos.y, m_pos.z);
+	CManager::GetInstance()->GetDebugProc()->Print("\n向き： x:%f y:%f z:%f", m_rot.x, m_rot.y, m_rot.z);
 }
 
 //===========================================================================================
@@ -316,9 +316,9 @@ void CObject3D::Update(void)
 void CObject3D::Draw(void)
 {
 	//デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
 
-	CTexture *pTexture = CManager::GetTexture();
+	CTexture *pTexture = CManager::GetInstance()->GetTexture();
 
 	D3DXMATRIX mtxRot, mtxTrans;				//計算用マトリックス
 	

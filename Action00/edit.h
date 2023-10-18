@@ -22,20 +22,25 @@ private:	//定数用プライベート
 	static const int MAX_NAME = 254;
 
 public:
-	////種類
-	// enum STATE
-	//{
-	//	STATE_OFF = 0,
-	//	STATE_OFF,
-	//	STATE_MAX
-	//};
+	struct SObjectX
+	{
+		LPDIRECT3DVERTEXBUFFER9 pVtxBuff;	//バッファへの頂点情報
+		D3DXMATRIX mtxWorld;	//ワールドマトリックス
+		LPD3DXMESH pMesh;	//使用されているモデル数
+		LPD3DXBUFFER BuffMat;	//頂点カラー情報
+		DWORD dwNumMat;		//カラーの数
+		D3DXVECTOR3 pos;
+		D3DXVECTOR3 rot;
+	};
+
+public:
 
 	CEdit();
 	~CEdit();
 
 	static CEdit* Create(void);
 
-	static HRESULT Load(void);
+	void Load(const char *pFilename);
 	void Save(void);
 
 	HRESULT Init(void);
@@ -45,7 +50,7 @@ public:
 
 private:
 	CObjectX *m_pObjectX;
-	D3DXVECTOR3 m_pos;
+	SObjectX m_object;
 	int m_nTypeIdx;
 	int m_nIdx;
 	bool m_bUse;

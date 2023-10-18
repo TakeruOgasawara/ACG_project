@@ -27,7 +27,7 @@ private:
 		DWORD dwNumMat;	//カラーの数
 		D3DXVECTOR3 vtxMin, vtxMax;	//オブジェクトの最大値・最小値
 		char aXfileName[MAX_NAME];
-		int *nTextureIdx;	//テクスチャ番号
+		int pTextureIdx;	//テクスチャ番号
 	};
 
 public:
@@ -39,8 +39,10 @@ public:
 
 	int Regist(const char *pXfileName);
 
+	SXFile* GetAdrress(int nIdx);
 	D3DXVECTOR3 GetMax(int nIdx) { return m_aXFile[nIdx]->vtxMax; }
 	D3DXVECTOR3 GetMin(int nIdx) { return m_aXFile[nIdx]->vtxMin; }
+	int GetNumAll(void) { return m_nNumAll; }
 
 private:
 	void VtxMaxMin(int nNowCount);

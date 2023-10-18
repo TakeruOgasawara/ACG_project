@@ -22,6 +22,7 @@ class CLight;
 class CTexture;
 class CObjectX;
 class CScene;
+class CXfile;
 
 class CTitle;
 class CGame;
@@ -73,17 +74,18 @@ public:
 	void Update(void);
 	void Draw(void);
 	
-	CRenderer *GetRenderer(void) { return m_pRenderer; }
-	CInputKeyboard *GetInputKeyboard(void) { return m_pInputKeyboard; }
-	CInputMouse *GetInputMouse(void) { return m_pInputMouse; }
-	CInputJoyPad *GetInputJoyPad(void) { return m_pInputJoyPad; }
-	CDebugProc *GetDebugProc(void) { return m_pDebugProc; }
-	CSound *GetSound(void) { return m_pSound; }
-	CCamera *GetCamera(void) { return m_pCamera; }
-	CLight *GetLight(void) { return m_pLight; }
-	CTexture *GetTexture(void) { return m_pTexture; }
-	CScene *GetScene(void) { return m_pScene; }
-	CFade *GetFade(void) { return m_pFade; }
+	CRenderer* GetRenderer(void) { return m_pRenderer; }
+	CInputKeyboard* GetInputKeyboard(void) { return m_pInputKeyboard; }
+	CInputMouse* GetInputMouse(void) { return m_pInputMouse; }
+	CInputJoyPad* GetInputJoyPad(void) { return m_pInputJoyPad; }
+	CDebugProc* GetDebugProc(void) { return m_pDebugProc; }
+	CSound* GetSound(void) { return m_pSound; }
+	CCamera* GetCamera(void) { return m_pCamera; }
+	CLight* GetLight(void) { return m_pLight; }
+	CTexture* GetTexture(void) { return m_pTexture; }
+	CScene* GetScene(void) { return m_pScene; }
+	CFade* GetFade(void) { return m_pFade; }
+	CXfile* GetXfile(void) { return m_pXfile; }
 
 	void SetMode(CScene::MODE mode);
 	CScene::MODE GetMode(void) { return m_pScene->GetMode(); }
@@ -91,23 +93,24 @@ public:
 private:
 	static CManager *m_pManager;
 
-	CRenderer *m_pRenderer;
-	CInputKeyboard *m_pInputKeyboard;
-	CInputMouse *m_pInputMouse;
-	CInputJoyPad *m_pInputJoyPad;
-	CDebugProc *m_pDebugProc;
-	CSound *m_pSound;
-	CCamera *m_pCamera;
-	CLight *m_pLight;
-	CTexture *m_pTexture;
+	CRenderer* m_pRenderer;
+	CInputKeyboard* m_pInputKeyboard;
+	CInputMouse * m_pInputMouse;
+	CInputJoyPad * m_pInputJoyPad;
+	CDebugProc * m_pDebugProc;
+	CSound* m_pSound;
+	CCamera * m_pCamera;
+	CLight * m_pLight;
+	CTexture* m_pTexture;
 	bool m_bUse;
 
-	CTitle *m_pTitle;
-	CGame *m_pGame;
-	CResult *m_pResult;
-	CFade *m_pFade;
+	CTitle* m_pTitle;
+	CGame* m_pGame;
+	CResult* m_pResult;
+	CFade* m_pFade;
+	CScene* m_pScene;
 
-	CScene *m_pScene;
+	CXfile* m_pXfile;
 };
 
 #endif

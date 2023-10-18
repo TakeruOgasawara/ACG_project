@@ -11,10 +11,12 @@
 #include "manager.h"
 
 //前方宣言
-class CObject2D;
+class CPlayer;
+class CEdit;
+class CCamera;
 
 //タイトルクラス
-class CStage : public CScene
+class CStage
 {
 private:
 	//ステージ列挙型
@@ -55,10 +57,20 @@ public:
 	void Update();
 	void Draw();
 
-	static HRESULT Load(void);
+private:	//メンバ関数
+	void Stage0(void);
+	/*void Stage1(void);
+	void Stage2(void);
+	void Stage3(void);
+	void Stage4(void);
+	void Stage5(void);*/
 
-private:
+private:	//メンバ変数
 	SData m_data;
+
+	CCamera* m_pCamera;
+	CEdit* m_pEdit;
+	CPlayer* m_pPlayer;
 };
 
 #endif

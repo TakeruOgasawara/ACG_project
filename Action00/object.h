@@ -12,12 +12,9 @@
 //前方宣言
 class CObject2D;
 class CEnemy3D;
-class CPlayer3D;
-class CChain;
+class CPlayer;
 class CMeshWall;
 class CObjectX;
-class CBullet;
-class CChainObject;
 
 //マクロ定義
 #define MAX_OBJECT		(5000)
@@ -31,32 +28,21 @@ public:			//構造体・列挙型用のpublic
 	typedef enum
 	{
 		TYPE_NONE,			//無し
-		TYPE_PLAYER3D,		//プレイヤー3D
-		TYPE_ENEMY3D,		//敵3D
-		TYPE_BULLET,		//弾
-		TYPE_EXPLOSION,		//爆発
+		TYPE_PLAYER,		//プレイヤー3D
 		TYPE_EFFECT,		//エフェクト
 		TYPE_PARTICLE,		//パーティクル
-		TYPE_SCORE,			//スコア
 		TYPE_TIME,			//時間
-		TYPE_BLOCK,			//ブロック
-		TYPE_ITEM,			//アイテム
 		TYPE_OBJECT3D,		//オブジェクト3D
+		TYPE_OBJECTX,		//オブジェクトX
 		TYPE_BILLBOARD,		//ビルボード
-		TYPE_OBJECTX,		//オブジェクトX(Xファイルから読み込んだモデル)
-		TYPE_FRAME,			//枠
-		TYPE_CHAIN,
-		TYPE_DETONATION_POINT,
-		TYPE_SCOREOBJECT,
 		TYPE_MESHWALL,		//メッシュウォール
-		TYPE_CHAINOBJECT,	//連鎖オブジェクト
 		TYPE_MAX
 	} TYPE;
 
 public:			//メンバ関数用のpublic
 
-	CObject(int nPriority = 3);			//コンストラクタ デフォルト引数
-	virtual ~CObject();			//デストラクタ
+	CObject(int nPriority = 3);	//コンストラクタ デフォルト引数
+	virtual ~CObject();	//デストラクタ
 
 	//******************************************
 	// メンバ関数
@@ -86,12 +72,9 @@ public:			//メンバ関数用のpublic
 	virtual D3DXVECTOR3 GetRotation(void) = 0;				//向きの取得
 	virtual D3DXVECTOR3 GetMovement(void) { return D3DXVECTOR3(0.0f, 0.0f, 0.0f); }	//移動量の取得
 	virtual CEnemy3D *GetEnemy3D(void) { return nullptr; }	//敵情報の取得
-	virtual CPlayer3D *GetPlayer3D(void) { return nullptr; }//プレイやの取得
-	virtual CChain *GetChain(void) { return nullptr; }		//連鎖情報の取得
+	virtual CPlayer *GetPlayer(void) { return nullptr; }//プレイやの取得
 	virtual CMeshWall *GetMeshWall(void) { return nullptr; }//メッシュウォールの取得
 	virtual CObjectX *GetObjectX(void) { return nullptr; }	//オブジェXの取得
-	virtual CBullet *GetBullet(void) { return nullptr; }
-	virtual CChainObject *GetChainObject(void) { return nullptr; }
 	static CObject *GetCObject(int nPriority, int nIdx);	//オブジェクトの取得
 	static int GetNumAll(void) { return m_nNumAll; }		//オブジェクト総数の取得
 	TYPE GetType(void) { return m_type; }					//種類の取得

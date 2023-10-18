@@ -34,7 +34,7 @@ CXfile::~CXfile()
 }
 
 //===========================================================================================
-// Xファイルを全て読み込む(初期化処理)
+// Xファイルを読み込む(初期化処理)
 //===========================================================================================
 HRESULT CXfile::Load(void)
 {
@@ -43,6 +43,7 @@ HRESULT CXfile::Load(void)
 	{
 		"data\\MODEL\\object\\floor00.x",
 		"data\\MODEL\\object\\blockTile00.x",
+		"data\\MODEL\\object\\bigTV.x",
 	};
 
 	for (int nCntTex = 0; nCntTex < MAX_TEXTURE; nCntTex++)
@@ -50,6 +51,10 @@ HRESULT CXfile::Load(void)
 		if (aFileList[nCntTex] != nullptr)
 		{
 			Regist(aFileList[nCntTex]);
+		}
+		else
+		{
+			break;
 		}
 	}
 
@@ -65,6 +70,9 @@ void CXfile::Unload(void)
 	{
 		if (m_aXFile[nCntFile] != nullptr)
 		{
+			//ファイル名をクリア
+			ZeroMemory(&m_aXFile[nCntFile]->aXfileName, sizeof(m_aXFile[nCntFile]->aXfileName));
+			
 			if (m_aXFile[nCntFile]->pBuffMat != nullptr)
 			{
 				m_aXFile[nCntFile]->pBuffMat->Release();
@@ -76,6 +84,11 @@ void CXfile::Unload(void)
 				m_aXFile[nCntFile]->pMesh->Release();
 				m_aXFile[nCntFile]->pMesh = nullptr;
 			}
+
+			delete m_aXFile[nCntFile];
+			m_aXFile[nCntFile] = nullptr;
+
+			m_nNumAll--;
 		}
 	}
 }
@@ -90,19 +103,31 @@ int CXfile::Regist(const char *c_pXfileName)
 	CTexture* pTexture = CManager::GetInstance()->GetTexture();	//テクスチャポインタの取得
 	D3DXMATERIAL *pMat;	//マテリアルポインタ
 
+	if (c_pXfileName == nullptr)
+	{
+		return -1;
+	}
+
 	for (int nCnt = 0; nCnt < MAX_FILE; nCnt++)
 	{
-		if (c_pXfileName != nullptr)
+		if (m_aXFile[nCnt] != nullptr)
 		{
-			return -1;
+			if (strcmp(&m_aXFile[nCnt]->aXfileName[0], c_pXfileName) == 0)
+			{//あらかじめ用意されたファイル名と引数のファイル名が同じだった場合
+
+				return nCnt;	//番号を返す
+			}
+
+			continue;
 		}
 
-		if (strcmp(&m_aXFile[nCnt]->aXfileName[0], c_pXfileName) == 0)
-		{//あらかじめ用意されたファイル名と引数のファイル名が同じだった場合
+		//ポインタを生成
+		m_aXFile[nCnt] = new SXFile;
 
-			return nCnt;	//番号を返す
-		}
-		else if (m_aXFile[nCnt] != nullptr)
+		//値をクリアする
+		ZeroMemory(m_aXFile[nCnt], sizeof(SXFile));
+
+		if (m_aXFile[nCnt] != nullptr)
 		{
 			//テクスチャ名を書き込む
 			strcpy(&m_aXFile[nCnt]->aXfileName[0], c_pXfileName);
@@ -127,16 +152,17 @@ int CXfile::Regist(const char *c_pXfileName)
 				if (pMat[nCntMat].pTextureFilename != nullptr)
 				{
 					//ファイルからテクスチャを読み込む
-					pTexture->Regist(pMat[nCntMat].pTextureFilename);
+					m_aXFile[nCnt]->pTextureIdx = pTexture->Regist(pMat[nCntMat].pTextureFilename);
 				}
 			}
 
 			//オブジェクトサイズを算出する関数
 			VtxMaxMin(nCnt);
 
+			m_nNumAll++;	//総数カウントアップ
+
 			return nCnt;
 		}
-
 	}
 
 	return -1;	//NULL
@@ -147,9 +173,9 @@ int CXfile::Regist(const char *c_pXfileName)
 //===========================================================================================
 void CXfile::VtxMaxMin(int nNowCount)
 {
-	DWORD dwSizeFVF;		//頂点フォーマットのサイズ
-	BYTE* pVtxBuff;			//頂点バッファへのポインタ
-	int nNumVtx;			//頂点数
+	DWORD dwSizeFVF;	//頂点フォーマットのサイズ
+	BYTE* pVtxBuff;	//頂点バッファへのポインタ
+	int nNumVtx;	//頂点数
 
 	//頂点数を取得
 	nNumVtx = m_aXFile[nNowCount]->pMesh->GetNumVertices();
@@ -194,3 +220,17 @@ void CXfile::VtxMaxMin(int nNowCount)
 	//頂点バッファをアンロック
 	m_aXFile[nNowCount]->pMesh->UnlockVertexBuffer();
 }
+
+//===========================================================================================
+// オブジェクトのサイズを算出
+//===========================================================================================
+CXfile::SXFile* CXfile::GetAdrress(int nIdx)
+{
+	if (nIdx < 0 && nIdx > m_nNumAll)
+	{
+		return nullptr;
+	}
+
+	return m_aXFile[nIdx];
+}
+

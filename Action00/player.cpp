@@ -12,7 +12,6 @@
 #include "manager.h"
 #include "input.h"
 #include "debugproc.h"
-#include "camera.h"
 #include "collision.h"
 
 //マクロ定義
@@ -36,7 +35,6 @@ CPlayer::CPlayer(int nPriority)
 {
 	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_state = STATE_NORMAL;
-	m_pCollision = nullptr;
 	m_pCamera = nullptr;
 	m_pArrowAround = nullptr;
 	m_bFirstJump = false;
@@ -118,9 +116,8 @@ CPlayer *CPlayer::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 HRESULT CPlayer::Init(void)
 {
 	CTexture *pTexture = CManager::GetInstance()->GetTexture();
-	m_pCamera = CManager::GetInstance()->GetCamera();
 
-	CObject::SetType(CObject::TYPE_PLAYER3D);
+	CObject::SetType(CObject::TYPE_PLAYER);
 
 	// ビルボード(プレイヤー本体
 	CBillboard::Init();
@@ -134,9 +131,6 @@ HRESULT CPlayer::Init(void)
 	//m_pArrowAround->SetSize(D3DXVECTOR2(10.0f, 20.0f));
 	m_pArrowAround->SetPosition(D3DXVECTOR3(GetPosition().x, GetPosition().y + 50.0f, 0.0f));
 
-	// カメラ
-	//m_pCamera->SetValue(500.0f, D3DXVECTOR3(0.0f, 10.0f, 500.0f), D3DXVECTOR3(0.0f, 10.0f, 50.0f));
-
 	return S_OK;
 }
 
@@ -145,19 +139,9 @@ HRESULT CPlayer::Init(void)
 //===========================================================================================
 void CPlayer::Uninit(void)
 {
-	if (m_pCollision != nullptr)
-	{
-		m_pCollision = nullptr;
-	}
-
 	if (m_pArrowAround != nullptr)
 	{
 		m_pArrowAround = nullptr;
-	}
-
-	if (m_pCamera != nullptr)
-	{
-		m_pCamera = nullptr;
 	}
 
 	CBillboard::Uninit();
@@ -187,9 +171,6 @@ void CPlayer::Update(void)
 		m_bSecondJump = false;
 	}
 
-	//カメラ関係
-	CameraRelationship(pos, rot);
-
 	if (m_bSecondJump == false)
 	{//二回目のジャンプをしてない場合
 
@@ -204,7 +185,7 @@ void CPlayer::Update(void)
 	pos += m_move;
 
 	
-	if (CollisionObjectX(&pos, &posOld, &m_move, SIZE.x) == true)
+	if (CollisionObjectX(&pos, &posOld, &m_move, SIZE.y) == true)
 	{
 		m_bFirstJump = false;
 		m_bSecondJump = false;
@@ -305,19 +286,6 @@ void CPlayer::Jump(void)
 		};
 
 		m_bSecondJump = true;	//二回目のジャンプをしたことにする
-	}
-}
-
-//===========================================================================================
-// カメラ関係
-//===========================================================================================
-void CPlayer::CameraRelationship(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
-{
-	if (m_pCamera != nullptr)
-	{
-		m_pCamera->SetLength(300.0f);
-		m_pCamera->SetHeight(200.0f, 200.0f);
-		m_pCamera->Follow2D_x_axisDedicated(pos);
 	}
 }
 

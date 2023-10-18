@@ -26,21 +26,23 @@
 
 #include "player.h"
 
+#include "stage.h"
+
 //静的メンバ変数宣言
-CPlayer3D *CGame::m_pPlayer3D = nullptr;
-CMap *CGame::m_pMap = nullptr;
-CUI_Manager *CGame::m_pUIManager = nullptr;
-CPause *CGame::m_pPause = nullptr;
-CEdit *CGame::m_pEdit = nullptr;
-CXfile* CGame::m_pXfile = nullptr;
+CGame* CGame::m_pGame = nullptr;
 
 //===========================================================================================
 // コンストラクタ
 //===========================================================================================
 CGame::CGame()
 {
+	m_pUIManager = nullptr;
+	m_pPause = nullptr;
+	m_pXfile = nullptr;
 	m_pSound = nullptr;
 	m_bEdit = false;
+
+	m_pStage = nullptr;
 }
 
 //===========================================================================================
@@ -49,6 +51,39 @@ CGame::CGame()
 CGame::~CGame()
 {
 
+}
+
+//===========================================================================================
+// シングルトン
+//===========================================================================================
+CGame* CGame::GetInstance(void)
+{
+	if (m_pGame == nullptr)
+	{//nullだった場合
+
+		return m_pGame = new CGame;
+	}
+	else
+	{
+		return m_pGame;
+	}
+}
+
+//===========================================================================================
+// 破棄
+//===========================================================================================
+void CGame::Release(void)
+{
+	if (m_pGame == nullptr)
+	{//nullだった場合
+
+		return;
+	}
+	else
+	{
+		delete	m_pGame;
+		m_pGame = nullptr;
+	}
 }
 
 //===========================================================================================
@@ -64,17 +99,8 @@ HRESULT CGame::Init()
 		m_pXfile->Load();
 	}
 
-	/*CObject3D *pObject3D = CObject3D::Create(D3DXVECTOR3(0.0f, 200.0f, 10.0f), CObject3D::TYPE_WALL);
-	pObject3D->SetSize_wall(640.0f, 360.0f);*/
-
-	//床
-	CObject3D::Create(D3DXVECTOR3(0.0f, -5.0f, 0.0f), "data\\TEXTURE\\floor.png");
-
-	//CObjectX::Create("data\\MODEL\\object\\floor00.x", D3DXVECTOR3(0.0f, 250.0f, 0.0f));
-
-	//プレイヤー
-	CPlayer::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-
+	m_pStage = CStage::Create();
+	
 	return E_NOTIMPL;
 }
 
@@ -83,6 +109,18 @@ HRESULT CGame::Init()
 //===========================================================================================
 void CGame::Uninit()
 {
+	if (m_pGame != nullptr)
+	{
+		m_pGame->Release();
+	}
+
+	if (m_pStage != nullptr)
+	{
+		m_pStage->Uninit();
+		delete m_pStage;
+		m_pStage = nullptr;
+	}
+
 	if (m_pPause != nullptr)
 	{
 		m_pPause->Uninit();
@@ -108,10 +146,10 @@ void CGame::Update()
 	CInputKeyboard *pInputKey = CManager::GetInstance()->GetInputKeyboard();
 	CFade *pFade = CManager::GetInstance()->GetFade();
 
-	//エディット
-	Edit();
-
-
+	if (m_pStage != nullptr)
+	{
+		m_pStage->Update();
+	}
 
 	/*if (pInputKey->GetTrigger(DIK_P) == true)
 	{
@@ -159,45 +197,8 @@ void CGame::Draw()
 		m_pPause->Draw();
 	}
 
-	if (m_pEdit != nullptr)
+	if (m_pStage != nullptr)
 	{
-		m_pEdit->Draw();
-	}
-}
-
-//===========================================================================================
-// 描画処理
-//===========================================================================================
-void CGame::Edit(void)
-{
-	CInputKeyboard* pInputKey = CManager::GetInstance()->GetInputKeyboard();
-
-	if (pInputKey->GetTrigger(DIK_F3) == true)
-	{
-		m_bEdit = m_bEdit ? false : true;
-
-		if (m_bEdit == true)
-		{
-			if (m_pEdit == nullptr)
-			{
-				m_pEdit = CEdit::Create();
-			}
-		}
-		else
-		{
-			if (m_pEdit != nullptr)
-			{
-				delete m_pEdit;
-				m_pEdit = nullptr;
-
-			}
-		}
-	}
-
-	if (m_pEdit != nullptr)
-	{
-		m_pEdit->Update();
-
-		return;
+		m_pStage->Draw();
 	}
 }

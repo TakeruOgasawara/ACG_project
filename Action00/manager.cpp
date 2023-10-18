@@ -13,6 +13,7 @@
 #include "camera.h"
 #include "light.h"
 #include "texture.h"
+#include "xfile.h"
 
 #include "title.h"
 #include "game.h"
@@ -44,6 +45,7 @@ CManager::CManager()
 	m_pGame = nullptr;
 	m_pResult = nullptr;
 	m_pFade = nullptr;
+	m_pXfile = nullptr;
 }
 
 //===========================================================================================
@@ -208,6 +210,17 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 			m_pTexture->Load();
 		}
 	}
+	//xファイルの生成
+	if (m_pXfile == nullptr)
+	{
+		m_pXfile = new CXfile;
+
+		//初期化処理
+		if (m_pXfile != nullptr)
+		{
+			m_pXfile->Load();
+		}
+	}
 
 	//m_pSound->PlaySound(CSound::LABEL_BGM000);
 
@@ -320,6 +333,15 @@ void CManager::Uninit(void)
 		m_pScene->Uninit();
 		delete m_pScene;
 		m_pScene = nullptr;
+	}
+
+	//Xファイルの終了、破棄
+	if (m_pXfile != nullptr)
+	{
+		//シーンの終了処理
+		m_pXfile->Unload();
+		delete m_pXfile;
+		m_pXfile = nullptr;
 	}
 	
 	if (m_pFade != nullptr)

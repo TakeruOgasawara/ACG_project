@@ -16,12 +16,11 @@ private:
 	static const int MAX_FILE = 64;
 	static const int MAX_NAME = 254;
 
-private:
+public:
 	//Xファイル情報の構造体
 	struct SXFile
 	{
 		LPDIRECT3DVERTEXBUFFER9 pVtxBuff;	//バッファへの頂点情報
-		D3DXMATRIX mtxWorld;	//ワールドマトリックス
 		LPD3DXMESH pMesh;	//使用されているモデル数
 		LPD3DXBUFFER pBuffMat;	//頂点カラー情報
 		DWORD dwNumMat;	//カラーの数

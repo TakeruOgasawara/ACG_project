@@ -91,15 +91,9 @@ void CGame::Release(void)
 //===========================================================================================
 HRESULT CGame::Init()
 {
-	if (m_pXfile == nullptr)
-	{
-		m_pXfile = new CXfile;
-
-		//	xƒtƒ@ƒCƒ‹‚Ì“Ç‚Ýž‚Ý
-		m_pXfile->Load();
-	}
-
 	m_pStage = CStage::Create();
+
+	//CObjectX::Create("data\\MODEL\\object\\floor00.x", D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	
 	return E_NOTIMPL;
 }

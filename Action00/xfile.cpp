@@ -129,11 +129,8 @@ int CXfile::Regist(const char *c_pXfileName)
 
 		if (m_aXFile[nCnt] != nullptr)
 		{
-			//テクスチャ名を書き込む
-			strcpy(&m_aXFile[nCnt]->aXfileName[0], c_pXfileName);
-
 			//Xファイルの読み込み
-			if (FAILED(D3DXLoadMeshFromX(&m_aXFile[nCnt]->aXfileName[0],
+			if (FAILED(D3DXLoadMeshFromX(c_pXfileName,
 				D3DXMESH_SYSTEMMEM, pDevice,
 				NULL,
 				&m_aXFile[nCnt]->pBuffMat,
@@ -143,6 +140,9 @@ int CXfile::Regist(const char *c_pXfileName)
 			{
 				return E_FAIL;	//読み込み失敗
 			}
+
+			//テクスチャ名を書き込む
+			strcpy(&m_aXFile[nCnt]->aXfileName[0], c_pXfileName);
 
 			//マテリアルへのポインタを取得
 			pMat = (D3DXMATERIAL*)m_aXFile[nCnt]->pBuffMat->GetBufferPointer();

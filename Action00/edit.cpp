@@ -145,6 +145,8 @@ void CEdit::Update(void)
 	{
 		m_nTypeIdx++;
 
+		int nCt = pXfile->GetNumAll();
+
 		m_nTypeIdx %= pXfile->GetNumAll();			//繰り返し
 	}
 
@@ -176,10 +178,16 @@ void CEdit::Draw(void)
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
 	CTexture* pTexture = CManager::GetInstance()->GetTexture();
 	CXfile *pXfile = CManager::GetInstance()->GetXfile();
+	CXfile::SXFile* pXfileData = pXfile->GetAdrress(m_nTypeIdx);
 
-	D3DXMATRIX mtxRot, mtxTrans;				//計算用マトリックス
-	D3DMATERIAL9 matDef;						//現在のマテリアル保存用
-	D3DXMATERIAL* pMat;							//マテリアルデータへのポインタ
+	D3DXMATRIX mtxRot, mtxTrans;	//計算用マトリックス
+	D3DMATERIAL9 matDef;	//現在のマテリアル保存用
+	D3DXMATERIAL* pMat;	//マテリアルデータへのポインタ
+
+	if (pXfileData == nullptr)
+	{
+		return;
+	}
 
 	//ワールドマトリックスの初期化
 	D3DXMatrixIdentity(&m_object.mtxWorld);
@@ -199,26 +207,18 @@ void CEdit::Draw(void)
 	pDevice->GetMaterial(&matDef);
 
 	//マテリアルへのポインタを取得
-	pMat = (D3DXMATERIAL*)pXfile->GetAdrress(m_nTypeIdx)->pBuffMat->GetBufferPointer();
+	pMat = (D3DXMATERIAL*)pXfileData->pBuffMat->GetBufferPointer();
 
-	for (int nCntMat = 0; nCntMat < (int)pXfile->GetAdrress(m_nTypeIdx)->dwNumMat; nCntMat++)
+	for (int nCntMat = 0; nCntMat < (int)pXfileData->dwNumMat; nCntMat++)
 	{
 		//マテリアルの設定
 		pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
-
-		if (pMat[nCntMat].pTextureFilename != NULL && pXfile->GetAdrress(m_nTypeIdx)->pTextureIdx > 0)
-		{
-			//テクスチャの設定
-			pDevice->SetTexture(0, pTexture->GetAddress(pXfile->GetAdrress(m_nTypeIdx)->pTextureIdx));
-		}
-		else
-		{
-			//テクスチャの設定
-			pDevice->SetTexture(0, NULL);
-		}
+		
+		//テクスチャの設定
+		pDevice->SetTexture(0, pTexture->GetAddress(pXfileData->pTextureIdx));
 
 		//オブジェクト(パーツ)の描画
-		pXfile->GetAdrress(m_nTypeIdx)->pMesh->DrawSubset(nCntMat);
+		pXfileData->pMesh->DrawSubset(nCntMat);
 	}
 
 	//保存されていたマテリアルを戻す

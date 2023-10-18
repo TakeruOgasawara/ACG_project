@@ -417,7 +417,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Desktop\\ACG\\ACG_project\\Action00\\data\\TEXTURE\\model\\TvScreen.jpg";
+    "data\\TEXTURE\\model\\TvScreen.jpg";
    }
   }
  }

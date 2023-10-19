@@ -175,17 +175,17 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	switch (uMsg)
 	{
-	case WM_DESTROY:			//ウィンドウ破棄のメッセージ
+	case WM_DESTROY:	//ウィンドウ破棄のメッセージ
 
-								//WM_QUITメッセージを送る
+		//WM_QUITメッセージを送る
 		PostQuitMessage(0);
 		break;
 
-	case WM_KEYDOWN:			//キー押下のメッセージ
+	case WM_KEYDOWN:	//キー押下のメッセージ
 
 		switch (wParam)
 		{
-		case VK_ESCAPE:			//[ESC]キーが押された
+		case VK_ESCAPE:	//[ESC]キーが押された
 
 			nID = MessageBox(hWnd, "終了しますか？", "終了メッセージ", MB_YESNO);
 
@@ -229,6 +229,9 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
+//===============================
+// FPSの取得
+//===============================
 int GetFps(void)
 {
 	return g_nCountFPS;

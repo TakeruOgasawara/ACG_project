@@ -19,6 +19,7 @@ CRenderer::CRenderer()
 {
 	m_pD3D = nullptr;	//Directx3Dオブジェクトへのポインタ
 	m_pD3DDevice = nullptr;	//Directx3Dへのデバイスへのポインタ
+	m_bWireframe = false;
 }
 
 //===========================================================================================

@@ -4,6 +4,8 @@
 // Author : Takeru Ogasawara
 //
 //===========================================================================================
+#include <assert.h>
+
 #include "title.h"
 #include "manager.h"
 #include "renderer.h"
@@ -13,17 +15,21 @@
 #include "texture.h"
 #include "fade.h"
 
-//静的メンバ変数宣言
-CObject2D *CTitle::m_apObject2D[2] = {};
-CMap *CTitle::m_pMap = nullptr;
-
 //===========================================================================================
 // コンストラクタ
 //===========================================================================================
 CTitle::CTitle()
 {
-	m_state = STATE_NONE;
-	col_a = 0.0f;
+	pName2D = nullptr;
+
+	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
+	{
+		m_apMenu[nCnt].pMenu2D = nullptr;
+		m_apMenu[nCnt].col = { 0.0f, 0.0f, 0.0f, 0.0f };
+	}
+
+	m_nTextureIdx = 0;
+	m_nSelect = 0;
 }
 
 //===========================================================================================
@@ -39,33 +45,39 @@ CTitle::~CTitle()
 //===========================================================================================
 HRESULT CTitle::Init()
 {
-	col_a = 0.0f;
-
 	CTexture *pTexture = CManager::GetInstance()->GetTexture();
 
-	for (int nCnt = 0; nCnt < 2; nCnt++)
+	pName2D = CObject2D::Create(3);
+	pName2D->SetPosition(D3DXVECTOR3(640.0f, 200.0f, 0.0f));
+	pName2D->SetSize_center(300.0f, 60.0f);
+	pName2D->BindTexture(pTexture->Regist("data\\TEXTURE\\TITLE\\name.png"));
+
+	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
 	{
-		m_apObject2D[nCnt] = CObject2D::Create(3);
+		m_apMenu[nCnt].pMenu2D = CObject2D::Create(3);
 
 		switch (nCnt)
 		{
-		case 0:
-			m_apObject2D[nCnt]->SetPosition(D3DXVECTOR3(640.0f, 200.0f, 0.0f));
-			m_apObject2D[nCnt]->SetSize_center(300.0f, 100.0f);
-			m_apObject2D[nCnt]->BindTexture(pTexture->Regist("data\\TEXTURE\\TITLE\\title-1.png"));
+		
+		case MENU_START:
+			m_apMenu[nCnt].pMenu2D->SetPosition(D3DXVECTOR3(640.0f, 400.0f, 0.0f));
+			m_apMenu[nCnt].pMenu2D->SetSize_center(30.0f, 20.0f);
+			m_apMenu[nCnt].pMenu2D->SetColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
+			m_apMenu[nCnt].pMenu2D->BindTexture(pTexture->Regist("data\\TEXTURE\\title\\start.png"));
 			break;
 
-		case 1:
-			m_apObject2D[nCnt]->SetPosition(D3DXVECTOR3(640.0f, 600.0f, 0.0f));
-			m_apObject2D[nCnt]->SetSize_center(130.0f, 40.0f);
-			m_apObject2D[nCnt]->BindTexture(pTexture->Regist("data\\TEXTURE\\tutorial_ENTER.png"));
+		case MENU_END:
+			m_apMenu[nCnt].pMenu2D->SetPosition(D3DXVECTOR3(640.0f, 450.0f, 0.0f));
+			m_apMenu[nCnt].pMenu2D->SetSize_center(30.0f, 20.0f);
+			m_apMenu[nCnt].pMenu2D->SetColor(D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
+			m_apMenu[nCnt].pMenu2D->BindTexture(pTexture->Regist("data\\TEXTURE\\title\\end.png"));
 			break;
+
 		default:
+			assert(false);	//エラー
 			break;
 		}
 	}
-
-	m_state = STATE_IN;
 
 	return S_OK;
 }
@@ -75,7 +87,12 @@ HRESULT CTitle::Init()
 //===========================================================================================
 void CTitle::Uninit()
 {
+	pName2D = nullptr;
 
+	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
+	{
+		m_apMenu[nCnt].pMenu2D = nullptr;
+	}
 }
 
 //===========================================================================================
@@ -83,37 +100,43 @@ void CTitle::Uninit()
 //===========================================================================================
 void CTitle::Update()
 {
+	//入力ポインタの取得
 	CInputKeyboard *pInputKey = CManager::GetInstance()->GetInputKeyboard();
 	CInputJoyPad *pJoyPad = CManager::GetInstance()->GetInputJoyPad();
 
-	if (m_state == STATE_IN)
-	{//フェードイン状態
+	if (pInputKey->GetTrigger(DIK_W) == true)
+	{
+		m_nSelect = (m_nSelect - 1 + MENU_MAX) % MENU_MAX;
 
-		col_a -= 0.02f;			//ポリゴンを透明にしていく
+		m_menu = (MENU)m_nSelect;
 
-		if (col_a <= 0.4f)
-		{
-			col_a = 0.0f;
-			m_state = STATE_OUT;				//何もしていない状態
-		}
+		SelectMenu();
 	}
-	else if (m_state == STATE_OUT)
-	{//フェードアウト状態
+	else if (pInputKey->GetTrigger(DIK_S) == true)
+	{
+		m_nSelect = (m_nSelect + 1 + MENU_MAX) % MENU_MAX;
 
-		col_a += 0.02f;			//ポリゴンを不透明にしていく
+		m_menu = (MENU)m_nSelect;
 
-		if (col_a >= 1.0f)
-		{
-			col_a = 1.0f;
-			m_state = STATE_IN;				//何もしていない状態
-		}
+		SelectMenu();
 	}
-
-	m_apObject2D[1]->SetColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, col_a));
 
 	if (pInputKey->GetTrigger(DIK_RETURN) || pJoyPad->GetTrigger(pJoyPad->BUTTON_A, 0))
 	{
-		CManager::GetInstance()->GetFade()->Set(MODE_GAME);
+		switch (m_menu)
+		{
+		case CTitle::MENU_START:
+			CManager::GetInstance()->GetFade()->Set(MODE_GAME);
+			break;
+
+		case CTitle::MENU_END:
+			//DestroyWindow();
+			break;
+
+		default:
+			assert(false);
+			break;
+		}
 	}
 
 	CScene::Update();
@@ -125,5 +148,26 @@ void CTitle::Update()
 void CTitle::Draw()
 {
 	CScene::Draw();
+}
+
+//===========================================================================================
+// 選択されているメニュー
+//===========================================================================================
+void CTitle::SelectMenu(void)
+{
+	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
+	{
+		if (m_menu == nCnt)
+		{//選択しているメニュと合っていたら
+
+			m_apMenu[nCnt].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		}
+		else
+		{
+			m_apMenu[nCnt].col = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f);
+		}
+
+		m_apMenu[nCnt].pMenu2D->SetColor(m_apMenu[nCnt].col);
+	}
 }
 

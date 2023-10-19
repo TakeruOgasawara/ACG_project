@@ -170,11 +170,11 @@ void CGame::Update()
 			return;
 		}
 	}*/
-
-	if (pInputKey->GetTrigger(DIK_RETURN) == true)
-	{
-		CScene::SetMode(CScene::MODE_RESULT);
-	}
+	
+	//if (pInputKey->GetTrigger(DIK_RETURN) == true)
+	//{
+	//	CManager::GetInstance()->GetFade()->Set(MODE_RESULT);
+	//}
 
 	CScene::Update();
 }

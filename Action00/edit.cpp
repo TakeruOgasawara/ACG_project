@@ -5,6 +5,7 @@
 //
 //===========================================================================================
 #include <stdio.h>
+#include <assert.h>
 #include "edit.h"
 #include "manager.h"
 #include "renderer.h"
@@ -18,14 +19,14 @@
 
 //マクロ定義
 static const int MAX_TYPE = 3;
-#define SPEED			(50.0f)
+#define SPEED			(49.0f)
 
 static char* FILENAME = "data\\TXT\\stage\\stage0.txt";
 
 //オブジェクトファイル名
 const char *c_Obj[MAX_TYPE] =
 {
-	"data\\MODEL\\object\\floor00.x",
+	"data\\MODEL\\object\\square.x",
 	"data\\MODEL\\object\\blockTile00.x",
 	"data\\MODEL\\object\\bigTV.x",
 };
@@ -110,7 +111,10 @@ void CEdit::Update(void)
 		return;
 	}
 
-	CManager::GetInstance()->GetDebugProc()->Print("\n\n【デバッグモード中】\n\n");
+	CManager::GetInstance()->GetDebugProc()->Print("\n\n【エディットモード中】\n");
+	CManager::GetInstance()->GetDebugProc()->Print("位置： x:%f y:%f z:%f\n", m_object.pos.x, m_object.pos.y, m_object.pos.z);
+	CManager::GetInstance()->GetDebugProc()->Print("向き： x:%f y:%f z:%f\n", m_object.rot.x, m_object.rot.y, m_object.rot.z);
+	CManager::GetInstance()->GetDebugProc()->Print("種類： %d\n", m_nTypeIdx);
 
 	//移動
 	if (pInputKey->GetTrigger(DIK_UP))
@@ -211,6 +215,8 @@ void CEdit::Draw(void)
 
 	for (int nCntMat = 0; nCntMat < (int)pXfileData->dwNumMat; nCntMat++)
 	{
+		pMat[nCntMat].MatD3D.Ambient.a = 1.0f;
+
 		//マテリアルの設定
 		pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 		
@@ -218,7 +224,10 @@ void CEdit::Draw(void)
 		pDevice->SetTexture(0, pTexture->GetAddress(pXfileData->pTextureIdx));
 
 		//オブジェクト(パーツ)の描画
-		pXfileData->pMesh->DrawSubset(nCntMat);
+		if (FAILED(pXfileData->pMesh->DrawSubset(nCntMat)))
+		{
+			assert(false);
+		}
 	}
 
 	//保存されていたマテリアルを戻す

@@ -130,13 +130,14 @@ int CXfile::Regist(const char *c_pXfileName)
 		if (m_aXFile[nCnt] != nullptr)
 		{
 			//Xファイルの読み込み
-			if (FAILED(D3DXLoadMeshFromX(c_pXfileName,
+			if (FAILED(D3DXLoadMeshFromX(
+				c_pXfileName,	//ファイル名
 				D3DXMESH_SYSTEMMEM, pDevice,
 				NULL,
-				&m_aXFile[nCnt]->pBuffMat,
+				&m_aXFile[nCnt]->pBuffMat,	//マテリアルデータ
 				NULL,
-				&m_aXFile[nCnt]->dwNumMat,
-				&m_aXFile[nCnt]->pMesh)))
+				&m_aXFile[nCnt]->dwNumMat,	//マテリアル数
+				&m_aXFile[nCnt]->pMesh)))	//メッシュデータ
 			{
 				return E_FAIL;	//読み込み失敗
 			}

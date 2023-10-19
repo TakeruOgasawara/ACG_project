@@ -12,19 +12,23 @@
 
 //前方宣言
 class CObject2D;
-class CMap;
 
 //タイトルクラス
 class CTitle : public CScene
 {
-private:
+private:	//構造体・列挙型用
 
-	enum STATE
+	enum MENU
 	{
-		STATE_NONE = 0,
-		STATE_IN,
-		STATE_OUT,
-		STATE_MAX
+		MENU_START = 0,
+		MENU_END,
+		MENU_MAX
+	};
+
+	struct SObject2D
+	{
+		CObject2D* pMenu2D;
+		D3DXCOLOR col;
 	};
 
 public:
@@ -37,11 +41,13 @@ public:
 	void Draw(); 
 
 private:
-	int m_nTextureIdx;			//テクスチャへの頂点情報
-	static CObject2D *m_apObject2D[2];
-	static CMap *m_pMap;
-	STATE m_state;
-	float col_a;
+	void SelectMenu(void);
+
+	int m_nTextureIdx;
+	CObject2D* pName2D;
+	SObject2D m_apMenu[MENU_MAX];
+	MENU m_menu;
+	int m_nSelect;
 };
 
 #endif

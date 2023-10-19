@@ -258,6 +258,11 @@ void CPlayer::Jump(void)
 	{//ジャンプしていない状態の場合
 		if (pInputKeyboard->GetTrigger(DIK_SPACE) == true)
 		{//キーが押された
+
+			//移動量の初期化
+			m_move.y = 0.0f;
+			m_move.x = 0.0f;
+
 			m_move.y += FILSTJUMP_POWER;			//数値分上へ
 
 			m_bFirstJump = true;	//一回目のジャンプをしたことにする

@@ -169,7 +169,7 @@ void CStage::Stage0(void)
 {
 	if (m_pCamera != nullptr)
 	{
-		m_pCamera->SetLength(300.0f);
+		m_pCamera->SetLength(700.0f);
 		m_pCamera->SetHeight(200.0f, 200.0f);
 		m_pCamera->Follow2D_x_axisDedicated(m_pPlayer->GetPosition());
 	}

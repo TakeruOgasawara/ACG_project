@@ -31,6 +31,7 @@ public:
 		DWORD dwNumMat;		//ƒJƒ‰[‚Ì”
 		D3DXVECTOR3 pos;
 		D3DXVECTOR3 rot;
+		int m_nTextureIdx;
 	};
 
 public:

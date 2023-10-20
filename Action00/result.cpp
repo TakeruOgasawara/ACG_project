@@ -41,7 +41,7 @@ HRESULT CResult::Load(void)
 	CTexture *pTexture = CManager::GetInstance()->GetTexture();
 
 	//テクスチャ
-	m_nTextureIdx = pTexture->Regist("data\\TEXTURE\\result-1.png");
+	m_nTextureIdx = pTexture->Regist("data\\TEXTURE\\result\\result-1.png");
 
 	return S_OK;
 }

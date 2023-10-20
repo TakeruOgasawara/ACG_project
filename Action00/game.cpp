@@ -92,8 +92,6 @@ void CGame::Release(void)
 HRESULT CGame::Init()
 {
 	m_pStage = CStage::Create();
-
-	//CObjectX::Create("data\\MODEL\\object\\floor00.x", D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	
 	return E_NOTIMPL;
 }
@@ -171,10 +169,10 @@ void CGame::Update()
 		}
 	}*/
 	
-	//if (pInputKey->GetTrigger(DIK_RETURN) == true)
-	//{
-	//	CManager::GetInstance()->GetFade()->Set(MODE_RESULT);
-	//}
+	if (pInputKey->GetTrigger(DIK_RETURN) == true)
+	{
+		CManager::GetInstance()->GetFade()->Set(MODE_RESULT);
+	}
 
 	CScene::Update();
 }

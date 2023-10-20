@@ -41,6 +41,7 @@ HRESULT CXfile::Load(void)
 	// 最初に読み込むxファイル一覧
 	const char *aFileList[MAX_FILE] =
 	{
+		"data\\MODEL\\object\\square.x",
 		"data\\MODEL\\object\\floor00.x",
 		"data\\MODEL\\object\\blockTile00.x",
 		"data\\MODEL\\object\\bigTV.x",
@@ -187,36 +188,40 @@ void CXfile::VtxMaxMin(int nNowCount)
 	//頂点バッファをロック
 	m_aXFile[nNowCount]->pMesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
 
-	D3DXVECTOR3 vtx = *(D3DXVECTOR3*)pVtxBuff;	//頂点座標の代入
+	for (int nCntVtx = 0; nCntVtx < nNumVtx; nCntVtx++)
+	{
 
-	if (m_aXFile[nNowCount]->vtxMax.x < vtx.x)
-	{//xが大きかったら
-		m_aXFile[nNowCount]->vtxMax.x = vtx.x;
-	}
-	if (m_aXFile[nNowCount]->vtxMax.z < vtx.z)
-	{//zの値が大きかったら
-		m_aXFile[nNowCount]->vtxMax.z = vtx.z;
-	}
+		D3DXVECTOR3 vtx = *(D3DXVECTOR3*)pVtxBuff;	//頂点座標の代入
 
-	if (m_aXFile[nNowCount]->vtxMin.x > vtx.x)
-	{//xが小さかったら
-		m_aXFile[nNowCount]->vtxMin.x = vtx.x;
-	}
-	if (m_aXFile[nNowCount]->vtxMin.z > vtx.z)
-	{//zの値が大きかったら
-		m_aXFile[nNowCount]->vtxMin.z = vtx.z;
-	}
+		if (m_aXFile[nNowCount]->vtxMax.x < vtx.x)
+		{//xが大きかったら
+			m_aXFile[nNowCount]->vtxMax.x = vtx.x;
+		}
+		if (m_aXFile[nNowCount]->vtxMax.z < vtx.z)
+		{//zの値が大きかったら
+			m_aXFile[nNowCount]->vtxMax.z = vtx.z;
+		}
 
-	if (m_aXFile[nNowCount]->vtxMax.y < vtx.y)
-	{//xが大きかったら
-		m_aXFile[nNowCount]->vtxMax.y = vtx.y;
-	}
-	if (m_aXFile[nNowCount]->vtxMin.y > vtx.y)
-	{//xが小さかったら
-		m_aXFile[nNowCount]->vtxMin.y = vtx.y;
-	}
+		if (m_aXFile[nNowCount]->vtxMin.x > vtx.x)
+		{//xが小さかったら
+			m_aXFile[nNowCount]->vtxMin.x = vtx.x;
+		}
+		if (m_aXFile[nNowCount]->vtxMin.z > vtx.z)
+		{//zの値が大きかったら
+			m_aXFile[nNowCount]->vtxMin.z = vtx.z;
+		}
 
-	pVtxBuff += dwSizeFVF;			//頂点フォーマットのサイズ分ポインタを進める
+		if (m_aXFile[nNowCount]->vtxMax.y < vtx.y)
+		{//xが大きかったら
+			m_aXFile[nNowCount]->vtxMax.y = vtx.y;
+		}
+		if (m_aXFile[nNowCount]->vtxMin.y > vtx.y)
+		{//xが小さかったら
+			m_aXFile[nNowCount]->vtxMin.y = vtx.y;
+		}
+
+		pVtxBuff += dwSizeFVF;			//頂点フォーマットのサイズ分ポインタを進める
+	}
 	
 	//頂点バッファをアンロック
 	m_aXFile[nNowCount]->pMesh->UnlockVertexBuffer();

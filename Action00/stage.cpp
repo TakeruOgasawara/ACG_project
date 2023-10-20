@@ -81,10 +81,10 @@ HRESULT CStage::Init()
 	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 	//エディット
-	m_pEdit = CEdit::Create();
+	//m_pEdit = CEdit::Create();
 
 	//テキストの読み込み
-	//m_pEdit->CEdit::Load(c_stageFileList[0]);d
+	m_pEdit->CEdit::Load(c_stageFileList[0]);
 
 	return S_OK;
 }
@@ -169,8 +169,8 @@ void CStage::Stage0(void)
 {
 	if (m_pCamera != nullptr)
 	{
-		m_pCamera->SetLength(700.0f);
-		m_pCamera->SetHeight(200.0f, 200.0f);
-		m_pCamera->Follow2D_x_axisDedicated(m_pPlayer->GetPosition());
+		m_pCamera->SetLength(500.0f);
+		//m_pCamera->SetHeight(200.0f, 200.0f);
+		//m_pCamera->Follow2D_x_axisDedicated(m_pPlayer->GetPosition());
 	}
 }

@@ -16,7 +16,8 @@ bool CollisionCircleXZAllies(D3DXVECTOR3 *pPos1, D3DXVECTOR3 *pPos2, float fLeng
 bool CollisionAdultWall(D3DXVECTOR3 *pPos, float fWidth);
 bool CollisionAdultWall(D3DXVECTOR3 *pPos, float fWidth, float fLimitWallx, float fLimitWallz);
 bool CollisionCross(void);
-bool CollisionInner(void);
+//bool CollisionInner(void);
 bool CollisionObjectX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *pMove, float size);
+bool CollisionObjectX1(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, bool bJunp, float size);
 
 #endif

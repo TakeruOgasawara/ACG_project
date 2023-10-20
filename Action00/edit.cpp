@@ -5,7 +5,6 @@
 //
 //===========================================================================================
 #include <stdio.h>
-#include <assert.h>
 #include "edit.h"
 #include "manager.h"
 #include "renderer.h"
@@ -18,17 +17,19 @@
 #include "xfile.h"
 
 //マクロ定義
-static const int MAX_TYPE = 3;
-#define SPEED			(49.0f)
+static const int MAX_TYPE = 5;
+#define SPEED	(25.0f)
 
-static char* FILENAME = "data\\TXT\\stage\\stage0.txt";
+static char* FILENAME = "data\\TXT\\stage\\stage0.txt";		//書き込むステージファイル名
 
 //オブジェクトファイル名
-const char *c_Obj[MAX_TYPE] =
-{
-	"data\\MODEL\\object\\square.x",
-	"data\\MODEL\\object\\blockTile00.x",
+const char* c_Obj[MAX_TYPE] =
+{ 
+	"data\\MODEL\\object\\squareMin.x",
+	"data\\MODEL\\object\\squareMax.x",
+	"data\\MODEL\\object\\blockTileMin.x",
 	"data\\MODEL\\object\\bigTV.x",
+	"data\\MODEL\\object\\fence.x",
 };
 
 //===========================================================================================
@@ -65,6 +66,8 @@ CEdit* CEdit::Create(void)
 	{
 		pEdit = new CEdit;
 
+		pEdit->Init();
+
 		return pEdit;
 	}
 
@@ -76,6 +79,12 @@ CEdit* CEdit::Create(void)
 //===========================================================================================
 HRESULT CEdit::Init(void)
 {
+#ifdef _DEBUG	//デバック時実行
+
+	m_pObjectX = CObjectX::Create(c_Obj[m_nTypeIdx], D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	//m_pObjectX->Init(c_Obj[m_nTypeIdx], D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
+#endif
 	return S_OK;
 }
 
@@ -96,9 +105,11 @@ void CEdit::Uninit(void)
 //===========================================================================================
 void CEdit::Update(void)
 {
+#ifdef _DEBUG	//デバック時実行
+
 	//キーボード情報の取得
-	CInputKeyboard *pInputKey = CManager::GetInstance()->GetInputKeyboard();
-	CDebugProc *pDebug = CManager::GetInstance()->GetDebugProc();
+	CInputKeyboard* pInputKey = CManager::GetInstance()->GetInputKeyboard();
+	CDebugProc* pDebug = CManager::GetInstance()->GetDebugProc();
 	CXfile* pXfile = CManager::GetInstance()->GetXfile();
 
 	if (pInputKey->GetTrigger(DIK_F3))
@@ -111,7 +122,7 @@ void CEdit::Update(void)
 		return;
 	}
 
-	CManager::GetInstance()->GetDebugProc()->Print("\n\n【エディットモード中】\n");
+	CManager::GetInstance()->GetDebugProc()->Print("\n\n【エディットモード中】\n\n");
 	CManager::GetInstance()->GetDebugProc()->Print("位置： x:%f y:%f z:%f\n", m_object.pos.x, m_object.pos.y, m_object.pos.z);
 	CManager::GetInstance()->GetDebugProc()->Print("向き： x:%f y:%f z:%f\n", m_object.rot.x, m_object.rot.y, m_object.rot.z);
 	CManager::GetInstance()->GetDebugProc()->Print("種類： %d\n", m_nTypeIdx);
@@ -144,14 +155,17 @@ void CEdit::Update(void)
 		m_object.pos.z -= SPEED;
 	}
 
+	m_pObjectX->SetPosition(m_object.pos);
+
 	//オブジェクト種類の変更
 	if (pInputKey->GetTrigger(DIK_1))
 	{
 		m_nTypeIdx++;
 
-		int nCt = pXfile->GetNumAll();
+		m_nTypeIdx %= MAX_TYPE;			//繰り返し
 
-		m_nTypeIdx %= pXfile->GetNumAll();			//繰り返し
+		m_pObjectX->Init(c_Obj[m_nTypeIdx], m_object.pos);
+		m_pObjectX->SetModelIdx(m_nTypeIdx);
 	}
 
 	//オブジェクトの設置
@@ -166,6 +180,8 @@ void CEdit::Update(void)
 	{
 		Save();
 	}
+
+#endif
 }
 
 //===========================================================================================
@@ -173,65 +189,17 @@ void CEdit::Update(void)
 //===========================================================================================
 void CEdit::Draw(void)
 {
+#ifdef _DEBUG	//デバック時実行
+
+
 	if (m_bUse == false)
 	{
 		return;
 	}
 
-	//デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
-	CTexture* pTexture = CManager::GetInstance()->GetTexture();
-	CXfile *pXfile = CManager::GetInstance()->GetXfile();
-	CXfile::SXFile* pXfileData = pXfile->GetAdrress(m_nTypeIdx);
+	m_pObjectX->Draw();
 
-	D3DXMATRIX mtxRot, mtxTrans;	//計算用マトリックス
-	D3DMATERIAL9 matDef;	//現在のマテリアル保存用
-	D3DXMATERIAL* pMat;	//マテリアルデータへのポインタ
-
-	if (pXfileData == nullptr)
-	{
-		return;
-	}
-
-	//ワールドマトリックスの初期化
-	D3DXMatrixIdentity(&m_object.mtxWorld);
-
-	//向きを反映
-	D3DXMatrixRotationYawPitchRoll(&mtxRot, m_object.rot.y, m_object.rot.x, m_object.rot.z);
-	D3DXMatrixMultiply(&m_object.mtxWorld, &m_object.mtxWorld, &mtxRot);
-
-	//位置を反映
-	D3DXMatrixTranslation(&mtxTrans, m_object.pos.x, m_object.pos.y, m_object.pos.z);
-	D3DXMatrixMultiply(&m_object.mtxWorld, &m_object.mtxWorld, &mtxTrans);
-
-	//ワールドマトリックスの設定
-	pDevice->SetTransform(D3DTS_WORLD, &m_object.mtxWorld);
-
-	//現在のマテリアルを取得
-	pDevice->GetMaterial(&matDef);
-
-	//マテリアルへのポインタを取得
-	pMat = (D3DXMATERIAL*)pXfileData->pBuffMat->GetBufferPointer();
-
-	for (int nCntMat = 0; nCntMat < (int)pXfileData->dwNumMat; nCntMat++)
-	{
-		pMat[nCntMat].MatD3D.Ambient.a = 1.0f;
-
-		//マテリアルの設定
-		pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
-		
-		//テクスチャの設定
-		pDevice->SetTexture(0, pTexture->GetAddress(pXfileData->pTextureIdx));
-
-		//オブジェクト(パーツ)の描画
-		if (FAILED(pXfileData->pMesh->DrawSubset(nCntMat)))
-		{
-			assert(false);
-		}
-	}
-
-	//保存されていたマテリアルを戻す
-	pDevice->SetMaterial(&matDef);
+#endif
 }
 
 //===========================================================================================
@@ -298,7 +266,7 @@ void CEdit::Load(const char* pFilename)
 		}
 		else if (strcmp("END_OBJECTSET", &Dast[0]) == 0)
 		{
-			m_pObjectX = CObjectX::Create(c_Obj[nType], pos);
+			CObjectX::Create(c_Obj[nType], pos);
 		}
 	}
 }
@@ -311,7 +279,7 @@ void CEdit::Save(void)
 	FILE* pFile = NULL;			//ファイルポインタを宣言
 
 	//ファイルを開く
-	pFile = fopen("data\\TXT\\stage\\stage0.txt", "w");
+	pFile = fopen(FILENAME, "w");
 
 	if (pFile == nullptr)
 	{
@@ -348,6 +316,6 @@ void CEdit::Save(void)
 
 	//ファイルを閉じる
 	fclose(pFile);
-	
+
 }
 

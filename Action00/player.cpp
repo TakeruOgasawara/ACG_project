@@ -163,13 +163,13 @@ void CPlayer::Update(void)
 	m_move.y -= GRAVITY;
 
 	//地面(0.0f)より下に行かないように
-	if (pos.y <= SIZE.y)
-	{
-		pos.y = SIZE.y;
-		m_move.y = 0.0f;
-		m_bFirstJump = false;
-		m_bSecondJump = false;
-	}
+	//if (pos.y <= SIZE.y)
+	//{
+	//	pos.y = SIZE.y;
+	//	m_move.y = 0.0f;
+	//	m_bFirstJump = false;
+	//	m_bSecondJump = false;
+	//}
 
 	if (m_bSecondJump == false)
 	{//二回目のジャンプをしてない場合
@@ -184,13 +184,22 @@ void CPlayer::Update(void)
 	//移動量の代入
 	pos += m_move;
 
-	
-	if (CollisionObjectX(&pos, &posOld, &m_move, SIZE.y) == true)
+	//オブジェクトとの当たり判定関数
+	if (CollisionObjectX1(&pos, &posOld, &m_move, m_bFirstJump, SIZE.y + 15.0f) == true)
 	{
 		m_bFirstJump = false;
 		m_bSecondJump = false;
 	}
-	
+	if (CollisionObjectX1(&pos, &posOld, &m_move, m_bSecondJump, SIZE.y + 15.0f) == true)
+	{
+		m_bFirstJump = false;
+		m_bSecondJump = false;
+	}
+
+	if (GetScreenPosition().y > 720.0f)
+	{
+		pos.y = 360.0f;
+	}
 
 	//矢印
 	Arrow(pos);
@@ -253,7 +262,6 @@ void CPlayer::Jump(void)
 	CInputJoyPad *pInpuJoyPad = CManager::GetInstance()->GetInputJoyPad();
 	CInputMouse *pInputMouse = CManager::GetInstance()->GetInputMouse();
 
-	//ジャンプできるか確認
 	if (m_bFirstJump == false && m_bSecondJump == false)
 	{//ジャンプしていない状態の場合
 		if (pInputKeyboard->GetTrigger(DIK_SPACE) == true)
@@ -263,7 +271,7 @@ void CPlayer::Jump(void)
 			m_move.y = 0.0f;
 			m_move.x = 0.0f;
 
-			m_move.y += FILSTJUMP_POWER;			//数値分上へ
+			m_move.y += FILSTJUMP_POWER;	//数値分上へ
 
 			m_bFirstJump = true;	//一回目のジャンプをしたことにする
 

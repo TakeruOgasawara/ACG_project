@@ -111,6 +111,9 @@
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル\main</Filter>
     </ClCompile>
+    <ClCompile Include="break_block.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="billboard.h">
@@ -190,6 +193,9 @@
     </ClInclude>
     <ClInclude Include="main.h">
       <Filter>ヘッダー ファイル\main</Filter>
+    </ClInclude>
+    <ClInclude Include="break_block.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

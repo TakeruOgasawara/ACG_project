@@ -225,7 +225,7 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	//m_pSound->PlaySound(CSound::LABEL_BGM000);
 
 	//ÉÇÅ[Éhê›íË
-	SetMode(CScene::MODE_GAME);
+	SetMode(CScene::MODE_TITLE);
 	
 	return S_OK;
 }

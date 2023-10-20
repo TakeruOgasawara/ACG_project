@@ -8,7 +8,7 @@
 #define _EDIT_H_				//2重インクルード防止のマクロを定義
 
 #include "main.h"
-#include "object.h"
+#include "objectX.h"
 
 //前方宣言
 class CObjectX;
@@ -31,7 +31,6 @@ public:
 		DWORD dwNumMat;		//カラーの数
 		D3DXVECTOR3 pos;
 		D3DXVECTOR3 rot;
-		int m_nTextureIdx;
 	};
 
 public:
@@ -41,7 +40,7 @@ public:
 
 	static CEdit* Create(void);
 
-	void Load(const char *pFilename);
+	void Load(const char* pFilename);
 	void Save(void);
 
 	HRESULT Init(void);
@@ -50,7 +49,7 @@ public:
 	void Draw(void);
 
 private:
-	CObjectX *m_pObjectX;
+	CObjectX* m_pObjectX;
 	SObjectX m_object;
 	int m_nTypeIdx;
 	int m_nIdx;

@@ -14,8 +14,8 @@
 #define VIEWING_ANGLE		(45.0f)			//視野角
 
 #define LENGTH				(500.0f)			//カメラとの距離
-#define V_POSITION			(D3DXVECTOR3(0.0f, 1020.0f, 0.0f))			//視点の高さ
-#define R_POSITION			(D3DXVECTOR3(0.0f, 540.0f, 0.0f))			//注視点の高さ
+#define V_POSITION			(D3DXVECTOR3(0.0f, 200.0f, 0.0f))			//視点の高さ
+#define R_POSITION			(D3DXVECTOR3(0.0f, 200.0f, 0.0f))			//注視点の高さ
 #define ROTATION			(D3DXVECTOR3(0.0f, 0.0f, 0.0f))				//向き
 
 //追従関係マクロ
@@ -87,7 +87,11 @@ void CCamera::Uninit(void)
 void CCamera::Update(void)
 {
 	//V_Move_Mouse();
+#ifdef _DEBUG	//デバック時実行
+
 	R_Move_Mouse();
+
+#endif
 
 	V_Move();
 	R_Move();

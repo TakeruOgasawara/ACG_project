@@ -154,6 +154,7 @@
   <ItemGroup>
     <ClCompile Include="arrow_around.cpp" />
     <ClCompile Include="billboard.cpp" />
+    <ClCompile Include="break_block.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="collision.cpp" />
     <ClCompile Include="debugproc.cpp" />
@@ -182,6 +183,7 @@
   <ItemGroup>
     <ClInclude Include="arrow_around.h" />
     <ClInclude Include="billboard.h" />
+    <ClInclude Include="break_block.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="collision.h" />
     <ClInclude Include="debugproc.h" />

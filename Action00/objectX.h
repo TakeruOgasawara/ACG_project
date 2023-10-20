@@ -36,7 +36,7 @@ public:
 
 	//ê›íËóp
 	void SetPosition(D3DXVECTOR3 pos) { m_pos = pos; }
-	void SetRotation(D3DXVECTOR3 rot) { m_rot = rot; };
+	void SetRotation(D3DXVECTOR3 rot) { m_rot = rot; }
 	void SetModelIdx(int nIdx) { m_nModelIdx = nIdx; }
 
 	//éÊìæóp

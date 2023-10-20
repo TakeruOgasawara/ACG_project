@@ -69,26 +69,25 @@ CObjectX * CObjectX::Create(void)
 //===========================================================================================
 CObjectX *CObjectX::Create(const char *c_pFileName, D3DXVECTOR3 pos)
 {
-	CObjectX *pObjX = NULL;
+	CObjectX *pObjX = nullptr;
 
-	if (pObjX == NULL)
+	if (pObjX == nullptr)
 	{
 		pObjX = new CObjectX;
 
-		if (pObjX != NULL)
+		if (pObjX != nullptr)
 		{
 			//‰Šú‰»ˆ—
 			pObjX->Init(c_pFileName, pos);
 
 			//ˆÊ’uÝ’è
 			pObjX->SetPosition(pos);
-			pObjX->m_pos = pos;
 
 			return pObjX;
 		}
 		else
 		{
-			return NULL;
+			return nullptr;
 		}
 	}
 

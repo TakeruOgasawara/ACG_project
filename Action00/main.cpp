@@ -76,18 +76,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR LpCmadLin
 	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, MAXIMIZE_WINDOW);
 
 	//ウィンドウを生成
-	hWnd = CreateWindowEx(0,	//拡張ウィンドウスタイル
-		CLASS_NAME,				//ウィンドウクラス名
-		WINDOW_NAME,			//ウィンドウの名前
-		WS_OVERLAPPEDWINDOW,	//ウィンドウスタイル
-		CW_USEDEFAULT,			//ウィンドウの左上X座標
-		CW_USEDEFAULT,			//ウィンドウの左上Y座標
-		(rect.right - rect.left),			//ウィンドウの幅
-		(rect.bottom - rect.top),			//ウィンドウの高さ
-		NULL,					//親ウィンドウのハンドル
-		NULL,					//メニューハンドルまたは子ウィンドウID
-		hInstance,				//インスタンスハンドル
-		NULL);					//ウィンドウ制作データ
+	hWnd = CreateWindowEx(0,		//拡張ウィンドウスタイル
+		CLASS_NAME,					//ウィンドウクラス名
+		WINDOW_NAME,				//ウィンドウの名前
+		WS_OVERLAPPEDWINDOW,		//ウィンドウスタイル
+		CW_USEDEFAULT,				//ウィンドウの左上X座標
+		CW_USEDEFAULT,				//ウィンドウの左上Y座標
+		(rect.right - rect.left),	//ウィンドウの幅
+		(rect.bottom - rect.top),	//ウィンドウの高さ
+		NULL,						//親ウィンドウのハンドル
+		NULL,						//メニューハンドルまたは子ウィンドウID
+		hInstance,					//インスタンスハンドル
+		NULL);						//ウィンドウ制作データ
 
 	DWORD dwCurrentTime;		//現在時刻
 	DWORD dwExecLastTime;		//最後に処理した時刻

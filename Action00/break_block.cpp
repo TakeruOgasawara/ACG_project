@@ -15,15 +15,18 @@
 //#include "texture.h"
 //#include "xfile.h"
 //
-////マクロ定義
-//static const int MAX_TYPE = 4;
-//
 ////===========================================================================================
 //// コンストラクタ
 ////===========================================================================================
 //CBreakBlock::CBreakBlock()
 //{
-//
+//	for (int nCnt = 0; nCnt < TYPE_MAX; nCnt++)
+//	{
+//		m_pObjectX[nCnt] = nullptr;
+//	}
+//	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+//	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+//	m_nDestroyTime = 0;
 //}
 //
 ////===========================================================================================
@@ -45,7 +48,7 @@
 //	{
 //		pEdit = new CBreakBlock;
 //
-//		pEdit->Init();
+//		pEdit->Init(pos);
 //		pEdit->SetPosition(pos);
 //
 //		return pEdit;
@@ -59,8 +62,15 @@
 ////===========================================================================================
 //HRESULT CBreakBlock::Init(void)
 //{
+//	return S_OK;
+//}
 //
-//	CObjectX::Init();
+////===========================================================================================
+//// 初期化処理
+////===========================================================================================
+//HRESULT CBreakBlock::Init(D3DXVECTOR3 pos)
+//{
+//	m_pObjectX[TYPE_BLOCK] = CObjectX::Create();
 //
 //	return S_OK;
 //}
@@ -164,128 +174,5 @@
 ////===========================================================================================
 //void CBreakBlock::Draw(void)
 //{
-//	if (m_bUse == false)
-//	{
-//		return;
-//	}
-//
 //	m_pObjectX->Draw();
 //}
-//
-////===========================================================================================
-//// 読み込み
-////===========================================================================================
-//void CBreakBlock::Load(const char* pFilename)
-//{
-//	char Dast[128] = {};		//文字列のゴミ箱
-//	int nType = 0;
-//	D3DXVECTOR3 pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-//	D3DXVECTOR3 rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-//	FILE* pFile = nullptr;			//ファイルポインタを宣言
-//
-//	//ファイルを開く
-//	pFile = fopen(pFilename, "r");
-//
-//	if (pFile == nullptr)
-//	{
-//		return;
-//	}
-//
-//	while (strcmp("END_SCRIPT", &Dast[0]) != 0)
-//	{
-//		fscanf(pFile, "%s", &Dast[0]);
-//
-//		if (strcmp("OBJECTSET", &Dast[0]) == 0)
-//		{
-//			while (1)
-//			{
-//				fscanf(pFile, "%s", &Dast[0]);
-//
-//				if (strcmp("TYPE", &Dast[0]) == 0)
-//				{
-//					fscanf(pFile, "%s", &Dast[0]);
-//					fscanf(pFile, "%d", &nType);			//位置x
-//				}
-//				if (strcmp("POS", &Dast[0]) == 0)
-//				{
-//					fscanf(pFile, "%s", &Dast[0]);
-//					fscanf(pFile, "%f", &pos.x);			//位置x
-//					fscanf(pFile, "%f", &pos.y);			//位置y
-//					fscanf(pFile, "%f", &pos.z);			//位置z
-//				}
-//				if (strcmp("ROT", &Dast[0]) == 0)
-//				{
-//					fscanf(pFile, "%s", &Dast[0]);
-//					fscanf(pFile, "%f", &rot.x);			//位置x
-//					fscanf(pFile, "%f", &rot.y);			//位置y
-//					fscanf(pFile, "%f", &rot.z);			//位置z
-//
-//					break;
-//				}
-//
-//				if (strcmp("ROT", &Dast[0]) == 0)
-//				{
-//					fscanf(pFile, "%s", &Dast[0]);
-//					fscanf(pFile, "%f", &rot.x);			//位置x
-//					fscanf(pFile, "%f", &rot.y);			//位置y
-//					fscanf(pFile, "%f", &rot.z);			//位置z
-//
-//					break;
-//				}
-//			}
-//		}
-//		else if (strcmp("END_OBJECTSET", &Dast[0]) == 0)
-//		{
-//			m_pObjectX = CObjectX::Create(c_Obj[nType], pos);
-//		}
-//	}
-//}
-//
-////===========================================================================================
-//// 書き込み
-////===========================================================================================
-//void CBreakBlock::Save(void)
-//{
-//	FILE* pFile = NULL;			//ファイルポインタを宣言
-//
-//	//ファイルを開く
-//	pFile = fopen("data\\TXT\\stage\\stage0.txt", "w");
-//
-//	if (pFile == nullptr)
-//	{
-//		return;
-//	}
-//
-//	fprintf(pFile, "SCRIPT\n\n");
-//
-//	for (int nCntPriority = 0; nCntPriority < NUM_PRIORITY; nCntPriority++)
-//	{
-//		for (int nCnt = 0; nCnt < MAX_OBJECT; nCnt++)
-//		{
-//			CObject* pObj = CObject::GetCObject(nCntPriority, nCnt);
-//
-//			if (pObj != NULL && pObj->GetType() == CObject::TYPE_OBJECTX)
-//			{
-//				CObjectX* pObjectX = pObj->GetObjectX();
-//
-//				D3DXVECTOR3 pos = pObjectX->GetPosition();
-//				D3DXVECTOR3 rot = pObjectX->GetRotation();
-//				int nTypeIdx = pObjectX->GetModelIndx();
-//
-//				fprintf(pFile, "OBJECTSET\n");
-//				fprintf(pFile, "	TYPE = %d\n", nTypeIdx);
-//				fprintf(pFile, "	POS = %0.2f %0.2f %0.2f\n", pos.x, pos.y, pos.z);
-//				fprintf(pFile, "	ROT = %0.2f %0.2f %0.2f\n", rot.x, rot.y, rot.z);
-//				fprintf(pFile, "END_OBJECTSET\n\n");
-//			}
-//		}
-//	}
-//
-//	//終了の合図
-//	fprintf(pFile, "END_SCRIPT");
-//
-//	//ファイルを閉じる
-//	fclose(pFile);
-//
-//}
-//

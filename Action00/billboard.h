@@ -27,18 +27,18 @@ public:
 	void Draw(void);
 
 	//設定用
-	void SetverTex(void);						//頂点設定
-	void SetPosition(D3DXVECTOR3 pos) { m_pos = pos; }			//位置設定
-	void SetRotation(D3DXVECTOR3 rot) { m_rot = rot; }			//向き設定
+	void SetverTex(void);	//頂点設定
+	void SetPosition(D3DXVECTOR3 pos) { m_pos = pos; }	//位置設定
+	void SetRotation(D3DXVECTOR3 rot) { m_rot = rot; }	//向き設定
 	void SetSize(D3DXVECTOR2 size) { m_size = size; }
 	void SetColor(D3DXCOLOR col) { m_col = col; }
 	void SetLighting(bool bUse) { m_bUseLighting = bUse; }
 
 	//取得用
-	D3DXVECTOR3 GetPosition(void) { return m_pos; }			//位置取得
-	D3DXVECTOR3 GetRotation(void) { return m_rot; }			//向き取得
-	D3DXVECTOR2 GetSize(void) { return m_size; }			//大きさ取得
-	D3DXCOLOR GetColor(void) { return m_col; }			//色取得
+	D3DXVECTOR3 GetPosition(void) { return m_pos; }	//位置取得
+	D3DXVECTOR3 GetRotation(void) { return m_rot; }	//向き取得
+	D3DXVECTOR2 GetSize(void) { return m_size; }	//大きさ取得
+	D3DXCOLOR GetColor(void) { return m_col; }	//色取得
 
 	//テクスチャ割り当て
 	void BindTexture(int nIdx);

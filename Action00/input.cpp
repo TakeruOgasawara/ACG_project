@@ -15,7 +15,7 @@ LPDIRECTINPUT8 CInput::m_pInput = NULL;
 //========================================================================
 CInput::CInput()
 {
-	m_pDevice = NULL;
+	m_pDevice = nullptr;
 }
 
 //========================================================================
@@ -31,7 +31,7 @@ CInput::~CInput()
 //========================================================================
 HRESULT CInput::Init(HINSTANCE hInstance, HWND hWnd)
 {
-	if (m_pInput == NULL)
+	if (m_pInput == nullptr)
 	{
 		//DirectInputオブジェクトの初期化
 		if (FAILED(DirectInput8Create(hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_pInput, NULL)))

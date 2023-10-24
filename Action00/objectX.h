@@ -19,8 +19,8 @@ private:
 	const float SIZE = 20.0f;
 
 public:
-	CObjectX(int nPriority = 0);			//コンストラクタ
-	~CObjectX();			//デストラクタ
+	CObjectX(int nPriority = 0);	//コンストラクタ
+	~CObjectX();	//デストラクタ
 
 	//生成
 	static CObjectX *Create(void);

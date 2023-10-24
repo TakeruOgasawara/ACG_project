@@ -17,7 +17,7 @@
 //マクロ定義
 #define SIZE			(D3DXVECTOR2(5.0f, 10.0f))
 
-#define MOVE			(3.5f)			//移動量
+#define MOVE			(2.5f)			//移動量
 #define ATT				(0.3f)			//減衰
 #define GRAVITY			(1.0f)			//重力
 
@@ -26,16 +26,18 @@
 
 //ジャンプ
 #define FILSTJUMP_POWER		(20.4f)			//ジャンプ力
-#define SECONDJUMP_POWER	(30.0f)			//
+#define SECONDJUMP_POWER	(20.0f)			//
 
 //===========================================================================================
 // コンストラクタ
 //===========================================================================================
 CPlayer::CPlayer(int nPriority)
 {
+	m_posOld = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_state = STATE_NORMAL;
 	m_pCamera = nullptr;
+	m_pCollision = nullptr;
 	m_pArrowAround = nullptr;
 	m_bFirstJump = false;
 	m_bSecondJump = false;
@@ -156,41 +158,33 @@ void CPlayer::Uninit(void)
 void CPlayer::Update(void)
 {
 	D3DXVECTOR3 pos = GetPosition();
-	D3DXVECTOR3 posOld = pos;
 	D3DXVECTOR3 rot = GetRotation();
+
+	//過去位置の保存
+	m_posOld = pos;
 
 	//重力
 	m_move.y -= GRAVITY;
 
-	//地面(0.0f)より下に行かないように
-	//if (pos.y <= SIZE.y)
-	//{
-	//	pos.y = SIZE.y;
-	//	m_move.y = 0.0f;
-	//	m_bFirstJump = false;
-	//	m_bSecondJump = false;
-	//}
-
 	if (m_bSecondJump == false)
-	{//二回目のジャンプをしてない場合
-
+	{
 		//移動量を更新(減衰させる)
 		m_move.x += (0.0f - m_move.x) * ATT;
-
-		//操作
-		InputMove();
 	}
+
+	//操作
+	InputMove();
 
 	//移動量の代入
 	pos += m_move;
 
 	//オブジェクトとの当たり判定関数
-	if (CollisionObjectX1(&pos, &posOld, &m_move, m_bFirstJump, SIZE.y + 15.0f) == true)
+	if (CollisionObjectX1(&pos, &m_posOld, &m_move, m_bFirstJump, SIZE.y + 15.0f) == true)
 	{
 		m_bFirstJump = false;
 		m_bSecondJump = false;
 	}
-	if (CollisionObjectX1(&pos, &posOld, &m_move, m_bSecondJump, SIZE.y + 15.0f) == true)
+	if (CollisionObjectX1(&pos, &m_posOld, &m_move, m_bSecondJump, SIZE.y + 15.0f) == true)
 	{
 		m_bFirstJump = false;
 		m_bSecondJump = false;
@@ -242,11 +236,27 @@ void CPlayer::InputMove(void)
 	//キー入力で移動する処理
 	if (pInputKeyboard->GetPress(DIK_A) == true || pInpuJoyPad->GetJoyStickLX(0) < 0)
 	{//Aキーが押された
-		m_move.x -= MOVE;
+
+		if (m_bSecondJump == false)
+		{
+			m_move.x -= MOVE;
+		}
+		else
+		{
+			m_move.x -= 0.5f;
+		}
 	}
 	if (pInputKeyboard->GetPress(DIK_D) == true || pInpuJoyPad->GetJoyStickLX(0) > 0)
 	{//Dキーが押された
-		m_move.x += MOVE;
+
+		if (m_bSecondJump == false)
+		{
+			m_move.x += MOVE;
+		}
+		else
+		{
+			m_move.x += 0.5f;
+		}
 	}
 
 	//ジャンプをまとめた関数
@@ -264,7 +274,7 @@ void CPlayer::Jump(void)
 
 	if (m_bFirstJump == false && m_bSecondJump == false)
 	{//ジャンプしていない状態の場合
-		if (pInputKeyboard->GetTrigger(DIK_SPACE) == true)
+		if (pInputKeyboard->GetTrigger(DIK_SPACE) == true || pInpuJoyPad->GetTrigger(pInpuJoyPad->BUTTON_RB, 0) == true)
 		{//キーが押された
 
 			//移動量の初期化
@@ -274,14 +284,14 @@ void CPlayer::Jump(void)
 			m_move.y += FILSTJUMP_POWER;	//数値分上へ
 
 			m_bFirstJump = true;	//一回目のジャンプをしたことにする
-
 		}
 	}
+
+	//プレイヤーのスクリーン座標を取得
+	D3DXVECTOR3 screemPos = GetScreenPosition();
+
 	if (pInputMouse->GetTrigger(CInputMouse::MOUSE_LEFT))
 	{//キーが押された
-
-		//プレイヤーのスクリーン座標を取得
-		D3DXVECTOR3 screemPos = GetScreenPosition();
 
 		//プレイヤーからマウスカーソルの角度を算出
 		float fAngle = atan2f((screemPos.x - pInputMouse->GetPoint().x) + D3DX_PI, (screemPos.y - pInputMouse->GetPoint().y) + D3DX_PI);
@@ -299,6 +309,19 @@ void CPlayer::Jump(void)
 		};
 
 		m_bSecondJump = true;	//二回目のジャンプをしたことにする
+	}
+
+	if (pInpuJoyPad->GetJoyStickLX(0) < 0)
+	{//左
+		//移動量の初期化
+		m_move.y = 0.0f;
+		m_move.x = 0.0f;
+	}
+	if (pInpuJoyPad->GetJoyStickLX(0) > 0)
+	{//右
+		//移動量の初期化
+		m_move.y = 0.0f;
+		m_move.x = 0.0f;
 	}
 }
 

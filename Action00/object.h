@@ -31,11 +31,9 @@ public:			//構造体・列挙型用のpublic
 		TYPE_PLAYER,		//プレイヤー3D
 		TYPE_EFFECT,		//エフェクト
 		TYPE_PARTICLE,		//パーティクル
-		TYPE_TIME,			//時間
-		TYPE_OBJECT3D,		//オブジェクト3D
 		TYPE_OBJECTX,		//オブジェクトX
-		TYPE_BILLBOARD,		//ビルボード
-		TYPE_MESHWALL,		//メッシュウォール
+		TYPE_NEXTSTEP,		//
+		TYPE_LOCKDOOR,
 		TYPE_MAX
 	} TYPE;
 
@@ -53,6 +51,7 @@ public:			//メンバ関数用のpublic
 	virtual void Draw(void) = 0;			//描画
 
 	static void ReleaseAll(void);			//全オブジェクトの破棄
+	static void ParticularRelease(TYPE type);	//特定のオブジェクトの破棄
 	static void UpdateAll(void);			//全オブジェクトの更新
 	static void DrawAll(void);				//全オブジェクトの描画
 

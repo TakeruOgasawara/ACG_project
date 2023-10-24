@@ -43,8 +43,8 @@ public:
 	STATE GetState(void) { return m_state; }
 
 private:
-	STATE m_state;						//フェードの状態
-	CScene::MODE m_modeNext;			//次の画面(モード)
+	STATE m_state;	//フェードの状態
+	CScene::MODE m_modeNext;	//次の画面(モード)
 	D3DXCOLOR m_col;
 };
 

@@ -9,6 +9,7 @@
 
 #include "main.h"
 #include "object.h"
+#include "scene.h"
 
 //前方宣言
 class CRenderer;
@@ -28,36 +29,6 @@ class CTitle;
 class CGame;
 class CResult;
 class CFade;
-
-//シーンクラス(画面遷移)
-class CScene
-{
-public:
-	//シーン種類
-	typedef enum 
-	{
-		MODE_TITLE = 0,
-		MODE_GAME,
-		MODE_RESULT,
-		MODE_MAX
-	} MODE;
-
-	CScene();
-	~CScene();
-
-	static CScene *Create(MODE mode);
-
-	virtual HRESULT Init(void);
-	virtual void Uninit(void);
-	virtual void Update(void);
-	virtual void Draw(void);
-
-	void SetMode(MODE mode) { m_mode = mode; }
-	MODE GetMode(void) { return m_mode; }
-
-private:
-	MODE m_mode;
-};
 
 // マネージャクラス(全体管理)
 class CManager

@@ -59,6 +59,23 @@ void CObject::ReleaseAll(void)
 }
 
 //===========================================================================================
+// 特定のオブジェクトの更新
+//===========================================================================================
+void CObject::ParticularRelease(TYPE type)
+{
+	for (int nCntPriority = 0; nCntPriority < NUM_PRIORITY; nCntPriority++)
+	{
+		for (int nCntObject = 0; nCntObject < MAX_OBJECT; nCntObject++)
+		{
+			if (m_apObject[nCntPriority][nCntObject] != nullptr && m_apObject[nCntPriority][nCntObject]->m_type == type)
+			{
+				m_apObject[nCntPriority][nCntObject]->Uninit();		//終了処理
+			}
+		}
+	}
+}
+
+//===========================================================================================
 // 全てのオブジェクトの更新
 //===========================================================================================
 void CObject::UpdateAll(void)

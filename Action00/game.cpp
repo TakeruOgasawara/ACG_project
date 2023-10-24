@@ -16,6 +16,7 @@
 #include "sound.h"
 #include "camera.h"
 #include "billboard.h"
+#include "player.h"
 
 #include "input.h"
 #include "texture.h"
@@ -26,10 +27,10 @@
 
 #include "player.h"
 
-#include "stage.h"
+#include "stage_manager.h"
 
 //静的メンバ変数宣言
-CGame* CGame::m_pGame = nullptr;
+CPlayer* CGame::m_pPlayer = nullptr;
 
 //===========================================================================================
 // コンストラクタ
@@ -40,9 +41,10 @@ CGame::CGame()
 	m_pPause = nullptr;
 	m_pXfile = nullptr;
 	m_pSound = nullptr;
+	m_pPlayer = false;
 	m_bEdit = false;
 
-	m_pStage = nullptr;
+	m_pStageManager = nullptr;
 }
 
 //===========================================================================================
@@ -54,45 +56,14 @@ CGame::~CGame()
 }
 
 //===========================================================================================
-// シングルトン
-//===========================================================================================
-CGame* CGame::GetInstance(void)
-{
-	if (m_pGame == nullptr)
-	{//nullだった場合
-
-		return m_pGame = new CGame;
-	}
-	else
-	{
-		return m_pGame;
-	}
-}
-
-//===========================================================================================
-// 破棄
-//===========================================================================================
-void CGame::Release(void)
-{
-	if (m_pGame == nullptr)
-	{//nullだった場合
-
-		return;
-	}
-	else
-	{
-		delete	m_pGame;
-		m_pGame = nullptr;
-	}
-}
-
-//===========================================================================================
 // 初期化処理
 //===========================================================================================
 HRESULT CGame::Init()
 {
-	m_pStage = CStage::Create();
+	m_pPlayer = CPlayer::Create(D3DXVECTOR3(-400.0f, 0.0f, 0.0f));
 	
+	m_pStageManager = CStageManager::GetInstance();
+
 	return E_NOTIMPL;
 }
 
@@ -101,16 +72,11 @@ HRESULT CGame::Init()
 //===========================================================================================
 void CGame::Uninit()
 {
-	if (m_pGame != nullptr)
+	if (m_pStageManager != nullptr)
 	{
-		m_pGame->Release();
-	}
-
-	if (m_pStage != nullptr)
-	{
-		m_pStage->Uninit();
-		delete m_pStage;
-		m_pStage = nullptr;
+		m_pStageManager->Uninit();
+		delete m_pStageManager;
+		m_pStageManager = nullptr;
 	}
 
 	if (m_pPause != nullptr)
@@ -138,9 +104,9 @@ void CGame::Update()
 	CInputKeyboard *pInputKey = CManager::GetInstance()->GetInputKeyboard();
 	CFade *pFade = CManager::GetInstance()->GetFade();
 
-	if (m_pStage != nullptr)
+	if (m_pStageManager != nullptr)
 	{
-		m_pStage->Update();
+		m_pStageManager->Update();
 	}
 
 	/*if (pInputKey->GetTrigger(DIK_P) == true)
@@ -169,10 +135,10 @@ void CGame::Update()
 		}
 	}*/
 	
-	if (pInputKey->GetTrigger(DIK_RETURN) == true)
-	{
-		CManager::GetInstance()->GetFade()->Set(MODE_RESULT);
-	}
+	//if (pInputKey->GetTrigger(DIK_RETURN) == true)
+	//{
+	//	CManager::GetInstance()->GetFade()->Set(MODE_RESULT);
+	//}
 
 	CScene::Update();
 }
@@ -189,8 +155,8 @@ void CGame::Draw()
 		m_pPause->Draw();
 	}
 
-	if (m_pStage != nullptr)
+	if (m_pStageManager != nullptr)
 	{
-		m_pStage->Draw();
+		m_pStageManager->Draw();
 	}
 }

@@ -1,4 +1,11 @@
-﻿  edit.cpp
-  stage.cpp
+﻿  break_block.cpp
+  collision.cpp
+  edit.cpp
+  game.cpp
+  lock_door.cpp
+  objectX.cpp
+  object_next_step.cpp
+  stage0.cpp
+  stage_manager.cpp
   コードを生成中...
   Action00.vcxproj -> C:\Users\student\Desktop\1\ACG_project\Action00\Debug\Action00.exe

@@ -20,4 +20,7 @@ bool CollisionCross(void);
 bool CollisionObjectX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *pMove, float size);
 bool CollisionObjectX1(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, bool bJunp, float size);
 
+bool CollisionObjectX(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, float size);
+
+
 #endif

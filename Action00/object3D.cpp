@@ -234,7 +234,7 @@ HRESULT CObject3D::Init(void)
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
 
 	//種類の設定
-	CObject::SetType(CObject::TYPE_OBJECT3D);
+	//CObject::SetType(CObject::TYPE_OBJECT3D);
 
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4,

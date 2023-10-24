@@ -17,10 +17,10 @@
 #include "xfile.h"
 
 //マクロ定義
-static const int MAX_TYPE = 5;
+static const int MAX_TYPE = 6;
 #define SPEED	(25.0f)
 
-static char* FILENAME = "data\\TXT\\stage\\stage0.txt";		//書き込むステージファイル名
+static char* FILENAME = "data\\TXT\\stage\\0.1.txt";		//書き込むステージファイル名
 
 //オブジェクトファイル名
 const char* c_Obj[MAX_TYPE] =
@@ -30,6 +30,7 @@ const char* c_Obj[MAX_TYPE] =
 	"data\\MODEL\\object\\blockTileMin.x",
 	"data\\MODEL\\object\\bigTV.x",
 	"data\\MODEL\\object\\fence.x",
+	"data\\MODEL\\object\\lockdoor.x",
 };
 
 //===========================================================================================

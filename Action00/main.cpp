@@ -67,13 +67,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR LpCmadLin
 		hInstance,				//インスタンスハンドル
 		NULL);					//ウィンドウ制作データ
 
-	RECT rect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };				//画面サイズの構造体
+	RECT rect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };	//画面サイズの構造体
 
 	//ウインドクラスの登録
 	RegisterClassEx(&wcex);
 
 	//クライアント領域のサイズに調整
-	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, MAXIMIZE_WINDOW);
+	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
 
 	//ウィンドウを生成
 	hWnd = CreateWindowEx(0,		//拡張ウィンドウスタイル

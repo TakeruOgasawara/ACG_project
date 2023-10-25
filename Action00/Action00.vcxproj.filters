@@ -37,6 +37,21 @@
     <Filter Include="ヘッダー ファイル\stage">
       <UniqueIdentifier>{60182918-217c-44b9-af6e-80fd971752e8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\main\editor">
+      <UniqueIdentifier>{0c498982-3334-4aa2-af3a-95681df6c05e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\editor">
+      <UniqueIdentifier>{96ad03ab-89c9-460a-a515-fa17be5dfb0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\editor">
+      <UniqueIdentifier>{258f0279-71ba-4b2a-9500-ddbe9a18c7c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\fade">
+      <UniqueIdentifier>{c6a04cce-11fa-43b0-abc4-5070c90056e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\fade">
+      <UniqueIdentifier>{116d58e8-bd64-48f4-b4f3-23201308668c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="billboard.cpp">
@@ -46,9 +61,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="debugproc.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="fade.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="input.cpp">
@@ -73,9 +85,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="arrow_around.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="edit.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="collision.cpp">
@@ -123,9 +132,6 @@
     <ClCompile Include="object_next_step.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="fade_normal.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="stage_manager.cpp">
       <Filter>ソース ファイル\stage</Filter>
     </ClCompile>
@@ -134,6 +140,21 @@
     </ClCompile>
     <ClCompile Include="lock_door.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="edit.cpp">
+      <Filter>ソース ファイル\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="editor.cpp">
+      <Filter>ソース ファイル\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="fade_normal.cpp">
+      <Filter>ソース ファイル\fade</Filter>
+    </ClCompile>
+    <ClCompile Include="fade.cpp">
+      <Filter>ソース ファイル\fade</Filter>
+    </ClCompile>
+    <ClCompile Include="fade_death.cpp">
+      <Filter>ソース ファイル\fade</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -144,9 +165,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="debugproc.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="fade.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="input.h">
@@ -174,9 +192,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="xfile.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="edit.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="collision.h">
@@ -221,9 +236,6 @@
     <ClInclude Include="object_next_step.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="fade_normal.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="stage_manager.h">
       <Filter>ヘッダー ファイル\stage</Filter>
     </ClInclude>
@@ -232,6 +244,21 @@
     </ClInclude>
     <ClInclude Include="lock_door.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="edit.h">
+      <Filter>ヘッダー ファイル\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="editor.h">
+      <Filter>ヘッダー ファイル\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="fade.h">
+      <Filter>ヘッダー ファイル\fade</Filter>
+    </ClInclude>
+    <ClInclude Include="fade_normal.h">
+      <Filter>ヘッダー ファイル\fade</Filter>
+    </ClInclude>
+    <ClInclude Include="fade_death.h">
+      <Filter>ヘッダー ファイル\fade</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

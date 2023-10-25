@@ -159,7 +159,9 @@
     <ClCompile Include="collision.cpp" />
     <ClCompile Include="debugproc.cpp" />
     <ClCompile Include="edit.cpp" />
+    <ClCompile Include="editor.cpp" />
     <ClCompile Include="fade.cpp" />
+    <ClCompile Include="fade_death.cpp" />
     <ClCompile Include="fade_normal.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="input.cpp" />
@@ -193,7 +195,9 @@
     <ClInclude Include="collision.h" />
     <ClInclude Include="debugproc.h" />
     <ClInclude Include="edit.h" />
+    <ClInclude Include="editor.h" />
     <ClInclude Include="fade.h" />
+    <ClInclude Include="fade_death.h" />
     <ClInclude Include="fade_normal.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="input.h" />

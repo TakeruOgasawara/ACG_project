@@ -106,6 +106,5 @@ void CLight::Uninit(void)
 //===========================================================================================
 void CLight::Update(void)
 {
-	//CManager::GetDebugProc()->Print("\n[ƒ‰ƒCƒgî•ñ]\n");
 
 }

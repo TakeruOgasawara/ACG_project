@@ -10,7 +10,6 @@
 #include "main.h"
 #include "object.h"
 
-
 //プロトタイプ宣言
 bool CollisionCircleXZAllies(D3DXVECTOR3 *pPos1, D3DXVECTOR3 *pPos2, float fLength1, float fLength2, int MaxCnt);
 bool CollisionAdultWall(D3DXVECTOR3 *pPos, float fWidth);
@@ -20,7 +19,7 @@ bool CollisionCross(void);
 bool CollisionObjectX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *pMove, float size);
 bool CollisionObjectX1(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, bool bJunp, float size);
 
-bool CollisionObjectX(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, float size);
+bool CollisionObjectXType(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, bool bJunp, float size, CObject::TYPE type);
 
 
 #endif

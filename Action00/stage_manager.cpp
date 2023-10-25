@@ -125,5 +125,31 @@ void CStageManager::Update()
 //========================================================================
 void CStageManager::Draw()
 {
-	
+	switch (m_stage)
+	{
+	case STAGE_0:
+		m_pStage0->Draw();
+		break;
+
+	case STAGE_1:
+
+		break;
+
+	case STAGE_2:
+
+		break;
+
+	case STAGE_3:
+
+		break;
+
+	case STAGE_4:
+
+		break;
+
+	default:
+
+		assert(false);
+		break;
+	}
 }

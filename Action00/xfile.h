@@ -40,6 +40,7 @@ public:
 	SXFile* GetAdrress(int nIdx);
 	D3DXVECTOR3 GetMax(int nIdx) { return m_aXFile[nIdx]->vtxMax; }
 	D3DXVECTOR3 GetMin(int nIdx) { return m_aXFile[nIdx]->vtxMin; }
+	char* GetFileName(int nIdx) { return &m_aXFile[nIdx]->aXfileName[0]; }
 	int GetNumAll(void) { return m_nNumAll; }
 
 private:

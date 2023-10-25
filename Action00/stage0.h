@@ -13,9 +13,11 @@
 //前方宣言
 class CPlayer;
 class CCamera;
-class CEdit;
 class CNextStep;
 class CLockDoor;
+
+class CEdit;
+class CEditor;
 
 //タイトルクラス
 class CStage0
@@ -58,7 +60,7 @@ private:	//メンバ変数
 	CNextStep* m_pNextStep;
 
 	bool m_bNext;	//次へ進むか
-	bool m_bLoad;
+	bool m_bLoad;	//初期読み込みフラグ
 };
 
 #endif

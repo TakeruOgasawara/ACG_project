@@ -216,6 +216,9 @@ bool CollisionObjectX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *pMov
 	return bUse;
 }
 
+//===========================================================================================
+// 当たり判定 : CollisionObjectX(位置、過去位置、移動量、ジャンプ、 大きさ)
+//===========================================================================================
 bool CollisionObjectX1(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, bool bJunp, float size)
 {
 	bool bLand = false;	//着地したか

@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include "player.h"
 #include "arrow_around.h"
+#include "object2D.h"
 
 #include "renderer.h"
 #include "manager.h"
@@ -39,6 +40,7 @@ CPlayer::CPlayer(int nPriority)
 	m_pCamera = nullptr;
 	m_pCollision = nullptr;
 	m_pArrowAround = nullptr;
+	m_pObject2D = nullptr;
 	m_bFirstJump = false;
 	m_bSecondJump = false;
 }
@@ -170,10 +172,10 @@ void CPlayer::Update(void)
 	{
 		//移動量を更新(減衰させる)
 		m_move.x += (0.0f - m_move.x) * ATT;
-	}
 
-	//操作
-	InputMove();
+		//操作
+		InputMove();
+	}
 
 	//移動量の代入
 	pos += m_move;
@@ -193,6 +195,7 @@ void CPlayer::Update(void)
 	if (GetScreenPosition().y > 720.0f)
 	{
 		pos.y = 360.0f;
+		m_move.y = 0.0f;
 	}
 
 	//矢印
@@ -237,26 +240,12 @@ void CPlayer::InputMove(void)
 	if (pInputKeyboard->GetPress(DIK_A) == true || pInpuJoyPad->GetJoyStickLX(0) < 0)
 	{//Aキーが押された
 
-		if (m_bSecondJump == false)
-		{
-			m_move.x -= MOVE;
-		}
-		else
-		{
-			m_move.x -= 0.5f;
-		}
+		m_move.x -= MOVE;
 	}
 	if (pInputKeyboard->GetPress(DIK_D) == true || pInpuJoyPad->GetJoyStickLX(0) > 0)
 	{//Dキーが押された
 
-		if (m_bSecondJump == false)
-		{
-			m_move.x += MOVE;
-		}
-		else
-		{
-			m_move.x += 0.5f;
-		}
+		m_move.x += MOVE;	
 	}
 
 	//ジャンプをまとめた関数

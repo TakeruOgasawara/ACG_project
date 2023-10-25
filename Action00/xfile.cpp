@@ -41,10 +41,12 @@ HRESULT CXfile::Load(void)
 	// Å‰‚É“Ç‚İ‚Şxƒtƒ@ƒCƒ‹ˆê——
 	const char *aFileList[MAX_FILE] =
 	{
-		"data\\MODEL\\object\\square.x",
-		"data\\MODEL\\object\\floor00.x",
-		"data\\MODEL\\object\\blockTile00.x",
+		"data\\MODEL\\object\\squareMin.x",
+		"data\\MODEL\\object\\squareMax.x",
+		"data\\MODEL\\object\\blockTileMin.x",
 		"data\\MODEL\\object\\bigTV.x",
+		"data\\MODEL\\object\\fence.x",
+		"data\\MODEL\\object\\lockdoor.x",
 	};
 
 	for (int nCntTex = 0; nCntTex < MAX_TEXTURE; nCntTex++)

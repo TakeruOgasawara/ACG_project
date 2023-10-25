@@ -20,7 +20,7 @@
 static const int MAX_TYPE = 6;
 #define SPEED	(25.0f)
 
-static char* FILENAME = "data\\TXT\\stage\\0.1.txt";		//書き込むステージファイル名
+static char* FILENAME = "data\\TXT\\stage\\0.2.txt";		//書き込むステージファイル名
 
 //オブジェクトファイル名
 const char* c_Obj[MAX_TYPE] =

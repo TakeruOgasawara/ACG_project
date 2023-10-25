@@ -1,7 +1,38 @@
-﻿  stage0.cpp
+﻿  arrow_around.cpp
+  billboard.cpp
+  break_block.cpp
+  camera.cpp
+  collision.cpp
+  debugproc.cpp
+  edit.cpp
+  editor.cpp
+  fade.cpp
+  fade_death.cpp
+  fade_normal.cpp
+  game.cpp
+  light.cpp
+  lock_door.cpp
+  main.cpp
+  manager.cpp
+  object_next_step.cpp
+  object.cpp
+  object2D.cpp
+  object2Danim.cpp
+  コンパイル中...
+  object3D.cpp
+  objectX.cpp
+  pause.cpp
+  player.cpp
+  renderer.cpp
+  result.cpp
+  scene.cpp
+  stage0.cpp
+  stage_manager.cpp
+  texture.cpp
+  title.cpp
+  xfile.cpp
   コード生成しています。
-  4 of 320 functions ( 1.2%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    5 functions had inline decision re-evaluated but remain unchanged
+  Compiler switch has changed, fall back to full compilation.
+  All 355 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   コード生成が終了しました。
   Action00.vcxproj -> C:\Users\student\Desktop\1\ACG_project\Action00\Action00.exe

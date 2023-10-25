@@ -40,14 +40,6 @@ public:
 	void Update();
 	void Draw();
 
-private:	//ƒƒ“ƒoŠÖ”
-	void Stage0(void);
-	/*void Stage1(void);
-	void Stage2(void);
-	void Stage3(void);
-	void Stage4(void);
-	void Stage5(void);*/
-
 private:	//ƒƒ“ƒo•Ï”
 	static CStageManager* m_pStageManager;
 

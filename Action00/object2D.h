@@ -34,7 +34,7 @@ public:
 	void SetPosition(D3DXVECTOR3 pos);
 	void SetRotation(D3DXVECTOR3 rot);
 	void SetColor(D3DXCOLOR col);
-	void SetSize_center(float fWidth, float fHeight);
+	void SetSizeCenter(float fWidth, float fHeight);
 	void SetSize_lefteEnd(float fWidth, float fHeight);
 	void SetSizeLength(float fWidth, float fHeight);
 

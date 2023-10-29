@@ -16,6 +16,9 @@ class CPlayer;
 class CMeshWall;
 class CObjectX;
 class CBreakBlock;
+class CDamageBlock;
+class CTrapScissors;
+class CNextStep;
 
 //マクロ定義
 #define MAX_OBJECT		(5000)
@@ -35,7 +38,9 @@ public:			//構造体・列挙型用のpublic
 		TYPE_OBJECTX,		//オブジェクトX
 		TYPE_NEXTSTEP,		//
 		TYPE_LOCKDOOR,		//
-		TYPE_BREAKBLOCK,
+		TYPE_BREAKBLOCK,	//壊れるブロック
+		TYPE_DAMAGEBLOCK,	//ダメージブロック
+		TYPE_TRAPSCISSORS, //トラばさみ
 		TYPE_MAX
 	} TYPE;
 
@@ -53,11 +58,10 @@ public:			//メンバ関数用のpublic
 	virtual void Draw(void) = 0;	//描画
 
 	static void ReleaseAll(void);	//全オブジェクトの破棄
-	static void ParticularRelease(TYPE type);	//特定のオブジェクトの破棄
 	static void UpdateAll(void);	//全オブジェクトの更新
 	static void DrawAll(void);	//全オブジェクトの描画
 
-	static void ReleaseAll_specified(TYPE type);
+	static void ReleaseAllSpecified(TYPE type);
 
 	//******************************************
 	// 設定用メンバ関数
@@ -77,6 +81,9 @@ public:			//メンバ関数用のpublic
 	virtual CMeshWall *GetMeshWall(void) { return nullptr; }//メッシュウォールの取得
 	virtual CObjectX *GetObjectX(void) { return nullptr; }	//オブジェXの取得
 	virtual CBreakBlock* GetBreakBlock(void) { return nullptr; }	//壊れるブロックの取得
+	virtual CDamageBlock* GetDamageBlock(void) { return nullptr; }	//ダメージブロック
+	virtual CNextStep* GetNextStep(void) { return nullptr; }
+	virtual CTrapScissors* GetTrapScissors(void) { return nullptr; }
 	static CObject *GetCObject(int nPriority, int nIdx);	//オブジェクトの取得
 	static int GetNumAll(void) { return m_nNumAll; }	//オブジェクト総数の取得
 	TYPE GetType(void) { return m_type; }	//種類の取得

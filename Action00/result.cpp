@@ -55,7 +55,7 @@ HRESULT CResult::Init()
 
 	m_pObject2D = CObject2D::Create(3);
 
-	m_pObject2D->SetSize_center(640.0f, 360.0f);
+	m_pObject2D->SetSizeCenter(640.0f, 360.0f);
 
 	m_pObject2D->BindTexture(m_nTextureIdx);
 
@@ -80,7 +80,7 @@ void CResult::Update()
 
 	if (pInputKey->GetTrigger(DIK_RETURN) || pJoyPad->GetTrigger(pJoyPad->BUTTON_A, 0))
 	{
-		CManager::GetInstance()->GetFade()->Set(MODE_TITLE);
+		CManager::GetInstance()->GetFade()->SetMode(MODE_TITLE);
 	}
 
 	CScene::Update();

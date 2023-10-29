@@ -7,6 +7,9 @@
 #include "stage_manager.h"
 #include <stdio.h>
 #include <assert.h>
+#include "manager.h"
+#include "fade.h"
+#include "scene.h"
 
 #include "game.h"
 #include "object_next_step.h"
@@ -31,6 +34,7 @@ CStageManager::CStageManager()
 	nProgress = 0;
 
 	m_pStage0 = nullptr;
+	m_bEnd = false;
 }
 
 //========================================================================
@@ -44,21 +48,49 @@ CStageManager::~CStageManager()
 //========================================================================
 // ƒVƒ“ƒOƒ‹ƒgƒ“
 //========================================================================
-CStageManager* CStageManager::GetInstance(void)
+//CStageManager* CStageManager::GetInstance(void)
+//{
+//	if (m_pStageManager == nullptr)
+//	{//null‚¾‚Á‚½ê‡
+//
+//		m_pStageManager = new CStageManager;
+//
+//		m_pStageManager->Init();
+//
+//		return m_pStageManager;
+//	}
+//	else
+//	{
+//		return m_pStageManager;
+//	}
+//}
+
+
+//========================================================================
+// ¶¬
+//========================================================================
+CStageManager* CStageManager::Create(void)
 {
-	if (m_pStageManager == nullptr)
-	{//null‚¾‚Á‚½ê‡
+	CStageManager* pStageManager = nullptr;
 
-		m_pStageManager = new CStageManager;
-
-		m_pStageManager->Init();
-
-		return m_pStageManager;
-	}
-	else
+	if (pStageManager == nullptr)
 	{
-		return m_pStageManager;
+		pStageManager = new CStageManager;
+
+		if (pStageManager != nullptr)
+		{
+			//‰Šú‰»ˆ—
+			pStageManager->Init();
+
+			return pStageManager;
+		}
+		else
+		{
+			return nullptr;
+		}
 	}
+
+	return pStageManager;
 }
 
 //========================================================================
@@ -68,7 +100,7 @@ HRESULT CStageManager::Init()
 {
 	m_stage = STAGE_0;
 
-	m_pStage0 = CStage0::GetInstance();
+	m_pStage0 = CStage0::Create();
 
 	return S_OK;
 }
@@ -114,9 +146,18 @@ void CStageManager::Update()
 		break;
 
 	default:
-
 		assert(false);
 		break;
+	}
+
+	if (m_bEnd == false)
+	{
+		if (m_pStage0->GetArea() == m_pStage0->AREA_1 && m_pStage0->GetAreaEnd() == true)
+		{
+			CManager::GetInstance()->GetFade()->SetMode(CScene::MODE_RESULT);
+
+			m_bEnd = true;
+		}
 	}
 }
 
@@ -125,31 +166,5 @@ void CStageManager::Update()
 //========================================================================
 void CStageManager::Draw()
 {
-	switch (m_stage)
-	{
-	case STAGE_0:
-		m_pStage0->Draw();
-		break;
 
-	case STAGE_1:
-
-		break;
-
-	case STAGE_2:
-
-		break;
-
-	case STAGE_3:
-
-		break;
-
-	case STAGE_4:
-
-		break;
-
-	default:
-
-		assert(false);
-		break;
-	}
 }

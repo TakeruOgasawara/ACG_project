@@ -5,15 +5,23 @@
 //
 //===========================================================================================
 #include <stdio.h>
+#include <assert.h>
 #include "player.h"
 #include "arrow_around.h"
 #include "object2D.h"
+#include "objectX.h"
+
+#include "break_block.h"
+#include "damage_block .h"
+#include "object_next_step.h"
+#include "trap_scissors.h"
 
 #include "renderer.h"
 #include "manager.h"
 #include "input.h"
 #include "debugproc.h"
 #include "collision.h"
+#include "fade_death.h"
 
 //マクロ定義
 #define SIZE			(D3DXVECTOR2(5.0f, 10.0f))
@@ -21,6 +29,9 @@
 #define MOVE			(2.5f)			//移動量
 #define ATT				(0.3f)			//減衰
 #define GRAVITY			(1.0f)			//重力
+#define LIFE			(1)				//体力
+#define JUMPEND			(10)
+
 
 //矢印の位置
 #define ARROW_POS		(70.0f)
@@ -37,11 +48,14 @@ CPlayer::CPlayer(int nPriority)
 	m_posOld = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_state = STATE_NORMAL;
+	m_nLife = 0;
+	m_nNormalJumpCount = 0;
+	m_nSecondJumpCount = 0;
 	m_pCamera = nullptr;
 	m_pCollision = nullptr;
 	m_pArrowAround = nullptr;
 	m_pObject2D = nullptr;
-	m_bFirstJump = false;
+	m_bNormalJump = false;
 	m_bSecondJump = false;
 }
 
@@ -69,6 +83,8 @@ CPlayer * CPlayer::Create(D3DXVECTOR3 pos)
 			pPlayer->Init();
 
 			pPlayer->SetPosition(pos);
+
+			pPlayer->SetType(CObject::TYPE_PLAYER);
 
 			return pPlayer;
 		}
@@ -103,6 +119,8 @@ CPlayer *CPlayer::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 			//向き設定
 			pPlayer->SetRotation(rot);
 
+			pPlayer->SetType(CObject::TYPE_PLAYER);
+
 			return pPlayer;
 		}
 		else
@@ -123,6 +141,8 @@ HRESULT CPlayer::Init(void)
 
 	CObject::SetType(CObject::TYPE_PLAYER);
 
+	m_nLife = LIFE;
+
 	// ビルボード(プレイヤー本体
 	CBillboard::Init();
  	SetSize(D3DXVECTOR2(SIZE.x, SIZE.y));
@@ -132,7 +152,6 @@ HRESULT CPlayer::Init(void)
 	// 二回目のジャンプ方向を決める矢印
 	m_pArrowAround = CArrowAround::Create();	//生成
 	m_pArrowAround->BindTexture("data\\TEXTURE\\game\\arrow1.png");
-	//m_pArrowAround->SetSize(D3DXVECTOR2(10.0f, 20.0f));
 	m_pArrowAround->SetPosition(D3DXVECTOR3(GetPosition().x, GetPosition().y + 50.0f, 0.0f));
 
 	return S_OK;
@@ -145,13 +164,11 @@ void CPlayer::Uninit(void)
 {
 	if (m_pArrowAround != nullptr)
 	{
+		m_pArrowAround->Uninit();
 		m_pArrowAround = nullptr;
 	}
 
 	CBillboard::Uninit();
-
-	//自分自身の破棄
-	Release();
 }
 
 //===========================================================================================
@@ -165,11 +182,16 @@ void CPlayer::Update(void)
 	//過去位置の保存
 	m_posOld = pos;
 
-	//重力
-	m_move.y -= GRAVITY;
+	if (m_state == STATE_DEATH)
+	{//死亡状態の場合
+		return;
+	}
 
 	if (m_bSecondJump == false)
 	{
+		//重力
+		m_move.y -= GRAVITY;
+
 		//移動量を更新(減衰させる)
 		m_move.x += (0.0f - m_move.x) * ATT;
 
@@ -177,25 +199,53 @@ void CPlayer::Update(void)
 		InputMove();
 	}
 
+	//ジャンプをまとめた関数
+	NormalJump();
+
 	//移動量の代入
 	pos += m_move;
 
 	//オブジェクトとの当たり判定関数
-	if (CollisionObjectX1(&pos, &m_posOld, &m_move, m_bFirstJump, SIZE.y + 15.0f) == true)
+	if (CollisionObjectX1(&pos, &m_posOld, &m_move, m_bNormalJump, SIZE.y + 15.0f) == true)
 	{
-		m_bFirstJump = false;
+		m_bNormalJump = false;
 		m_bSecondJump = false;
+		//m_nNormalJumpCount = 0;
 	}
 	if (CollisionObjectX1(&pos, &m_posOld, &m_move, m_bSecondJump, SIZE.y + 15.0f) == true)
 	{
-		m_bFirstJump = false;
+		m_bNormalJump = false;
+		m_bSecondJump = false;
+		//m_nNormalJumpCount = 0;
+	}	
+	//崩れるブロックとの当たり判定
+	if (CollisionBreakBlock(&pos, &m_posOld, &m_move, SIZE.y + 15.0f) == true)
+	{
+		m_bNormalJump = false;
 		m_bSecondJump = false;
 	}
-
-	if (GetScreenPosition().y > 720.0f)
+	//ダメージブロックとの当たり判定
+	if (CollisionDamageBlock(pos, SIZE.y + 15.0f) == true)
 	{
-		pos.y = 360.0f;
-		m_move.y = 0.0f;
+		Hit(10);
+		return;
+	}
+	//次との当たり判定
+	if (CollisionNextStep(pos, SIZE.y + 15.0f) == true)
+	{
+		return;
+	}
+	//トラばさみとの当たり判定
+	if (CollisionTrapScissors(pos, SIZE.y + 15.0f) == true)
+	{
+		/*Hit(10);
+		return;*/
+	}
+	//画面外に出た時の判定
+	if (GetScreenPosition().y > SCREEN_HEIGHT)
+	{
+		Hit(10);
+		return;
 	}
 
 	//矢印
@@ -222,10 +272,30 @@ void CPlayer::Draw(void)
 	//ライティングの有効/無効の設定
 	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
-	CBillboard::Draw();
+	if (m_state != STATE_DEATH)
+	{
+		CBillboard::Draw();
+	}
 
 	//ライティングの有効/無効の設定
 	pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
+}
+
+//===========================================================================================
+// ヒット処理
+//===========================================================================================
+void CPlayer::Hit(int nDamage)
+{
+	//体力を減らす
+	m_nLife -= nDamage;
+
+	if (m_nLife < 0 && m_state != STATE_DEATH)
+	{
+		CFadeDeath::Create();
+		m_state = STATE_DEATH;
+		m_nLife = 0;
+		//Release();
+	}
 }
 
 //===========================================================================================
@@ -247,57 +317,56 @@ void CPlayer::InputMove(void)
 
 		m_move.x += MOVE;	
 	}
-
-	//ジャンプをまとめた関数
-	Jump();
 }
 
 //===========================================================================================
-// ジャンプ
+// ノーマルジャンプ
 //===========================================================================================
-void CPlayer::Jump(void)
+void CPlayer::NormalJump(void)
 {
 	CInputKeyboard *pInputKeyboard = CManager::GetInstance()->GetInputKeyboard();
 	CInputJoyPad *pInpuJoyPad = CManager::GetInstance()->GetInputJoyPad();
-	CInputMouse *pInputMouse = CManager::GetInstance()->GetInputMouse();
 
-	if (m_bFirstJump == false && m_bSecondJump == false)
+	if (m_bNormalJump == false && m_bSecondJump == false)
 	{//ジャンプしていない状態の場合
-		if (pInputKeyboard->GetTrigger(DIK_SPACE) == true || pInpuJoyPad->GetTrigger(pInpuJoyPad->BUTTON_RB, 0) == true)
+
+		if (pInputKeyboard->GetPress(DIK_SPACE) == true || pInpuJoyPad->GetPress(pInpuJoyPad->BUTTON_RB, 0) == true)
 		{//キーが押された
 
 			//移動量の初期化
-			m_move.y = 0.0f;
-			m_move.x = 0.0f;
+			//m_move.y = 0.0f;
 
-			m_move.y += FILSTJUMP_POWER;	//数値分上へ
+			/*m_nNormalJumpCount++;
 
-			m_bFirstJump = true;	//一回目のジャンプをしたことにする
+			if (m_nNormalJumpCount < 10)
+			{*/
+				m_move.y += FILSTJUMP_POWER;
+
+				m_bNormalJump = true;
+			/*}
+			else
+			{
+				m_nNormalJumpCount = 0;
+			}*/
 		}
+	/*	else
+		{
+			m_nNormalJumpCount = 0;
+		}*/
 	}
 
-	//プレイヤーのスクリーン座標を取得
-	D3DXVECTOR3 screemPos = GetScreenPosition();
+	//ブーストジャンプ
+	SecondJump();
 
-	if (pInputMouse->GetTrigger(CInputMouse::MOUSE_LEFT))
-	{//キーが押された
+	if (m_bSecondJump == true)
+	{
+		m_nSecondJumpCount++;
 
-		//プレイヤーからマウスカーソルの角度を算出
-		float fAngle = atan2f((screemPos.x - pInputMouse->GetPoint().x) + D3DX_PI, (screemPos.y - pInputMouse->GetPoint().y) + D3DX_PI);
-
-		//移動量の初期化
-		m_move.y = 0.0f;
-		m_move.x = 0.0f;
-
-		//移動量に加える
-		m_move += 
-		{ 
-			sinf(fAngle + D3DX_PI) * SECONDJUMP_POWER,
-			cosf(fAngle) * SECONDJUMP_POWER,
-			0.0f 
-		};
-
-		m_bSecondJump = true;	//二回目のジャンプをしたことにする
+		if (m_nSecondJumpCount > JUMPEND)
+		{
+			m_bSecondJump = false;
+			m_nSecondJumpCount = 0;
+		}
 	}
 
 	if (pInpuJoyPad->GetJoyStickLX(0) < 0)
@@ -311,6 +380,45 @@ void CPlayer::Jump(void)
 		//移動量の初期化
 		m_move.y = 0.0f;
 		m_move.x = 0.0f;
+	}
+}
+
+//===========================================================================================
+// ジャンプ
+//===========================================================================================
+void CPlayer::SecondJump(void)
+{
+	CInputKeyboard* pInputKeyboard = CManager::GetInstance()->GetInputKeyboard();
+	CInputJoyPad* pInpuJoyPad = CManager::GetInstance()->GetInputJoyPad();
+	CInputMouse* pInputMouse = CManager::GetInstance()->GetInputMouse();
+
+	//プレイヤーのスクリーン座標を取得
+	D3DXVECTOR3 screemPos = GetScreenPosition();
+
+	if (m_bSecondJump == false)
+	{//ジャンプしていない状態の場合
+
+		if (pInputMouse->GetTrigger(CInputMouse::MOUSE_LEFT))
+		{//キーが押された
+
+			//プレイヤーからマウスカーソルの角度を算出
+			float fAngle = atan2f((screemPos.x - pInputMouse->GetPoint().x) + D3DX_PI, (screemPos.y - pInputMouse->GetPoint().y) + D3DX_PI);
+
+			//移動量の初期化
+			m_move.y = 0.0f;
+			m_move.x = 0.0f;
+
+			//移動量に加える
+			m_move +=
+			{
+				sinf(fAngle + D3DX_PI)* SECONDJUMP_POWER,
+					cosf(fAngle)* SECONDJUMP_POWER,
+					0.0f
+			};
+
+			m_bNormalJump = true;
+			m_bSecondJump = true;	//二回目のジャンプをしたことにする
+		}
 	}
 }
 
@@ -368,4 +476,163 @@ D3DXVECTOR3 CPlayer::GetScreenPosition(void)
 	D3DXVec3Project(&screenPos, &playerPos, &viewport, &mtxProjection, &mtxView, &mtxWorld);
 
 	return screenPos;
+}
+
+//===========================================================================================
+// 崩れるブロックとの当たり判定
+//===========================================================================================
+bool CPlayer::CollisionBreakBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, float size)
+{
+	bool bLand = false;	//着地したか
+
+	for (int nCntPriority = 0; nCntPriority < NUM_PRIORITY; nCntPriority++)
+	{
+		for (int nCntObj = 0; nCntObj < MAX_OBJECT; nCntObj++)
+		{
+			CObject* pObject = CObject::GetCObject(nCntPriority, nCntObj);
+
+			if (pObject == nullptr)
+			{
+				continue;
+			}
+
+			if (pObject->GetType() != pObject->TYPE_BREAKBLOCK)
+			{
+				continue;
+			}
+
+			CBreakBlock* pBreakBlock = pObject->GetBreakBlock();	//子クラス、壊れるブロックの情報取得
+
+			if (pBreakBlock == nullptr)
+			{
+				continue;
+			}
+
+			if (pBreakBlock->Collision(pPos, pPosOld, pMove, size) == true)
+			{
+				bLand = true;
+			}
+		}
+	}
+	return bLand;	//bLandの結果を関数に返す
+}
+
+//===========================================================================================
+// ダメージブロックとの当たり判定
+//===========================================================================================
+bool CPlayer::CollisionDamageBlock(D3DXVECTOR3 pos, float size)
+{
+	bool bTouch = false;	//接触したか
+
+	for (int nCntPriority = 0; nCntPriority < NUM_PRIORITY; nCntPriority++)
+	{
+		for (int nCntObj = 0; nCntObj < MAX_OBJECT; nCntObj++)
+		{
+			CObject* pObject = CObject::GetCObject(nCntPriority, nCntObj);
+
+			if (pObject == nullptr)
+			{
+				continue;
+			}
+
+			if (pObject->GetType() != pObject->TYPE_DAMAGEBLOCK)
+			{
+				continue;
+			}
+
+			CDamageBlock* pDamageBlock = pObject->GetDamageBlock();	//子クラス、壊れるブロックの情報取得
+
+			if (pDamageBlock == nullptr)
+			{
+				continue;
+			}
+
+			if (pDamageBlock->Collision(pos, size) == true)
+			{
+				bTouch = true;
+			}
+		}
+	}
+
+	return bTouch;			//bLandの結果を関数に返す
+}
+
+//===========================================================================================
+// ステージ切り替えの当たり判定
+//===========================================================================================
+bool CPlayer::CollisionNextStep(D3DXVECTOR3 pos, float size)
+{
+	bool bTouch = false;	//接触したか
+
+	for (int nCntPriority = 0; nCntPriority < NUM_PRIORITY; nCntPriority++)
+	{
+		for (int nCntObj = 0; nCntObj < MAX_OBJECT; nCntObj++)
+		{
+			CObject* pObject = CObject::GetCObject(nCntPriority, nCntObj);
+
+			if (pObject == nullptr)
+			{
+				continue;
+			}
+
+			if (pObject->GetType() != pObject->TYPE_NEXTSTEP)
+			{
+				continue;
+			}
+
+			CNextStep* pNextStep = pObject->GetNextStep();	//子クラス、壊れるブロックの情報取得
+
+			if (pNextStep == nullptr)
+			{
+				continue;
+			}
+
+			if (pNextStep->Collision(pos, size) == true)
+			{
+				bTouch = true;
+			}
+		}
+	}
+
+	return bTouch;			//bLandの結果を関数に返す
+}
+
+//===========================================================================================
+// トラばさみ
+//===========================================================================================
+bool CPlayer::CollisionTrapScissors(D3DXVECTOR3 pos, float size)
+{
+	bool bTouch = false;	//接触したか
+
+	for (int nCntPriority = 0; nCntPriority < NUM_PRIORITY; nCntPriority++)
+	{
+		for (int nCntObj = 0; nCntObj < MAX_OBJECT; nCntObj++)
+		{
+			CObject* pObject = CObject::GetCObject(nCntPriority, nCntObj);
+
+			if (pObject == nullptr)
+			{
+				continue;
+			}
+
+			if (pObject->GetType() != pObject->TYPE_TRAPSCISSORS)
+			{
+				continue;
+			}
+
+			CTrapScissors* pTrapScissors = pObject->GetTrapScissors();	//子クラス、壊れるブロックの情報取得
+
+			if (pTrapScissors == nullptr)
+			{
+				continue;
+			}
+
+			if (pTrapScissors->Collision(pos, size) == true)
+			{
+				bTouch = true;
+			}
+		}
+	}
+
+	return bTouch;			//bLandの結果を関数に返す
 }

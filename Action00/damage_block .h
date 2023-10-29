@@ -1,43 +1,23 @@
 //===============================================================================
 //
-// [break_block.h]
+// [damage_block.h]
 // Author : Takeru Ogasawara
 //
 //===============================================================================
-#ifndef _BREAK_BLOCK_H_	//このマクロ定義がされていなかったら
-#define _BREAK_BLOCK_H_	//2重インクルード防止のマクロを定義
+#ifndef _DAMAGE_BLOCK_H_	//このマクロ定義がされていなかったら
+#define _DAMAGE_BLOCK_H_	//2重インクルード防止のマクロを定義
 
 #include "main.h"
-#include "object.h"
-
-//前方宣言
-class CObjectX;
+#include "objectX.h"
 
 //プレイヤークラス
-class CBreakBlock : public CObject
+class CDamageBlock : public CObjectX
 {
-private:
-
-	enum TYPE
-	{
-		TYPE_BLOCK = 0,
-		TYPE_FRAME,
-		TYPE_MAX
-	};
-
-	enum STATE
-	{
-		STATE_NONE = 0,	//なし
-		STATE_BREAK,	//破壊
-		STATE_RECREATE,	//再生
-		STATE_MAX
-	};
-
 public:
-	CBreakBlock(int nPriority = 4);
-	~CBreakBlock();
+	CDamageBlock();
+	~CDamageBlock();
 
-	static CBreakBlock* Create(D3DXVECTOR3 pos);
+	static CDamageBlock* Create(D3DXVECTOR3 pos);
 
 	HRESULT Init(void);
 	HRESULT Init(D3DXVECTOR3 pos);
@@ -52,20 +32,14 @@ public:
 	//取得用
 	D3DXVECTOR3 GetPosition(void) { return m_pos; }	//位置取得
 	D3DXVECTOR3 GetRotation(void) { return m_rot; }	//向き取得
+	CDamageBlock* GetDamageBlock(void) { return this; }
+
+	bool Collision(D3DXVECTOR3 pos, float size);
 
 private:
-	void Break(void);
-	void ReCeate(void);
-	bool Collision(void);
 
-	CObjectX* m_pObjectX[TYPE_MAX];
 	D3DXVECTOR3 m_pos;	//位置
-	D3DXVECTOR3 m_SavePos;
 	D3DXVECTOR3 m_rot;	//向き
-	STATE m_state;
-	int m_nDestroyCnt;	//消滅までのカウント
-	int m_nReCreateCnt;
-	bool m_bBreak;	//破壊フラグ
 };
 
 #endif

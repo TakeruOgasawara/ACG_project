@@ -30,6 +30,7 @@ CTitle::CTitle()
 
 	m_nTextureIdx = 0;
 	m_nSelect = 0;
+	m_menu = MENU_START;
 }
 
 //===========================================================================================
@@ -49,7 +50,7 @@ HRESULT CTitle::Init()
 
 	pName2D = CObject2D::Create(3);
 	pName2D->SetPosition(D3DXVECTOR3(640.0f, 200.0f, 0.0f));
-	pName2D->SetSize_center(300.0f, 60.0f);
+	pName2D->SetSizeCenter(300.0f, 60.0f);
 	pName2D->BindTexture(pTexture->Regist("data\\TEXTURE\\TITLE\\name.png"));
 
 	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
@@ -61,14 +62,14 @@ HRESULT CTitle::Init()
 		
 		case MENU_START:
 			m_apMenu[nCnt].pMenu2D->SetPosition(D3DXVECTOR3(640.0f, 400.0f, 0.0f));
-			m_apMenu[nCnt].pMenu2D->SetSize_center(30.0f, 20.0f);
+			m_apMenu[nCnt].pMenu2D->SetSizeCenter(30.0f, 20.0f);
 			m_apMenu[nCnt].pMenu2D->SetColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
 			m_apMenu[nCnt].pMenu2D->BindTexture(pTexture->Regist("data\\TEXTURE\\title\\start.png"));
 			break;
 
 		case MENU_END:
 			m_apMenu[nCnt].pMenu2D->SetPosition(D3DXVECTOR3(640.0f, 450.0f, 0.0f));
-			m_apMenu[nCnt].pMenu2D->SetSize_center(30.0f, 20.0f);
+			m_apMenu[nCnt].pMenu2D->SetSizeCenter(30.0f, 20.0f);
 			m_apMenu[nCnt].pMenu2D->SetColor(D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
 			m_apMenu[nCnt].pMenu2D->BindTexture(pTexture->Regist("data\\TEXTURE\\title\\end.png"));
 			break;
@@ -126,7 +127,7 @@ void CTitle::Update()
 		switch (m_menu)
 		{
 		case CTitle::MENU_START:
-			CManager::GetInstance()->GetFade()->Set(MODE_GAME);
+			CManager::GetInstance()->GetFade()->SetMode(MODE_GAME);
 			break;
 
 		case CTitle::MENU_END:

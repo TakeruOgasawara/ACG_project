@@ -80,8 +80,6 @@ void CNextStep::Update(void)
 {
 	D3DXVECTOR3 pos = GetPosition();
 
-	TachObject(pos);
-
 	//デバッグ表示
 	CManager::GetInstance()->GetDebugProc()->Print("\n\n【NextStepオブジェクト情報】");
 	CManager::GetInstance()->GetDebugProc()->Print("\n位置： x:%f y:%f z:%f\n", pos.x, pos.y, pos.z);
@@ -98,33 +96,25 @@ void CNextStep::Draw(void)
 //===========================================================================================
 // 触れた判定
 //===========================================================================================
-bool CNextStep::TachObject(D3DXVECTOR3 pos)
+bool CNextStep::Collision(D3DXVECTOR3 pos, float size)
 {
 	m_bTach = false;
-	CPlayer* pPlayer = CGame::GetPlayer();
-
-	if (pPlayer == nullptr)
-	{
-		return false;
-	}
-
-	D3DXVECTOR3 playerPos = pPlayer->GetPosition();
-	D3DXVECTOR3 playerPosOld = pPlayer->GetPosisionOld();
-	float size = 10.0f;
+	
+	D3DXVECTOR3 ObjectPos = GetPosition();
 	D3DXVECTOR3 vtxMax = GetVtxMax();
 	D3DXVECTOR3 vtxMin = GetVtxMin();
 
-	if (playerPos.y + size > pos.y + vtxMin.y && playerPos.y - size < pos.y + vtxMax.y)
+	if (pos.y + size > ObjectPos.y + vtxMin.y && pos.y - size < ObjectPos.y + vtxMax.y)
 	{//オブジェクトの幅(y)に入った場合
-		if (playerPos.x + size > pos.x + vtxMin.x &&
-			playerPos.x - size < pos.x + vtxMax.x)
+		if (pos.x + size > ObjectPos.x + vtxMin.x &&
+			pos.x - size < ObjectPos.x + vtxMax.x)
 		{//左右の当たり幅の指定
-			if (playerPos.z + size >= pos.z + vtxMin.z)
+			if (pos.z + size >= ObjectPos.z + vtxMin.z)
 			{//前の当たり判定
 				m_bTach = true;
 				CFadeNormal::Create();
 			}
-			if (playerPos.z - size <= pos.z + vtxMax.z)
+			if (pos.z - size <= ObjectPos.z + vtxMax.z)
 			{//後の当たり判定
 				m_bTach = true;
 				CFadeNormal::Create();

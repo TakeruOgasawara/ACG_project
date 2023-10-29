@@ -16,6 +16,7 @@ class CPause;
 class CSound;
 class CEdit;
 class CXfile;
+class CTime;
 
 class CStageManager;
 class CPlayer;
@@ -33,8 +34,10 @@ public:
 	void Draw();
 
 	static CPlayer* GetPlayer(void) { return m_pPlayer; }
+	static void SetPlayerNULL(void) { m_pPlayer = nullptr; }
 	CPause* GetPause(void) { return m_pPause; }
 	CXfile* GetXfile(void) { return m_pXfile; }
+	CTime* GetTime(void) { return m_pTime; }
 
 private:
 	CUI_Manager* m_pUIManager;
@@ -43,6 +46,7 @@ private:
 	CSound* m_pSound;
 	static CPlayer* m_pPlayer;
 	CStageManager* m_pStageManager;
+	CTime* m_pTime;
 
 	bool m_bEdit;
 };

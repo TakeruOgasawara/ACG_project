@@ -24,6 +24,8 @@ class CTexture;
 class CObjectX;
 class CScene;
 class CXfile;
+class CPlayer;
+class CSlow;
 
 class CTitle;
 class CGame;
@@ -57,6 +59,9 @@ public:
 	CScene* GetScene(void) { return m_pScene; }
 	CFade* GetFade(void) { return m_pFade; }
 	CXfile* GetXfile(void) { return m_pXfile; }
+	CSlow* GetSlow(void) { return m_pSlow; }
+
+	virtual CPlayer* GetPlayer(void) { return nullptr; }
 
 	void SetMode(CScene::MODE mode);
 	CScene::MODE GetMode(void) { return m_pScene->GetMode(); }
@@ -73,6 +78,7 @@ private:
 	CCamera * m_pCamera;
 	CLight * m_pLight;
 	CTexture* m_pTexture;
+	CSlow* m_pSlow;
 	bool m_bUse;
 
 	CTitle* m_pTitle;

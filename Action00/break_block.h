@@ -12,11 +12,12 @@
 
 //前方宣言
 class CObjectX;
+class CPlayer;
 
 //プレイヤークラス
 class CBreakBlock : public CObject
 {
-private:
+public:
 
 	enum TYPE
 	{
@@ -48,15 +49,18 @@ public:
 	//設定用
 	void SetPosition(D3DXVECTOR3 pos) { m_pos = pos; }	//位置設定
 	void SetRotation(D3DXVECTOR3 rot) { m_rot = rot; }	//向き設定
+	void SetState(STATE state) { m_state = state; }
 
 	//取得用
 	D3DXVECTOR3 GetPosition(void) { return m_pos; }	//位置取得
 	D3DXVECTOR3 GetRotation(void) { return m_rot; }	//向き取得
+	CBreakBlock* GetBreakBlock(void) { return this; }
+
+	bool Collision(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, float size);
 
 private:
 	void Break(void);
 	void ReCeate(void);
-	bool Collision(void);
 
 	CObjectX* m_pObjectX[TYPE_MAX];
 	D3DXVECTOR3 m_pos;	//位置

@@ -57,7 +57,7 @@ HRESULT CFadeNormal::Init(void)
 
 	//位置・サイズ・色の設定
 	SetPosition(D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f));
-	SetSize_center(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f);
+	SetSizeCenter(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f);
 	//SetColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
 
 	SetState(STATE_IN);
@@ -122,7 +122,7 @@ void CFadeNormal::Draw(void)
 //========================================================================
 // 設定処理
 //========================================================================
-//void CFadeNormal::Set(CScene::MODE modeNext)
+//void CFadeNormal::SetMode(CScene::MODE modeNext)
 //{
 //	if (m_state != STATE_OUT)
 //	{

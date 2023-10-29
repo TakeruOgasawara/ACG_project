@@ -15,17 +15,14 @@
 #include "object_next_step.h"
 #include "object.h"
 #include "break_block.h"
+#include "damage_block .h"
+#include "trap_scissors.h"
 
 #include "camera.h"
 #include "player.h"
 #include "edit.h"
 #include "objectX.h"
 #include "input.h"
-
-#include "fade_death.h"
-
-// 定数宣言
-const int nNowArea = 2;
 
 //静的メンバ変数宣言
 CStage0* CStage0::m_pStage0 = nullptr;
@@ -43,13 +40,14 @@ const char* c_stage0FileList[3] =
 //========================================================================
 CStage0::CStage0()
 {
-	m_area = AREA_2;
+	m_area = AREA_0;
 	m_bLoad = false;
 	m_pCamera = nullptr;
 	m_pPlayer = nullptr;
 	m_pEdit = nullptr;
 	m_pNextStep = nullptr;
 	m_bNext = false;
+	m_bAreaEnd = false;
 }
 
 //========================================================================
@@ -63,21 +61,28 @@ CStage0::~CStage0()
 //========================================================================
 // シングルトン
 //========================================================================
-CStage0* CStage0::GetInstance(void)
+CStage0* CStage0::Create(void)
 {
-	if (m_pStage0 == nullptr)
-	{//nullだった場合
+	CStage0* pStage0 = nullptr;
 
-		m_pStage0 = new CStage0;
-
-		m_pStage0->Init();
-
-		return m_pStage0;
-	}
-	else
+	if (pStage0 == nullptr)
 	{
-		return m_pStage0;
+		pStage0 = new CStage0;
+
+		if (pStage0 != nullptr)
+		{
+			//初期化処理
+			pStage0->Init();
+
+			return pStage0;
+		}
+		else
+		{
+			return nullptr;
+		}
 	}
+
+	return pStage0;
 }
 
 //========================================================================
@@ -88,13 +93,14 @@ HRESULT CStage0::Init()
 	//情報の取得
 	m_pCamera = CManager::GetInstance()->GetCamera();
 
-	m_pPlayer = CGame::GetPlayer();
+	//プレイヤー生成
+	m_pPlayer = CPlayer::Create(D3DXVECTOR3(-400.0f, 25.0f, 0.0f));
 
+	//遷移オブジェクト生成
 	m_pNextStep = CNextStep::Create();
 
 	//テキストの読み込み
 	m_pEdit = CEdit::Create();
-	m_pEdit->CEdit::Load(c_stage0FileList[nNowArea]);
 
 	m_bLoad = true;
 
@@ -116,7 +122,7 @@ void CStage0::Uninit()
 	}
 	if (m_pEdit != nullptr)
 	{
-		delete m_pEdit;
+		//delete m_pEdit;
 		m_pEdit = nullptr;
 	}
 }
@@ -126,17 +132,37 @@ void CStage0::Uninit()
 //========================================================================
 void CStage0::Update()
 {
+	if (m_bAreaEnd == true)
+	{
+		return;
+	}
+
 	CInputKeyboard* pInputKeyboard = CManager::GetInstance()->GetInputKeyboard();
 
-	if (pInputKeyboard->GetTrigger(DIK_R) == true)
+	if (m_pPlayer == nullptr)
 	{
-		m_bLoad = true;
-		CFadeDeath::Create();
+		if (pInputKeyboard->GetTrigger(DIK_SPACE) == true)
+		{
+			m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
+			m_bLoad = true;
+		}
+		else
+		{
+			return;
+		}
 	}
 
 	if (m_pEdit != nullptr)
 	{
 		m_pEdit->Update();
+	}
+
+	if (m_pPlayer->GetState() == CPlayer::STATE_DEATH)
+	{
+		m_pPlayer->Uninit();
+		m_pPlayer = nullptr;
+		return;
 	}
 
 	switch (m_area)
@@ -154,7 +180,7 @@ void CStage0::Update()
 		break;
 
 	default:
-		assert(false);
+		//assert(false);
 		break;
 	}
 }
@@ -171,12 +197,20 @@ void CStage0::Draw()
 }
 
 //========================================================================
-// エリア0
+// エリア0 (チュートリアル)
 //========================================================================
 void CStage0::Area0(void)
 {
 	if (m_bLoad == true)
 	{
+		//特定のオブジェクトの削除
+		CObject::ReleaseAllSpecified(CObject::TYPE_OBJECTX);
+		CObject::ReleaseAllSpecified(CObject::TYPE_BREAKBLOCK);
+		CObject::ReleaseAllSpecified(CObject::TYPE_DAMAGEBLOCK);
+
+		//ステージ読み込み
+		m_pEdit->CEdit::Load(c_stage0FileList[AREA_0]);
+
 		//エリアゴールの位置
 		m_pNextStep->SetPosition(D3DXVECTOR3(640.0f, -0.0f, 0.0f));
 
@@ -184,6 +218,8 @@ void CStage0::Area0(void)
 		m_pPlayer->SetPosition(D3DXVECTOR3(-400.0f, 25.0f, 0.0f));
 
 		//カメラの設定
+		m_pCamera->SetPosition_V(D3DXVECTOR3(0.0f, 200.0f, -500.0f));
+		m_pCamera->SetPosition_R(D3DXVECTOR3(0.0f, 200.0f, 0.0f));
 		m_pCamera->SetLength(500.0f);
 		
 		m_bLoad = false;
@@ -193,12 +229,6 @@ void CStage0::Area0(void)
 	{
 		if (m_pNextStep->GetTach() == true && m_bNext == false)
 		{
-			////特定のオブジェクトの削除
-			//CObject::ParticularRelease(CObject::TYPE_OBJECTX);
-
-			////ステージ読み込み
-			//m_pEdit->CEdit::Load(c_stage0FileList[AREA_1]);
-
 			//エリア番号を変更
 			m_area = AREA_1;
 
@@ -212,14 +242,16 @@ void CStage0::Area0(void)
 }
 
 //========================================================================
-// エリア1
+// エリア1 (チュートリアル)
 //========================================================================
 void CStage0::Area1(void)
 {
 	if (m_bLoad == true)
 	{
 		//特定のオブジェクトの削除
-		CObject::ParticularRelease(CObject::TYPE_OBJECTX);
+		CObject::ReleaseAllSpecified(CObject::TYPE_OBJECTX);
+		CObject::ReleaseAllSpecified(CObject::TYPE_BREAKBLOCK);
+		CObject::ReleaseAllSpecified(CObject::TYPE_DAMAGEBLOCK);
 
 		//ステージ読み込み
 		m_pEdit->CEdit::Load(c_stage0FileList[AREA_1]);
@@ -247,43 +279,57 @@ void CStage0::Area1(void)
 		m_pCamera->Follow2D_x_axisDedicated(m_pPlayer->GetPosition());
 	}
 	
-	if (m_pNextStep->GetTach() == true && m_bNext == false)
+	if (m_pNextStep != nullptr)
 	{
-		//特定のオブジェクトの削除
-		CObject::ParticularRelease(CObject::TYPE_OBJECTX);
+		if (m_pNextStep->GetTach() == true && m_bNext == false)
+		{
+			////エリア番号を変更
+			//m_area = AREA_2;
 
-		//ステージの読み込み
-		m_pEdit->CEdit::Load(c_stage0FileList[AREA_1]);
+			////読み込みを開始状態へ
+			//m_bLoad = true;
 
-		//エリア番号を変更
-		m_area = AREA_1;
+			////次へ
+			//m_bNext = true;
 
-		//読み込みを開始状態へ
-		m_bLoad = true;
-
-		//次へ
-		m_bNext = true;
+			m_bAreaEnd = true;
+		}
 	}
 }
 
 //========================================================================
-// エリア2
+// エリア2 (チュートリアル)
 //========================================================================
 void CStage0::Area2(void)
 {
 	if (m_bLoad == true)
 	{
+		//特定のオブジェクトの削除
+		CObject::ReleaseAllSpecified(CObject::TYPE_OBJECTX);
+		CObject::ReleaseAllSpecified(CObject::TYPE_BREAKBLOCK);
+		CObject::ReleaseAllSpecified(CObject::TYPE_DAMAGEBLOCK);
+
+		//ステージの読み込み
+		m_pEdit->CEdit::Load(c_stage0FileList[AREA_2]);
+
 		//エリアゴールの位置
 		m_pNextStep->SetPosition(D3DXVECTOR3(2940.0f, -125.0f, 0.0f));
 
-		//プレイヤーの初期位置
-		m_pPlayer->SetPosition(D3DXVECTOR3(-400.0f, 25.0f, 0.0f));
+		if (m_pPlayer != nullptr)
+		{
+			//プレイヤーの初期位置
+			m_pPlayer->SetPosition(D3DXVECTOR3(-400.0f, 25.0f, 0.0f));
+		}
 
 		//カメラ設定
 		m_pCamera->SetLength(500.0f);
 		m_pCamera->SetHeight(200.0f, 200.0f);
 
-		CBreakBlock::Create(D3DXVECTOR3(-100.0f, 0.0f, 0.0f));
+		//CBreakBlock::Create(D3DXVECTOR3(-100.0f, 50.0f, 0.0f));
+
+		//CDamageBlock::Create(D3DXVECTOR3(50.0f, 300.0f, 0.0f));
+
+		//CTrapScissors::Create(D3DXVECTOR3(0.0f, 20.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 		m_bLoad = false;
 	}
@@ -293,26 +339,25 @@ void CStage0::Area2(void)
 		m_bNext = false;
 	}
 
-	if (m_pPlayer->GetPosition().x >= 0.0f && m_pPlayer->GetPosition().x <= 2300.0f)
+	if (m_pPlayer != nullptr)
 	{
-		m_pCamera->Follow2D_x_axisDedicated(m_pPlayer->GetPosition());
+		if (m_pPlayer->GetPosition().x >= 0.0f && m_pPlayer->GetPosition().x <= 2300.0f)
+		{
+			m_pCamera->Follow2D_x_axisDedicated(m_pPlayer->GetPosition());
+		}
 	}
 
 	if (m_pNextStep->GetTach() == true && m_bNext == false)
 	{
-		//特定のオブジェクトの削除
-		CObject::ParticularRelease(CObject::TYPE_OBJECTX);
+		////エリア番号を変更
+		//m_area = AREA_2;
 
-		//ステージの読み込み
-		m_pEdit->CEdit::Load(c_stage0FileList[AREA_2]);
+		////読み込みを開始状態へ
+		//m_bLoad = true;
 
-		//エリア番号を変更
-		m_area = AREA_2;
+		////次へ
+		//m_bNext = true;
 
-		//読み込みを開始状態へ
-		m_bLoad = true;
-
-		//次へ
-		m_bNext = true;
+		m_bAreaEnd = true;
 	}
 }

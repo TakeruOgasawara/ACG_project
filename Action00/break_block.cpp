@@ -102,6 +102,8 @@ void CBreakBlock::Uninit(void)
 	{
 		if (m_pObjectX[nCnt] != nullptr)
 		{
+			//m_pObjectX[nCnt]->Uninit();
+			//delete m_pObjectX[nCnt];
 			m_pObjectX[nCnt] = nullptr;
 		}
 	}
@@ -130,10 +132,11 @@ void CBreakBlock::Update(void)
 		break;
 	}
 
-	if (Collision() == true)
-	{
-		m_state = STATE_BREAK;
-	}
+	//位置設定
+	D3DXVECTOR3 pos = GetPosition();
+
+	CManager::GetInstance()->GetDebugProc()->Print("\n\n【崩れる情報】");
+	CManager::GetInstance()->GetDebugProc()->Print("\n位置： x:%f y:%f z:%f", pos.x, pos.y, pos.z);
 }
 
 //===========================================================================================
@@ -187,151 +190,69 @@ void CBreakBlock::ReCeate(void)
 //===========================================================================================
 // 当たり判定
 //===========================================================================================
-bool CBreakBlock::Collision(void)
+bool CBreakBlock::Collision(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, float size)
 {
 	bool bLand = false;
-
-	CPlayer* pPlayer = CGame::GetPlayer();
-
-	if (pPlayer == nullptr)
-	{
-		assert(false);
-		return false;
-	}
 
 	if (m_pObjectX[TYPE_BLOCK] == false)
 	{
 		return false;
 	}
 
-	D3DXVECTOR3 playerPos = pPlayer->GetPosition();
-	D3DXVECTOR3 playerPosOld = pPlayer->GetPosisionOld();
-	D3DXVECTOR3 playerMove = pPlayer->GetMovement();
-	bool bFirst = pPlayer->GetFirstJamp();
-	bool bSecond = pPlayer->GetSecondJamp();
-	float size = 25.0f;
-
 	D3DXVECTOR3 pos = m_pObjectX[TYPE_BLOCK]->GetPosition();
 	D3DXVECTOR3 vtxMax = m_pObjectX[TYPE_BLOCK]->GetVtxMax();
 	D3DXVECTOR3 vtxMin = m_pObjectX[TYPE_BLOCK]->GetVtxMin();
 
-	if (bFirst == false || bSecond == false)
-	{
-		//yの当たり判定
-		if (playerPos.z + size > pos.z + vtxMin.z && playerPos.z - size < pos.z + vtxMax.z &&
-			playerPos.x + size > pos.x + vtxMin.x && playerPos.x - size < pos.x + vtxMax.x)
-		{//ブロックの範囲ないの場合
-			if (playerPosOld.y + size <= pos.y + vtxMin.y && playerPos.y + size >= pos.y + vtxMin.y)
-			{//上の当たり判定
-				pPlayer->SetPosition(D3DXVECTOR3(playerPos.x, pos.y + vtxMin.y - size, playerPos.z));
-				pPlayer->SetMoveY(0.0f);
-			}
-			if (playerPosOld.y - size >= pos.y + vtxMax.y && playerPos.y - size <= pos.y + vtxMax.y)
-			{//下の当たり判定
-				playerPos.y = pos.y + vtxMax.y + size;
-
-				pPlayer->SetPosition(D3DXVECTOR3(playerPos.x, playerPos.y, playerPos.z));
-				pPlayer->SetMoveY(0.0f);
-
-				pPlayer->SetFirstJamp(false);
-				pPlayer->SetSecondJamp(false);
-				
-				bLand = true;
-			}
+	//yの当たり判定
+	if (pPos->z + size > pos.z + vtxMin.z && pPos->z - size < pos.z + vtxMax.z &&
+		pPos->x + size > pos.x + vtxMin.x && pPos->x - size < pos.x + vtxMax.x)
+	{//ブロックの範囲ないの場合
+		if (pPosOld->y + size <= pos.y + vtxMin.y &&
+			pPos->y + size >= pos.y + vtxMin.y)
+		{//上の当たり判定
+			pPos->y = pos.y + vtxMin.y - size;
+			pMove->y = 0.0f;
 		}
-		if (playerPos.y + size > pos.y + vtxMin.y && playerPos.y - size < pos.y + vtxMax.y)
-		{//オブジェクトの幅(y)に入った場合
-			if (playerPos.x + size > pos.x + vtxMin.x && playerPos.x - size < pos.x + vtxMax.x)
-			{//左右の当たり幅の指定
-				if (playerPosOld.z + size <= pos.z + vtxMin.z && playerPos.z + size >= pos.z + vtxMin.z)
-				{//前の当たり判定
-					playerPos.z = pos.z + vtxMin.z - size;
-
-					pPlayer->SetPosition(D3DXVECTOR3(playerPos.x, playerPos.y, playerPos.z));
-					pPlayer->SetMoveZ(0.0f);
-				}
-				if (playerPosOld.z - size >= pos.z + vtxMax.z && playerPos.z - size <= pos.z + vtxMax.z)
-				{//後の当たり判定
-					playerPos.z = pos.z + vtxMax.z + size;
-					pPlayer->SetPosition(D3DXVECTOR3(playerPos.x, playerPos.y, playerPos.z));
-					pPlayer->SetMoveZ(0.0f);
-				}
-			}
-			if (playerPos.z + size > pos.z + vtxMin.z && playerPos.z - size < pos.z + vtxMax.z)
-			{//オブジェクトの幅(z)に入った場合
-				if (playerPosOld.x + size <= pos.x + vtxMin.x && playerPos.x + size >= pos.x + vtxMin.x)
-				{//左の当たり判定
-					playerPos.x = pos.x + vtxMin.x - size;
-					pPlayer->SetPosition(D3DXVECTOR3(playerPos.x, playerPos.y, playerPos.z));
-					pPlayer->SetMoveX(0.0f);
-				}
-				if (playerPosOld.x - size >= pos.x + vtxMax.x && playerPos.x - size <= pos.x + vtxMax.x)
-				{//右の当たり判定
-					playerPos.x = pos.x + vtxMax.x + size;
-					pPlayer->SetPosition(D3DXVECTOR3(playerPos.x, playerPos.y, playerPos.z));
-					pPlayer->SetMoveX(0.0f);
-				}
-			}
+		if (pPosOld->y - size >= pos.y + vtxMax.y &&
+			pPos->y - size <= pos.y + vtxMax.y)
+		{//下の当たり判定
+			pPos->y = pos.y + vtxMax.y + size;
+			pMove->y = 0.0f;
+			m_state = STATE_BREAK;
+			bLand = true;
 		}
 	}
-	else
-	{
-		if (playerPos.y + size > pos.y + vtxMin.y && playerPos.y - size < pos.y + vtxMax.y)
-		{//オブジェクトの幅(y)に入った場合
-			if (playerPos.x + size > pos.x + vtxMin.x && playerPos.x - size < pos.x + vtxMax.x)
-			{//左右の当たり幅の指定
-				if (playerPosOld.z + size <= pos.z + vtxMin.z && playerPos.z + size >= pos.z + vtxMin.z)
-				{//前の当たり判定
-					playerPos.z = pos.z + vtxMin.z - size;
-					pPlayer->SetPosition(D3DXVECTOR3(playerPos.x, playerPos.y, playerPos.z));
-					pPlayer->SetMoveZ(0.0f);
-				}
-				if (playerPosOld.z - size >= pos.z + vtxMax.z && playerPos.z - size <= pos.z + vtxMax.z)
-				{//後の当たり判定
-					playerPos.z = pos.z + vtxMax.z + size;
-					pPlayer->SetPosition(D3DXVECTOR3(playerPos.x, playerPos.y, playerPos.z));
-					pPlayer->SetMoveZ(0.0f);
-				}
+	if (pPos->y + size > pos.y + vtxMin.y && pPos->y - size < pos.y + vtxMax.y)
+	{//オブジェクトの幅(y)に入った場合
+		if (pPos->x + size > pos.x + vtxMin.x &&
+			pPos->x - size < pos.x + vtxMax.x)
+		{//左右の当たり幅の指定
+			if (pPosOld->z + size <= pos.z + vtxMin.z &&
+				pPos->z + size >= pos.z + vtxMin.z)
+			{//前の当たり判定
+				pPos->z = pos.z + vtxMin.z - size;
+				pMove->z = 0.0f;
 			}
-			if (playerPos.z + size > pos.z + vtxMin.z && playerPos.z - size < pos.z + vtxMax.z)
-			{//オブジェクトの幅(z)に入った場合
-				if (playerPosOld.x + size <= pos.x + vtxMin.x && playerPos.x + size >= pos.x + vtxMin.x)
-				{//左の当たり判定
-					playerPos.x = pos.x + vtxMin.x - size;
-					pPlayer->SetPosition(D3DXVECTOR3(playerPos.x, playerPos.y, playerPos.z));
-
-					pPlayer->SetMoveX(0.0f);
-				}
-				if (playerPosOld.x - size >= pos.x + vtxMax.x && playerPos.x - size <= pos.x + vtxMax.x)
-				{//右の当たり判定
-					playerPos.x = pos.x + vtxMax.x + size;
-					pPlayer->SetPosition(D3DXVECTOR3(playerPos.x, playerPos.y, playerPos.z));
-					pPlayer->SetMoveX(0.0f);
-				}
+			if (pPosOld->z - size >= pos.z + vtxMax.z &&
+				pPos->z - size <= pos.z + vtxMax.z)
+			{//後の当たり判定
+				pPos->z = pos.z + vtxMax.z + size;
+				pMove->z = 0.0f;
 			}
-
-			//yの当たり判定
-			if (playerPos.z + size > pos.z + vtxMin.z && playerPos.z - size < pos.z + vtxMax.z &&
-				playerPos.x + size > pos.x + vtxMin.x && playerPos.x - size < pos.x + vtxMax.x)
-			{//ブロックの範囲ないの場合
-				if (playerPosOld.y + size <= pos.y + vtxMin.y && playerPos.y + size >= pos.y + vtxMin.y)
-				{//上の当たり判定
-					playerPos.y = pos.y + vtxMin.y - size;
-					pPlayer->SetPosition(D3DXVECTOR3(playerPos.x, playerPos.y, playerPos.z));
-					pPlayer->SetMoveY(0.0f);
-				}
-				if (playerPosOld.y - size >= pos.y + vtxMax.y && playerPos.y - size <= pos.y + vtxMax.y)
-				{//下の当たり判定
-					playerPos.y = pos.y + vtxMax.y + size;
-
-					pPlayer->SetPosition(D3DXVECTOR3(playerPos.x, playerPos.y, playerPos.z));
-					pPlayer->SetMoveY(0.0f);
-					pPlayer->SetFirstJamp(false);
-					pPlayer->SetSecondJamp(false);
-
-					bLand = true;
-
-				}
+		}
+		if (pPos->z + size > pos.z + vtxMin.z && pPos->z - size < pos.z + vtxMax.z)
+		{//オブジェクトの幅(z)に入った場合
+			if (pPosOld->x + size <= pos.x + vtxMin.x &&
+				pPos->x + size >= pos.x + vtxMin.x)
+			{//左の当たり判定
+				pPos->x = pos.x + vtxMin.x - size;
+				pMove->x = 0.0f;
+			}
+			if (pPosOld->x - size >= pos.x + vtxMax.x &&
+				pPos->x - size <= pos.x + vtxMax.x)
+			{//右の当たり判定
+				pPos->x = pos.x + vtxMax.x + size;
+				pMove->x = 0.0f;
 			}
 		}
 	}

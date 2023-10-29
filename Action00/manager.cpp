@@ -14,6 +14,7 @@
 #include "light.h"
 #include "texture.h"
 #include "xfile.h"
+#include "slow.h"
 
 #include "title.h"
 #include "game.h"
@@ -46,6 +47,7 @@ CManager::CManager()
 	m_pResult = nullptr;
 	m_pFade = nullptr;
 	m_pXfile = nullptr;
+	m_pSlow = nullptr;
 }
 
 //===========================================================================================
@@ -107,7 +109,7 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 		if (m_pRenderer != nullptr)
 		{
 			//レンダラーの初期化処理
-			if (FAILED(m_pRenderer->Init(hWnd, TRUE)))
+			if (FAILED(m_pRenderer->Init(hWnd, bWindow)))
 			{
 				return E_FAIL;
 			}
@@ -211,21 +213,33 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 		}
 	}
 	//xファイルの生成
-	if (m_pXfile == nullptr)
+	//if (m_pXfile == nullptr)
+	//{
+	//	m_pXfile = new CXfile;
+
+	//	//初期化処理
+	//	if (m_pXfile != nullptr)
+	//	{
+	//		m_pXfile->Load();
+	//	}
+	//}
+
+	// スロー情報の生成
+	if (m_pSlow == nullptr)
 	{
-		m_pXfile = new CXfile;
+		m_pSlow = new CSlow;
 
 		//初期化処理
 		if (m_pXfile != nullptr)
 		{
-			m_pXfile->Load();
+			m_pSlow->Init();
 		}
 	}
 
 	//m_pSound->PlaySound(CSound::LABEL_BGM000);
 
 	//モード設定
-	SetMode(CScene::MODE_GAME);
+	SetMode(CScene::MODE_TITLE);
 	
 	return S_OK;
 }
@@ -343,6 +357,15 @@ void CManager::Uninit(void)
 		delete m_pXfile;
 		m_pXfile = nullptr;
 	}
+
+	//スローの終了、破棄
+	if (m_pSlow != nullptr)
+	{
+		//シーンの終了処理
+		m_pSlow->Uninit();
+		delete m_pSlow;
+		m_pSlow = nullptr;
+	}
 	
 	if (m_pFade != nullptr)
 	{
@@ -385,6 +408,12 @@ void CManager::Update(void)
 		m_pInputJoyPad->Update();
 	}
 
+	// スローの更新処理
+	if (m_pSlow != NULL)
+	{
+		m_pSlow->Update();
+	}
+
 	//シーンの更新
 	if (m_pScene != nullptr)
 	{
@@ -423,6 +452,7 @@ void CManager::SetMode(CScene::MODE mode)
 		m_pScene = nullptr;
 	}
 
+	//全オブジェクトの破棄
 	CObject::ReleaseAll();
 
 	//テクスチャの終了、破棄

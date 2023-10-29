@@ -37,9 +37,6 @@
     <Filter Include="ヘッダー ファイル\stage">
       <UniqueIdentifier>{60182918-217c-44b9-af6e-80fd971752e8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\main\editor">
-      <UniqueIdentifier>{0c498982-3334-4aa2-af3a-95681df6c05e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\editor">
       <UniqueIdentifier>{96ad03ab-89c9-460a-a515-fa17be5dfb0d}</UniqueIdentifier>
     </Filter>
@@ -51,6 +48,12 @@
     </Filter>
     <Filter Include="ソース ファイル\fade">
       <UniqueIdentifier>{116d58e8-bd64-48f4-b4f3-23201308668c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\trap">
+      <UniqueIdentifier>{9d2cc899-6bb4-45ff-9846-6808afb1ad24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\trap">
+      <UniqueIdentifier>{528fb2f3-0eab-4771-82fe-580d0881bd67}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -120,9 +123,6 @@
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル\main</Filter>
     </ClCompile>
-    <ClCompile Include="break_block.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="scene.cpp">
       <Filter>ソース ファイル\mode</Filter>
     </ClCompile>
@@ -155,6 +155,30 @@
     </ClCompile>
     <ClCompile Include="fade_death.cpp">
       <Filter>ソース ファイル\fade</Filter>
+    </ClCompile>
+    <ClCompile Include="break_block.cpp">
+      <Filter>ソース ファイル\trap</Filter>
+    </ClCompile>
+    <ClCompile Include="damage_block .cpp">
+      <Filter>ソース ファイル\trap</Filter>
+    </ClCompile>
+    <ClCompile Include="trap_scissors.cpp">
+      <Filter>ソース ファイル\trap</Filter>
+    </ClCompile>
+    <ClCompile Include="slow.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="time.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="number.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="ranking.cpp">
+      <Filter>ソース ファイル\mode</Filter>
+    </ClCompile>
+    <ClCompile Include="score.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -224,9 +248,6 @@
     <ClInclude Include="main.h">
       <Filter>ヘッダー ファイル\main</Filter>
     </ClInclude>
-    <ClInclude Include="break_block.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="manager.h">
       <Filter>ヘッダー ファイル\main</Filter>
     </ClInclude>
@@ -259,6 +280,30 @@
     </ClInclude>
     <ClInclude Include="fade_death.h">
       <Filter>ヘッダー ファイル\fade</Filter>
+    </ClInclude>
+    <ClInclude Include="break_block.h">
+      <Filter>ヘッダー ファイル\trap</Filter>
+    </ClInclude>
+    <ClInclude Include="damage_block .h">
+      <Filter>ヘッダー ファイル\trap</Filter>
+    </ClInclude>
+    <ClInclude Include="trap_scissors.h">
+      <Filter>ヘッダー ファイル\trap</Filter>
+    </ClInclude>
+    <ClInclude Include="slow.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="time.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="number.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ranking.h">
+      <Filter>ヘッダー ファイル\mode</Filter>
+    </ClInclude>
+    <ClInclude Include="score.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

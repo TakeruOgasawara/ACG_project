@@ -47,8 +47,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR LpCmadLin
 		LoadIcon(NULL, IDI_APPLICATION)		//ファイルのアイコン
 	};
 
-	HWND hWnd;				//ウィンドウハンドル(識別子)
-	MSG msg;				//メッセージを格納する変数
+	HWND hWnd;	//ウィンドウハンドル(識別子)
+	MSG msg;	//メッセージを格納する変数
 
 	//ウィンドウクラスの登録
 	RegisterClassEx(&wcex);
@@ -102,14 +102,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR LpCmadLin
 	dwExecLastTime = timeGetTime();		//現在時刻を取得(保存)
 	dwFrameCount = 0;
 	dwFPSLastTime = timeGetTime();
-
+	
 	//ウィンドウの表示
 	ShowWindow(hWnd, nCmdShow);			//ウィンドウの表示状態を設定
 	UpdateWindow(hWnd);					//クライアント領域を更新
 
-
 	//マネージャの初期化
-	CManager::GetInstance()->Init(hInstance, hWnd, TRUE);
+	CManager::GetInstance()->Init(hInstance, hWnd, TRUE); //画面の最大化
 
 	//メッセージループ
 	while (1)

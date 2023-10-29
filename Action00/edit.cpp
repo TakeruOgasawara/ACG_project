@@ -86,6 +86,7 @@ HRESULT CEdit::Init(void)
 	//m_pObjectX->Init(c_Obj[m_nTypeIdx], D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 #endif
+
 	return S_OK;
 }
 
@@ -118,7 +119,7 @@ void CEdit::Update(void)
 		m_bUse = m_bUse ? false : true;
 	}
 
-	if (m_bUse == false)
+	if (m_bUse == false || m_pObjectX == nullptr)
 	{
 		return;
 	}
@@ -192,7 +193,6 @@ void CEdit::Draw(void)
 {
 #ifdef _DEBUG	//デバック時実行
 
-
 	if (m_bUse == false)
 	{
 		return;
@@ -235,21 +235,21 @@ void CEdit::Load(const char* pFilename)
 				if (strcmp("TYPE", &Dast[0]) == 0)
 				{
 					fscanf(pFile, "%s", &Dast[0]);
-					fscanf(pFile, "%d", &nType);			//位置x
+					fscanf(pFile, "%d", &nType);
 				}
 				if (strcmp("POS", &Dast[0]) == 0)
 				{
 					fscanf(pFile, "%s", &Dast[0]);
-					fscanf(pFile, "%f", &pos.x);			//位置x
-					fscanf(pFile, "%f", &pos.y);			//位置y
-					fscanf(pFile, "%f", &pos.z);			//位置z
+					fscanf(pFile, "%f", &pos.x);
+					fscanf(pFile, "%f", &pos.y);
+					fscanf(pFile, "%f", &pos.z);
 				}
 				if (strcmp("ROT", &Dast[0]) == 0)
 				{
 					fscanf(pFile, "%s", &Dast[0]);
-					fscanf(pFile, "%f", &rot.x);			//位置x
-					fscanf(pFile, "%f", &rot.y);			//位置y
-					fscanf(pFile, "%f", &rot.z);			//位置z
+					fscanf(pFile, "%f", &rot.x);
+					fscanf(pFile, "%f", &rot.y);
+					fscanf(pFile, "%f", &rot.z);
 
 					break;
 				}
@@ -257,9 +257,9 @@ void CEdit::Load(const char* pFilename)
 				if (strcmp("ROT", &Dast[0]) == 0)
 				{
 					fscanf(pFile, "%s", &Dast[0]);
-					fscanf(pFile, "%f", &rot.x);			//位置x
-					fscanf(pFile, "%f", &rot.y);			//位置y
-					fscanf(pFile, "%f", &rot.z);			//位置z
+					fscanf(pFile, "%f", &rot.x);
+					fscanf(pFile, "%f", &rot.y);
+					fscanf(pFile, "%f", &rot.z);
 
 					break;
 				}

@@ -144,6 +144,8 @@ HRESULT CObjectX::Init(const char *c_pFileName, D3DXVECTOR3 pos)
 	//í—Şİ’è
 	SetType(TYPE_OBJECTX);
 
+	m_pos = pos;
+
 	//Xƒtƒ@ƒCƒ‹‚Ì“Ç‚İ‚İ
 	D3DXLoadMeshFromX(c_pFileName,
 		D3DXMESH_SYSTEMMEM, pDevice,

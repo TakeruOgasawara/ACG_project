@@ -61,7 +61,7 @@ HRESULT CFadeDeath::Init(void)
 
 	//位置・サイズ・色の設定
 	SetPosition(D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f));
-	SetSize_center(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f);
+	SetSizeCenter(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f);
 	SetColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
 
 	m_col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);

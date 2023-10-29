@@ -35,8 +35,8 @@ CRenderer::~CRenderer()
 //===========================================================================================
 HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 {
-	D3DDISPLAYMODE d3ddm;				//ディスプレイモード
-	D3DPRESENT_PARAMETERS d3dpp;		//プレゼンテーションパラメータ
+	D3DDISPLAYMODE d3ddm;	//ディスプレイモード
+	D3DPRESENT_PARAMETERS d3dpp;	//プレゼンテーションパラメータ
 
 	//DIrect3Dオブジェクトの作成
 	m_pD3D = Direct3DCreate9(D3D_SDK_VERSION);

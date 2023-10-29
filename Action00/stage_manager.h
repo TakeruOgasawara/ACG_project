@@ -33,7 +33,8 @@ public:
 	CStageManager();
 	~CStageManager();
 
-	static CStageManager* GetInstance(void);
+	//static CStageManager* GetInstance(void);
+	static CStageManager* Create(void);
 
 	HRESULT Init();
 	void Uninit();
@@ -47,6 +48,7 @@ private:	//メンバ変数
 	CStage0* m_pStage0;
 
 	int nProgress;	//進行度
+	bool m_bEnd;
 };
 
 #endif

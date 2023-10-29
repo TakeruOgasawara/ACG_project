@@ -22,7 +22,7 @@ class CEditor;
 //タイトルクラス
 class CStage0
 {
-private:
+public:
 	//エリア列挙型
 	enum EArea
 	{
@@ -36,15 +36,16 @@ public:
 	CStage0();
 	~CStage0();
 
-	//static CStage0* Create(void);
-	static CStage0* GetInstance(void);
+	static CStage0* Create(void);
+	//static CStage0* GetInstance(void);
 
 	HRESULT Init();
 	void Uninit();
 	void Update();
 	void Draw();
 
-	CPlayer* GetPlayer(void) { return m_pPlayer; }
+	EArea GetArea(void) { return m_area; }
+	bool GetAreaEnd(void) { return m_bAreaEnd; }
 
 private:
 	void Area0(void);
@@ -53,6 +54,7 @@ private:
 
 private:	//メンバ変数
 	static CStage0* m_pStage0;
+	D3DXVECTOR3 m_Savepos;
 	EArea m_area;
 	CCamera* m_pCamera;
 	CPlayer* m_pPlayer;
@@ -61,6 +63,7 @@ private:	//メンバ変数
 
 	bool m_bNext;	//次へ進むか
 	bool m_bLoad;	//初期読み込みフラグ
+	bool m_bAreaEnd;
 };
 
 #endif

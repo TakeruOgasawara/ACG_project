@@ -24,6 +24,7 @@
 #include "pause.h"
 #include "edit.h"
 #include "xfile.h"
+#include "time.h"
 
 #include "player.h"
 
@@ -43,6 +44,7 @@ CGame::CGame()
 	m_pSound = nullptr;
 	m_pPlayer = false;
 	m_bEdit = false;
+	m_pTime = false;
 
 	m_pStageManager = nullptr;
 }
@@ -60,9 +62,10 @@ CGame::~CGame()
 //===========================================================================================
 HRESULT CGame::Init()
 {
-	m_pPlayer = CPlayer::Create(D3DXVECTOR3(-400.0f, 0.0f, 0.0f));
+	m_pTime = CTime::Create(D3DXVECTOR3(1050.0f, 30.0f, 0.0f));
+	//m_pTime->Set
 	
-	m_pStageManager = CStageManager::GetInstance();
+	m_pStageManager = CStageManager::Create();
 
 	return E_NOTIMPL;
 }
@@ -92,6 +95,13 @@ void CGame::Uninit()
 		delete m_pXfile;
 		m_pXfile = nullptr;
 	}
+
+	if (m_pTime != nullptr)
+	{
+		m_pTime->Uninit();
+		delete m_pTime;
+		m_pTime = nullptr;
+	}
 }
 
 //===========================================================================================
@@ -107,6 +117,11 @@ void CGame::Update()
 	if (m_pStageManager != nullptr)
 	{
 		m_pStageManager->Update();
+	}
+
+	if (m_pTime != nullptr)
+	{
+		m_pTime->Update();
 	}
 
 	/*if (pInputKey->GetTrigger(DIK_P) == true)
@@ -134,10 +149,15 @@ void CGame::Update()
 			return;
 		}
 	}*/
-	
-	//if (pInputKey->GetTrigger(DIK_RETURN) == true)
+
+	//“ü—Íƒ|ƒCƒ“ƒ^‚ÌŽæ“¾
+	//CInputKeyboard* pInputKey = CManager::GetInstance()->GetInputKeyboard();
+
+	//CInputJoyPad* pJoyPad = CManager::GetInstance()->GetInputJoyPad();
+
+	//if (pInputKey->GetTrigger(DIK_RETURN) || pJoyPad->GetTrigger(pJoyPad->BUTTON_A, 0))
 	//{
-	//	CManager::GetInstance()->GetFade()->Set(MODE_RESULT);
+	//	CManager::GetInstance()->GetFade()->SetMode(CScene::MODE_RESULT);
 	//}
 
 	CScene::Update();
@@ -148,8 +168,6 @@ void CGame::Update()
 //===========================================================================================
 void CGame::Draw()
 {
-	CScene::Draw();
-
 	if (m_pPause != nullptr)
 	{
 		m_pPause->Draw();
@@ -159,4 +177,11 @@ void CGame::Draw()
 	{
 		m_pStageManager->Draw();
 	}
+
+	if (m_pTime != nullptr)
+	{
+		m_pTime->Update();
+	}
+
+	CScene::Draw();
 }

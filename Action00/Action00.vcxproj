@@ -157,6 +157,7 @@
     <ClCompile Include="break_block.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="collision.cpp" />
+    <ClCompile Include="damage_block .cpp" />
     <ClCompile Include="debugproc.cpp" />
     <ClCompile Include="edit.cpp" />
     <ClCompile Include="editor.cpp" />
@@ -169,6 +170,7 @@
     <ClCompile Include="lock_door.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="manager.cpp" />
+    <ClCompile Include="number.cpp" />
     <ClCompile Include="object_next_step.cpp" />
     <ClCompile Include="object.cpp" />
     <ClCompile Include="object2D.cpp" />
@@ -177,14 +179,19 @@
     <ClCompile Include="objectX.cpp" />
     <ClCompile Include="pause.cpp" />
     <ClCompile Include="player.cpp" />
+    <ClCompile Include="ranking.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="result.cpp" />
     <ClCompile Include="scene.cpp" />
+    <ClCompile Include="score.cpp" />
+    <ClCompile Include="slow.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="stage0.cpp" />
     <ClCompile Include="stage_manager.cpp" />
     <ClCompile Include="texture.cpp" />
+    <ClCompile Include="time.cpp" />
     <ClCompile Include="title.cpp" />
+    <ClCompile Include="trap_scissors.cpp" />
     <ClCompile Include="xfile.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -193,6 +200,7 @@
     <ClInclude Include="break_block.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="collision.h" />
+    <ClInclude Include="damage_block .h" />
     <ClInclude Include="debugproc.h" />
     <ClInclude Include="edit.h" />
     <ClInclude Include="editor.h" />
@@ -205,6 +213,7 @@
     <ClInclude Include="lock_door.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="manager.h" />
+    <ClInclude Include="number.h" />
     <ClInclude Include="object_next_step.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="object2D.h" />
@@ -213,14 +222,19 @@
     <ClInclude Include="objectX.h" />
     <ClInclude Include="pause.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="ranking.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="result.h" />
     <ClInclude Include="scene.h" />
+    <ClInclude Include="score.h" />
+    <ClInclude Include="slow.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="stage0.h" />
     <ClInclude Include="stage_manager.h" />
     <ClInclude Include="texture.h" />
+    <ClInclude Include="time.h" />
     <ClInclude Include="title.h" />
+    <ClInclude Include="trap_scissors.h" />
     <ClInclude Include="xfile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

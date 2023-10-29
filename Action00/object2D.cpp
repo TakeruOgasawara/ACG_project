@@ -456,7 +456,7 @@ D3DXVECTOR2 CObject2D::GetSize(void)
 //=======================================================
 // ポリゴンサイズの設定
 //=======================================================
-void CObject2D::SetSize_center(float fWidth, float fHeight)
+void CObject2D::SetSizeCenter(float fWidth, float fHeight)
 {
 	//サイズの設定(向きを使用しない場合)
 	m_fWidth = fWidth;

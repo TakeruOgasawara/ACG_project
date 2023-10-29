@@ -92,7 +92,7 @@ void CPause::Init()
 			}
 		
 			m_aMenuInfo[nCnt].pObject2D->SetPosition(D3DXVECTOR3(640.0f, 200.0f + nCnt * 110.0f, 0.0f));
-			m_aMenuInfo[nCnt].pObject2D->SetSize_center(SIZE_X, SIZE_Y);
+			m_aMenuInfo[nCnt].pObject2D->SetSizeCenter(SIZE_X, SIZE_Y);
 		}
 	}
 
@@ -170,11 +170,11 @@ void CPause::Update()
 			break;
 		case MENU_RETRY:
 			//SetFadeMode(FADEMODE_NORMAL);
-			pFade->Set(CScene::MODE_GAME);
+			pFade->SetMode(CScene::MODE_GAME);
 			break;
 		case MENU_QUIT:
 			//SetFadeMode(FADEMODE_NORMAL);
-			pFade->Set(CScene::MODE_TITLE);
+			pFade->SetMode(CScene::MODE_TITLE);
 			break;
 		}
 	}

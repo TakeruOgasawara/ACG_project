@@ -27,10 +27,11 @@ public:
 	void Update(void);
 	void Draw(void);
 
+	CNextStep* GetNextStep(void) { return this; }
 	bool GetTach(void) { return m_bTach; }
+	bool Collision(D3DXVECTOR3 pos, float size);
 
 private:
-	bool TachObject(D3DXVECTOR3 pos);
 
 	bool m_bTach;
 };

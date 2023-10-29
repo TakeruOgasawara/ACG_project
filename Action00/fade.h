@@ -38,7 +38,7 @@ public:
 	void Update(void);
 	void Draw(void);
 
-	void Set(CScene::MODE modeNext);
+	void SetMode(CScene::MODE modeNext);
 	void SetState(STATE state);
 	STATE GetState(void) { return m_state; }
 

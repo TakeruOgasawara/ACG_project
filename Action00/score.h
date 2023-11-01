@@ -10,27 +10,28 @@
 #include "main.h"
 #include "number.h"
 
-//マクロ定義
-#define MAX_NUMSCORE			(8)
-
-//ナンバークラス
+//スコアクラス
 class CScore
 {
+public:
+	static const int MAX_SCORE = 5;
+
 public:
 	CScore();
 	~CScore();
 	static CScore *Create(D3DXVECTOR3 pos);
-	HRESULT Init();
+	HRESULT Init(D3DXVECTOR3 pos);
 	void Uninit();
 	void Update();
 	void Draw();
-	void SetScore(void);
 	void AddScore(int nValue);
 
 private:
-	static CNumber *m_apNumber[MAX_NUMSCORE];
-	static D3DXVECTOR3 m_pos;
-	static int m_nScore;
+	void SetScore(void);
+
+	CNumber *m_apNumber[MAX_SCORE];
+	D3DXVECTOR3 m_pos;
+	int m_nScore;
 };
 
 #endif

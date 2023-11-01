@@ -9,6 +9,7 @@
 #include "time.h"
 #include "input.h"
 #include "fade.h"
+#include "score.h"
 
 #include <stdio.h>
 #include <assert.h>
@@ -16,6 +17,7 @@
 //*****************************
 // マクロ定義
 //*****************************
+#define RANKING_FILE	"ranking.bin"
 #define MAX_TEX				(2)				//テクスチャ―の最大数
 #define NUM_PLACE			(8)				//スコアの桁数
 #define MAX_RANK			(5)				//表示するランキングの最大数
@@ -28,14 +30,17 @@
 //*****************************
 // 静的メンバ変数宣言
 //*****************************
-CTime* CRanking::m_apTime[MAX_RANKING] = {};
+CScore* CRanking::m_apScore[MAX_RANKING] = {};
 
 //========================================================================
 // コンストラクタ
 //========================================================================
 CRanking::CRanking()
 {
-
+	for (int nCnt = 0; nCnt < MAX_RANKING; nCnt++)
+	{
+		m_apScore[nCnt] = nullptr;
+	}
 }
 
 //========================================================================
@@ -47,14 +52,23 @@ CRanking::~CRanking()
 //========================================================================
 // 初期化
 //========================================================================
-void CRanking::Init(void)
+HRESULT CRanking::Init(void)
 {
+	D3DXVECTOR3 pos = { 0.0f, 0.0f, 0.0f };
 	int aTime[MAX_RANKING] = {};
 
 	Load(&aTime[0]);
 
 	Sort(&aTime[0]);
 
+	//スコアの表示
+	for (int nCnt = 0; nCnt < MAX_RANKING; nCnt++)
+	{
+		m_apScore[nCnt] = CScore::Create(D3DXVECTOR3(pos.x , pos.y + (10 * nCnt), 0.0f));
+		m_apScore[nCnt]->AddScore(aTime[nCnt]);
+	}
+
+	return S_OK;
 }
 
 //========================================================================
@@ -62,7 +76,11 @@ void CRanking::Init(void)
 //========================================================================
 void CRanking::Uninit(void)
 {
-
+	for (int nCnt = 0; nCnt < MAX_RANKING; nCnt++)
+	{
+		m_apScore[nCnt]->Uninit();
+		m_apScore[nCnt] = nullptr;
+	}
 }
 
 //========================================================================
@@ -86,19 +104,36 @@ void CRanking::Draw(void)
 //========================================================================
 void CRanking::Save(int* pTime)
 {
-	//ファイルポインタを宣言
-	FILE* pFile;
+	////ファイルポインタを宣言
+	//FILE* pFile;
 
-	pFile = fopen("ranking.bin", "wb");
+	//pFile = fopen(RANKING_FILE, "wb");
 
-	if (pFile != NULL)
-	{//ファイルが開けた場合
-		//バイナリファイルにセーブ
-		fwrite(&pTime[0], sizeof(int), MAX_RANK, pFile);
+	//if (pFile != NULL)
+	//{//ファイルが開けた場合
+	//	//バイナリファイルにセーブ
+	//	fwrite(&pTime[0], sizeof(int), MAX_RANK, pFile);
 
-		//ファイルを閉じる
-		fclose(pFile);
+	//	//ファイルを閉じる
+	//	fclose(pFile);
+	//}
+	FILE* pFile = nullptr;
+
+	//ファイルを開く
+	pFile = fopen("data\\ranking.txt", "r");
+
+	if (pFile == nullptr)
+	{
+		return;
 	}
+
+	for (int nCnt = 0; nCnt < 5; nCnt++)
+	{
+		fscanf(pFile, "%d", &pTime[nCnt]);
+	}
+
+	//ファイルを閉じる
+	fclose(pFile);
 }
 
 //========================================================================
@@ -106,25 +141,46 @@ void CRanking::Save(int* pTime)
 //========================================================================
 void CRanking::Load(int* pTime)
 {
-	//ファイルポインタを宣言
-	FILE* pFile;
+	////ファイルポインタを宣言
+	//FILE* pFile;
 
-	pFile = fopen("ranking.bin", "rb");
+	//pFile = fopen(RANKING_FILE, "rb");
 
-	if (pFile != NULL)
-	{//ファイルが開けた場合
-		//バイナリファイルからロード
+	//if (pFile != nullptr)
+	//{//ファイルが開けた場合
+	//	//バイナリファイルからロード
 
-		fread(&pTime[0], sizeof(int), MAX_RANK, pFile);
+	//	fread(&pTime[0], sizeof(int), MAX_RANK, pFile);
 
-		//ファイルを閉じる
-		fclose(pFile);
-	}
-	else
+	//	//ファイルを閉じる
+	//	fclose(pFile);
+	//}
+	//else
+	//{
+	//	for (int nCnt = 0; nCnt < MAX_RANKING; nCnt++)
+	//	{
+	//		pTime[nCnt] = 0;
+	//	}
+	//}
+
+	FILE* pFile = nullptr;
+
+	//ファイルを開く
+	pFile = fopen("data\\ranking.txt", "r");
+
+	if (pFile == nullptr)
 	{
-		
+		return;
 	}
 
+	for (int nCnt = 0; nCnt < 5; nCnt++, pTime++)
+	{
+		fscanf(pFile, "%d", &pTime[0]);
+
+	}
+
+	//ファイルを閉じる
+	fclose(pFile);
 }
 
 //========================================================================
@@ -132,7 +188,6 @@ void CRanking::Load(int* pTime)
 //========================================================================
 void CRanking::Sort(int* pTime)
 {
-	// 降順ソート
 	for (int nCntFst = 0; nCntFst < MAX_RANKING - 1; nCntFst++)
 	{
 		int nTempNum = nCntFst;	// 仮の一番大きい番号

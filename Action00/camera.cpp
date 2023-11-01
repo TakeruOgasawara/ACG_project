@@ -86,9 +86,9 @@ void CCamera::Uninit(void)
 //===========================================================================================
 void CCamera::Update(void)
 {
-	//V_Move_Mouse();
+	
 #ifdef _DEBUG	//デバック時実行
-
+	V_Move_Mouse();
 	R_Move_Mouse();
 
 #endif

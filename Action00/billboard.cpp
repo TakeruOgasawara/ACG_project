@@ -312,6 +312,45 @@ void CBillboard::SetverTex(void)
 }
 
 //===========================================================================================
+//	頂点半径の設定
+//===========================================================================================
+void CBillboard::SetRadius(D3DXVECTOR2 radius)
+{
+	//頂点情報へのポインタ
+	VERTEX_3D* pVtx;
+
+	//対角線の長さを算出(デフォルト)
+	float m_fLength = sqrtf(radius.x * radius.x + radius.y * radius.y) * 0.5f;
+
+	//対角線の角度を算出する(デフォルト)
+	float m_fAngle = atan2f(radius.x, radius.y);
+
+	//頂点バッファをロックし、頂点情報へのポインタを取得
+	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+	//頂点座標の設定
+	pVtx[0].pos.x = m_pos.x + sinf(m_rot.z + -D3DX_PI + m_fAngle) * m_fLength;
+	pVtx[0].pos.y = m_pos.y + cosf(m_rot.z + -D3DX_PI + m_fAngle) * m_fLength;
+	pVtx[0].pos.z = 0.0f;
+
+	pVtx[1].pos.x = m_pos.x + sinf(m_rot.z + D3DX_PI - m_fAngle) * m_fLength;
+	pVtx[1].pos.y = m_pos.y + cosf(m_rot.z + D3DX_PI - m_fAngle) * m_fLength;
+	pVtx[1].pos.z = 0.0f;
+
+	pVtx[2].pos.x = m_pos.x + sinf(m_rot.z - m_fAngle) * m_fLength;
+	pVtx[2].pos.y = m_pos.y + cosf(m_rot.z - m_fAngle) * m_fLength;
+	pVtx[2].pos.z = 0.0f;
+
+	pVtx[3].pos.x = m_pos.x + sinf(m_rot.z + m_fAngle) * m_fLength;
+	pVtx[3].pos.y = m_pos.y + cosf(m_rot.z + m_fAngle) * m_fLength;
+	pVtx[3].pos.z = 0.0f;
+
+	//頂点バッファをアンロックする
+	m_pVtxBuff->Unlock();
+}
+
+
+//===========================================================================================
 // テクスチャの割り当て
 //===========================================================================================
 void CBillboard::BindTexture(int nIdx)

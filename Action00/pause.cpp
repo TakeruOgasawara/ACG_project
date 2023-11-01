@@ -79,15 +79,15 @@ void CPause::Init()
 			switch (nCnt)
 			{
 			case MENU_CONTINUE:
-				m_aMenuInfo[nCnt].pObject2D->BindTexture(CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\pause_0.png"));
+				m_aMenuInfo[nCnt].pObject2D->BindTexture(CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\Pause_Continue.png"));
 				break;
 
 			case MENU_RETRY:
-				m_aMenuInfo[nCnt].pObject2D->BindTexture(CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\pause_1.png"));
+				m_aMenuInfo[nCnt].pObject2D->BindTexture(CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\Pause_100.png"));
 				break;
 
 			case MENU_QUIT:
-				m_aMenuInfo[nCnt].pObject2D->BindTexture(CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\pause_2.png"));
+				m_aMenuInfo[nCnt].pObject2D->BindTexture(CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\Pause_BackTitle.png"));
 				break;
 			}
 		

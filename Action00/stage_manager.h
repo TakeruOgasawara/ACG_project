@@ -29,6 +29,13 @@ private:
 		STAGE_MAX
 	};
 
+	enum ESTATE
+	{
+		STATE_START = 0,
+		STATE_END,
+		STATE_MAX
+	};
+
 public:
 	CStageManager();
 	~CStageManager();
@@ -45,6 +52,7 @@ private:	//メンバ変数
 	static CStageManager* m_pStageManager;
 
 	ESTAGE m_stage;
+	ESTATE m_state;
 	CStage0* m_pStage0;
 
 	int nProgress;	//進行度

@@ -14,6 +14,7 @@
 #include "object2D.h"
 #include "texture.h"
 #include "fade.h"
+#include "sound.h"
 
 //===========================================================================================
 // コンストラクタ
@@ -55,23 +56,23 @@ HRESULT CTitle::Init()
 
 	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
 	{
-		m_apMenu[nCnt].pMenu2D = CObject2D::Create(3);
-
 		switch (nCnt)
 		{
 		
 		case MENU_START:
-			m_apMenu[nCnt].pMenu2D->SetPosition(D3DXVECTOR3(640.0f, 400.0f, 0.0f));
+			m_apMenu[nCnt].pMenu2D = CObject2D::Create(3);
+
+			m_apMenu[nCnt].pMenu2D->SetPosition(D3DXVECTOR3(640.0f, 600.0f, 0.0f));
 			m_apMenu[nCnt].pMenu2D->SetSizeCenter(30.0f, 20.0f);
 			m_apMenu[nCnt].pMenu2D->SetColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
 			m_apMenu[nCnt].pMenu2D->BindTexture(pTexture->Regist("data\\TEXTURE\\title\\start.png"));
 			break;
 
 		case MENU_END:
-			m_apMenu[nCnt].pMenu2D->SetPosition(D3DXVECTOR3(640.0f, 450.0f, 0.0f));
+		/*	m_apMenu[nCnt].pMenu2D->SetPosition(D3DXVECTOR3(640.0f, 450.0f, 0.0f));
 			m_apMenu[nCnt].pMenu2D->SetSizeCenter(30.0f, 20.0f);
 			m_apMenu[nCnt].pMenu2D->SetColor(D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
-			m_apMenu[nCnt].pMenu2D->BindTexture(pTexture->Regist("data\\TEXTURE\\title\\end.png"));
+			m_apMenu[nCnt].pMenu2D->BindTexture(pTexture->Regist("data\\TEXTURE\\title\\end.png"));*/
 			break;
 
 		default:
@@ -79,6 +80,8 @@ HRESULT CTitle::Init()
 			break;
 		}
 	}
+
+	CManager::GetInstance()->GetSound()->Play(CSound::LABEL_BGM_TITLE);
 
 	return S_OK;
 }
@@ -105,7 +108,7 @@ void CTitle::Update()
 	CInputKeyboard *pInputKey = CManager::GetInstance()->GetInputKeyboard();
 	CInputJoyPad *pJoyPad = CManager::GetInstance()->GetInputJoyPad();
 
-	if (pInputKey->GetTrigger(DIK_W) == true)
+	/*if (pInputKey->GetTrigger(DIK_W) == true)
 	{
 		m_nSelect = (m_nSelect - 1 + MENU_MAX) % MENU_MAX;
 
@@ -120,13 +123,15 @@ void CTitle::Update()
 		m_menu = (MENU)m_nSelect;
 
 		SelectMenu();
-	}
+	}*/
 
 	if (pInputKey->GetTrigger(DIK_RETURN) || pJoyPad->GetTrigger(pJoyPad->BUTTON_A, 0))
 	{
 		switch (m_menu)
 		{
 		case CTitle::MENU_START:
+			CManager::GetInstance()->GetSound()->Play(CSound::LABEL_SE_ENTER);
+
 			CManager::GetInstance()->GetFade()->SetMode(MODE_GAME);
 			break;
 

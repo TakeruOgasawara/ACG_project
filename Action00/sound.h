@@ -19,8 +19,11 @@ public:
 	// サウンド一覧
 	typedef enum
 	{
-		LABEL_BGM000 = 0,		// BGM0
-		LABEL_SE_SHOT,		// 弾発射音
+		LABEL_BGM_TITLE = 0,	// BGMタイトル
+		LABEL_SE_ENTER,	// 決定
+		LABEL_SE_JUMP,	// ジャンプ
+		LABEL_SE_BOOST,	// ジャンプ
+		LABEL_SE_DEATH,
 		LABEL_MAX,
 	} SOUND_LABEL;
 
@@ -43,7 +46,7 @@ public:
 	//*****************************************************************************
 	HRESULT Init(HWND hWnd);
 	void Uninit(void);
-	HRESULT PlaySound(SOUND_LABEL label);
+	HRESULT Play(SOUND_LABEL label);
 	void Stop(SOUND_LABEL label);
 	void Stop(void);
 	static CSound m_pSound;

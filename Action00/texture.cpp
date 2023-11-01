@@ -38,7 +38,7 @@ HRESULT CTexture::Load(void)
 	//ƒtƒ@ƒCƒ‹–¼
 	const char *c_apTexName[MAX_TEXTURE] =
 	{
-		"data\\TEXTURE\\none.jpg",
+		"data\\TEXTURE\\none.png",
 		"data\\TEXTURE\\murabito.png",
 	};
 

@@ -161,6 +161,7 @@
     <ClCompile Include="debugproc.cpp" />
     <ClCompile Include="edit.cpp" />
     <ClCompile Include="editor.cpp" />
+    <ClCompile Include="effect3D.cpp" />
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="fade_death.cpp" />
     <ClCompile Include="fade_normal.cpp" />
@@ -177,6 +178,7 @@
     <ClCompile Include="object2Danim.cpp" />
     <ClCompile Include="object3D.cpp" />
     <ClCompile Include="objectX.cpp" />
+    <ClCompile Include="particle3D.cpp" />
     <ClCompile Include="pause.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="ranking.cpp" />
@@ -204,6 +206,7 @@
     <ClInclude Include="debugproc.h" />
     <ClInclude Include="edit.h" />
     <ClInclude Include="editor.h" />
+    <ClInclude Include="effect3D.h" />
     <ClInclude Include="fade.h" />
     <ClInclude Include="fade_death.h" />
     <ClInclude Include="fade_normal.h" />
@@ -220,6 +223,7 @@
     <ClInclude Include="object2Danim.h" />
     <ClInclude Include="object3D.h" />
     <ClInclude Include="objectX.h" />
+    <ClInclude Include="particle3D.h" />
     <ClInclude Include="pause.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="ranking.h" />

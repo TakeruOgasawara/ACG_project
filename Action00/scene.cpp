@@ -12,6 +12,7 @@
 #include "title.h"
 #include "game.h"
 #include "result.h"
+#include "ranking.h"
 
 //===========================================================================================
 // コンストラクタ
@@ -51,6 +52,10 @@ CScene* CScene::Create(MODE mode)
 
 		case MODE_RESULT:
 			pScene = new CResult;
+			break;
+
+		case MODE_RANKING:
+			pScene = new CRanking;
 			break;
 		}
 	}

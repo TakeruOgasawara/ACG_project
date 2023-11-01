@@ -40,7 +40,6 @@ CManager::CManager()
 	m_pCamera = nullptr;
 	m_pLight = nullptr;
 	m_pTexture = nullptr;
-	m_bUse = false;
 	m_pScene = nullptr;
 	m_pTitle = nullptr;
 	m_pGame = nullptr;
@@ -48,6 +47,10 @@ CManager::CManager()
 	m_pFade = nullptr;
 	m_pXfile = nullptr;
 	m_pSlow = nullptr;
+
+	m_bUse = false;
+	m_nCurrentMinute = 0;
+	m_nCurrentSecond = 0;
 }
 
 //===========================================================================================
@@ -158,16 +161,16 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 		}
 	}
 	//サウンド
-	//if (m_pSound == nullptr)
-	//{
-	//	m_pSound = new CSound;
+	if (m_pSound == nullptr)
+	{
+		m_pSound = new CSound;
 
-	//	if (m_pSound != nullptr)
-	//	{
-	//		//マウスの初期化処理
-	//		m_pSound->Init(hWnd);
-	//	}
-	//}
+		if (m_pSound != nullptr)
+		{
+			//マウスの初期化処理
+			m_pSound->Init(hWnd);
+		}
+	}
 	// デバッグ表示の生成
 	if (m_pDebugProc == nullptr)
 	{
@@ -236,8 +239,6 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 		}
 	}
 
-	//m_pSound->PlaySound(CSound::LABEL_BGM000);
-
 	//モード設定
 	SetMode(CScene::MODE_TITLE);
 	
@@ -303,15 +304,15 @@ void CManager::Uninit(void)
 		m_pRenderer = nullptr;
 	}
 	//サウンドの終了、破棄
-	//if (m_pSound != nullptr)
-	//{
-	//	//サウンドの終了処理
-	//	m_pSound->Stop();
-	//	m_pSound->Uninit();
+	if (m_pSound != nullptr)
+	{
+		//サウンドの終了処理
+		m_pSound->Stop();
+		m_pSound->Uninit();
 
-	//	delete m_pSound;
-	//	m_pSound = nullptr;
-	//}
+		delete m_pSound;
+		m_pSound = nullptr;
+	}
 	//カメラの終了、破棄
 	if (m_pCamera != nullptr)
 	{
@@ -433,16 +434,28 @@ void CManager::Draw(void)
 	}
 }
 
+void CManager::SetCurrentTime(int nMinute, int nSecond)
+{
+	m_nCurrentMinute = nMinute;
+	m_nCurrentSecond = nSecond;
+}
+
+void CManager::GetCurrentTim(int* nMinute, int* nSecond)
+{
+	*nMinute = m_nCurrentMinute;
+	*nSecond = m_nCurrentSecond;
+}
+
 //===========================================================================================
 // モードの設定
 //===========================================================================================
 void CManager::SetMode(CScene::MODE mode)
 {
 	//サウンドの停止
-	//if (m_pSound != nullptr)
-	//{
-	//	m_pSound->Stop();
-	//}
+	if (m_pSound != nullptr)
+	{
+		m_pSound->Stop();
+	}
 
 	//現在のモードを破棄
 	if (m_pScene != nullptr)

@@ -1,45 +1,7 @@
-﻿  arrow_around.cpp
-  billboard.cpp
-  break_block.cpp
-  camera.cpp
-  damage_block .cpp
-  debugproc.cpp
-  edit.cpp
-  editor.cpp
-  fade.cpp
-  fade_death.cpp
-  fade_normal.cpp
-  game.cpp
-  light.cpp
-  lock_door.cpp
-  main.cpp
-  manager.cpp
-  number.cpp
-  object_next_step.cpp
-  object.cpp
-  object2D.cpp
-  コンパイル中...
-  object2Danim.cpp
-  object3D.cpp
-  objectX.cpp
-  pause.cpp
-  player.cpp
-  ranking.cpp
-  renderer.cpp
-  result.cpp
-  scene.cpp
-  score.cpp
-  slow.cpp
-  stage0.cpp
-  stage_manager.cpp
-  texture.cpp
-  time.cpp
-  title.cpp
-  trap_scissors.cpp
-  xfile.cpp
+﻿  stage0.cpp
   コード生成しています。
-  121 of 403 functions (30.0%) were compiled, the rest were copied from previous compilation.
-    32 functions were new in current compilation
-    32 functions had inline decision re-evaluated but remain unchanged
+  2 of 464 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    7 functions had inline decision re-evaluated but remain unchanged
   コード生成が終了しました。
   Action00.vcxproj -> C:\Users\student\Desktop\1\ACG_project\Action00\Action00.exe

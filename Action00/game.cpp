@@ -28,10 +28,12 @@
 
 #include "player.h"
 
+#include "sound.h"
 #include "stage_manager.h"
 
 //静的メンバ変数宣言
 CPlayer* CGame::m_pPlayer = nullptr;
+CTime* CGame::m_pTime = nullptr;
 
 //===========================================================================================
 // コンストラクタ
@@ -63,9 +65,11 @@ CGame::~CGame()
 HRESULT CGame::Init()
 {
 	m_pTime = CTime::Create(D3DXVECTOR3(1050.0f, 30.0f, 0.0f));
-	//m_pTime->Set
-	
+	m_pTime->SetState(CTime::STATE_STOP);
+
 	m_pStageManager = CStageManager::Create();
+
+	CManager::GetInstance()->GetSound()->Play(CSound::LABEL_BGM_TITLE);
 
 	return E_NOTIMPL;
 }
@@ -122,9 +126,16 @@ void CGame::Update()
 	if (m_pTime != nullptr)
 	{
 		m_pTime->Update();
+
+		if (m_pTime->GetState() == CTime::STATE_STOP)
+		{
+			CManager::GetInstance()->SetCurrentTime(0, 0);
+
+			CManager::GetInstance()->GetScene()->SetMode(CScene::MODE_TITLE);
+		}
 	}
 
-	/*if (pInputKey->GetTrigger(DIK_P) == true)
+	if (pInputKey->GetTrigger(DIK_P) == true)
 	{
 		if (m_pPause == nullptr)
 		{
@@ -148,7 +159,13 @@ void CGame::Update()
 
 			return;
 		}
-	}*/
+		else
+		{
+			m_pPause->Uninit();
+			delete m_pPause;
+			m_pPause = nullptr;
+		}
+	}
 
 	//入力ポインタの取得
 	//CInputKeyboard* pInputKey = CManager::GetInstance()->GetInputKeyboard();

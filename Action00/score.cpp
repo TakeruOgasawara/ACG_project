@@ -12,11 +12,6 @@
 #define SIZE_X	(20.0f)
 #define SIZE_Y	(25.0f)
 
-//静的メンバ変数宣言
-CNumber *CScore::m_apNumber[MAX_NUMSCORE] = {};
-D3DXVECTOR3 CScore::m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-int CScore::m_nScore = 0;
-
 //===========================================================================================
 // コンストラクタ
 //===========================================================================================
@@ -46,9 +41,7 @@ CScore *CScore::Create(D3DXVECTOR3 pos)
 
 		if (pScore != nullptr)
 		{
-			m_pos = pos;
-
-			pScore->Init();
+			pScore->Init(pos);
 
 			return pScore;
 		}
@@ -64,9 +57,11 @@ CScore *CScore::Create(D3DXVECTOR3 pos)
 //===========================================================================================
 // 初期化処理
 //===========================================================================================
-HRESULT CScore::Init()
+HRESULT CScore::Init(D3DXVECTOR3 pos)
 {
-	for (int nCnt = 0; nCnt < MAX_NUMSCORE; nCnt++)
+	m_pos = pos;
+
+	for (int nCnt = 0; nCnt < MAX_SCORE; nCnt++)
 	{
 		m_apNumber[nCnt] = CNumber::Create(D3DXVECTOR3(m_pos.x + (SPACE * nCnt), m_pos.y, 0.0f));
 		m_apNumber[nCnt]->SetSize(SIZE_X, SIZE_Y);
@@ -80,7 +75,7 @@ HRESULT CScore::Init()
 //===========================================================================================
 void CScore::Uninit()
 {
-	for (int nCnt = 0; nCnt < MAX_NUMSCORE; nCnt++)
+	for (int nCnt = 0; nCnt < MAX_SCORE; nCnt++)
 	{
 		m_apNumber[nCnt]->Uninit();
 		delete m_apNumber[nCnt];
@@ -101,7 +96,7 @@ void CScore::Update()
 //===========================================================================================
 void CScore::Draw()
 {
-	for (int nCnt = 0; nCnt < m_nScore; nCnt++)
+	for (int nCnt = 0; nCnt < MAX_SCORE; nCnt++)
 	{
 		m_apNumber[nCnt]->Draw();
 	}
@@ -112,21 +107,18 @@ void CScore::Draw()
 //===========================================================================================
 void CScore::SetScore(void)
 {
-	int aTexU[MAX_NUMSCORE];			//各桁の数字を格納
+	int aTexU[MAX_SCORE];			//各桁の数字を格納
 
 	//頂点情報へのポインタ
 	VERTEX_2D *pVtx;
 
-	aTexU[0] = m_nScore % 100000000 / 100000;
-	aTexU[1] = m_nScore % 10000000 / 100000;
-	aTexU[2] = m_nScore % 1000000 / 100000;
-	aTexU[3] = m_nScore % 100000 / 10000;
-	aTexU[4] = m_nScore % 10000 / 1000;
-	aTexU[5] = m_nScore % 1000 / 100;
-	aTexU[6] = m_nScore % 100 / 10;
-	aTexU[7] = m_nScore % 10 / 1;
+	aTexU[0] = m_nScore % 100000 / 10000;
+	aTexU[1] = m_nScore % 10000 / 1000;
+	aTexU[2] = m_nScore % 1000 / 100;
+	aTexU[3] = m_nScore % 100 / 10;
+	aTexU[4] = m_nScore % 10 / 1;
 
-	for (int nCntScore = 0; nCntScore < MAX_NUMSCORE; nCntScore++)
+	for (int nCntScore = 0; nCntScore < MAX_SCORE; nCntScore++)
 	{
 		if (m_apNumber[nCntScore] != nullptr)
 		{

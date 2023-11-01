@@ -83,7 +83,6 @@ HRESULT CEdit::Init(void)
 #ifdef _DEBUG	//デバック時実行
 
 	m_pObjectX = CObjectX::Create(c_Obj[m_nTypeIdx], D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-	//m_pObjectX->Init(c_Obj[m_nTypeIdx], D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 #endif
 
@@ -97,7 +96,8 @@ void CEdit::Uninit(void)
 {
 	if (m_pObjectX != nullptr)
 	{
-		delete m_pObjectX;
+		m_pObjectX->Uninit();
+		//delete m_pObjectX;
 		m_pObjectX = nullptr;
 	}
 }
@@ -270,6 +270,9 @@ void CEdit::Load(const char* pFilename)
 			CObjectX::Create(c_Obj[nType], pos);
 		}
 	}
+
+	//ファイルを閉じる
+	fclose(pFile);
 }
 
 //===========================================================================================
@@ -317,6 +320,5 @@ void CEdit::Save(void)
 
 	//ファイルを閉じる
 	fclose(pFile);
-
 }
 

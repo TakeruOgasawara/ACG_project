@@ -51,14 +51,14 @@ HRESULT CNumber::Load(void)
 //===========================================================================================
 CNumber *CNumber::Create(D3DXVECTOR3 pos)
 {
-	CNumber *pNumber = NULL;
+	CNumber *pNumber = nullptr;
 
-	if (pNumber == NULL)
+	if (pNumber == nullptr)
 	{
 		//オブジェクト2Dの生成
 		pNumber = new CNumber;
 
-		if (pNumber != NULL)
+		if (pNumber != nullptr)
 		{
 			//初期化処理
 			pNumber->Init(pos);
@@ -67,7 +67,7 @@ CNumber *CNumber::Create(D3DXVECTOR3 pos)
 		return pNumber;
 	}
 
-	return NULL;
+	return pNumber;
 }
 
 //===========================================================================================
@@ -79,9 +79,6 @@ HRESULT CNumber::Init(D3DXVECTOR3 pos)
 
 	//インスタンス生成
 	m_pObject2D = CObject2D::Create(pos);
-
-	//位置設定
-	m_pObject2D->SetPosition(D3DXVECTOR3(500.0f, 600.0f, 0.0f));
 
 	//サイズ設定
 	m_pObject2D->SetSizeCenter(10.0f, 20.0f);

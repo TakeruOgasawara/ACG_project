@@ -18,6 +18,17 @@ class CObject2D;
 //ナンバークラス
 class CTime
 {
+public:
+
+	enum STATE
+	{
+		STATE_NONE = 0,
+		STATE_COUNT,
+		STATE_STOP,
+		STATE_END,
+		STATE_MAX
+	};
+
 private:	//定数(マクロ的な役割)
 
 	static const int NUM_TIME = 5;
@@ -34,24 +45,29 @@ public:
 	void Draw();
 
 	void SetTime(void);
-	void AddTime(int nValue);
+	void AddTime(int nMinute, int nSecond);
 
 	int GetTime(void);
 
 	D3DXVECTOR3 GetPosition(void) { return m_pos; }
 	D3DXVECTOR3 GetRotation(void) { return m_rot; }
+	STATE GetState(void) { return m_state; }
+
 	void SetPosition(D3DXVECTOR3 pos) { m_pos = pos; }
 	void SetRotation(D3DXVECTOR3 rot) { m_rot = rot; }
+	void SetState(STATE state) { m_state = state; }
 
 private:
 	CNumber* m_apNumber[NUM_TIME];
 	CObject2D* m_pPeriod;
+	CObject2D* m_pColon;
 	D3DXVECTOR3 m_pos;
 	D3DXVECTOR3 m_rot;
-	int m_nTimeCount;
-	int m_nTime;	
+	int m_nSecondCount;
+	int m_nMinuteCount;
 	DWORD m_dwGameStartTime;	//ゲーム開始時間
 	DWORD m_dwGameTime;	//ゲーム経過時間
+	STATE m_state;
 };
 
 #endif

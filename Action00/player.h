@@ -71,7 +71,6 @@ private:
 	bool CollisionBreakBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, float size);
 	bool CollisionDamageBlock(D3DXVECTOR3 pos, float size);
 	bool CollisionNextStep(D3DXVECTOR3 pos, float size);
-	bool CollisionTrapScissors(D3DXVECTOR3 pos, float size);
 
 	//変数
 	D3DXVECTOR3 m_posOld;	//過去位置
@@ -81,6 +80,7 @@ private:
 	int m_nSecondJumpCount;
 	bool m_bNormalJump;	//一回目のジャンプをしたか
 	bool m_bSecondJump;	//二回目のジャンプをしたか
+	bool m_bJumpFlag;
 
 	STATE m_state;	//状態
 

@@ -9,8 +9,11 @@
 // サウンドの情報
 const CSound::SOUNDINFO CSound::m_aSoundInfo[LABEL_MAX] =
 {
-	{ "data/BGM/bgm.cyber002.wav", -1 },		// BGM0
-	{ "data/SE/break.wav", 0 },					// コンボ
+	{ "data/BGM/BGM.wav", -1 },		// BGM0
+	{ "data/SE/SE_enter001.wav", 0 },	// 決定
+	{ "data/SE/SE_jump1.wav", 0 },	// ジャンプ
+	{ "data/SE/SE_boost.wav", 0 },	// ブースと
+	{ "data/SE/death.wav", 0 }
 };
 
 //=============================================================================
@@ -45,10 +48,18 @@ HRESULT CSound::Init(HWND hWnd)
 	HRESULT hr;
 
 	// COMライブラリの初期化
-	CoInitializeEx(NULL, COINIT_MULTITHREADED);
+	hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+
+	if (FAILED(hr))
+	{
+		MessageBox(hWnd, "COMライブラリの初期化に失敗！", "警告！", MB_ICONWARNING);
+
+		return E_FAIL;
+	}
 
 	// XAudio2オブジェクトの作成
 	hr = XAudio2Create(&m_pXAudio2, 0);
+
 	if(FAILED(hr))
 	{
 		MessageBox(hWnd, "XAudio2オブジェクトの作成に失敗！", "警告！", MB_ICONWARNING);
@@ -61,6 +72,7 @@ HRESULT CSound::Init(HWND hWnd)
 	
 	// マスターボイスの生成
 	hr = m_pXAudio2->CreateMasteringVoice(&m_pMasteringVoice);
+
 	if(FAILED(hr))
 	{
 		MessageBox(hWnd, "マスターボイスの生成に失敗！", "警告！", MB_ICONWARNING);
@@ -220,7 +232,7 @@ void CSound::Uninit(void)
 //=============================================================================
 // セグメント再生(再生中なら停止)
 //=============================================================================
-HRESULT CSound::PlaySound(SOUND_LABEL label)
+HRESULT CSound::Play(SOUND_LABEL label)
 {
 	XAUDIO2_VOICE_STATE xa2state;
 	XAUDIO2_BUFFER buffer;

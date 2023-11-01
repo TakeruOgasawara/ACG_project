@@ -12,22 +12,45 @@
 
 //前方宣言
 class CObject2D;
+class CScore;
+class CTime;
 
 //タイトルクラス
 class CResult : public CScene
 {
+private:
+
+	enum EUI	//UIの種類
+	{
+		YOUR_NAME = 0,
+		RANK_FONT,
+		RANK,
+		TIME,
+		UI_MAX
+	};
+
 public:
 	CResult();
 	~CResult();
 
-	static HRESULT Load(void);
-	HRESULT Init();
-	void Uninit();
-	void Update();
-	void Draw();
+	HRESULT Init(void);
+	void Uninit(void);
+	void Update(void);
+	void Draw(void);
+
 private:
-	static int m_nTextureIdx;			//テクスチャへの頂点情報
-	static CObject2D *m_pObject2D;
+	void Save(int* pTime);
+	void Load(int* pTime);
+	void Sort(int* pTime);
+	void RankingIn(int* pTime, int nResult);
+	int m_nRank;
+
+	int m_nTextureIdx;	//テクスチャへの頂点情報
+	int m_nResultCnt;
+	CObject2D* m_pBg2D;
+	CObject2D* m_pUi2D[UI_MAX];
+	CTime* m_pScore;
+	CTime* m_pRanking[5];
 };
 
 #endif

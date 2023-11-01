@@ -26,6 +26,7 @@ class CScene;
 class CXfile;
 class CPlayer;
 class CSlow;
+class CScore;
 
 class CTitle;
 class CGame;
@@ -61,6 +62,10 @@ public:
 	CXfile* GetXfile(void) { return m_pXfile; }
 	CSlow* GetSlow(void) { return m_pSlow; }
 
+	//スコア保存用のメンバ関数
+	void SetCurrentTime(int nMinute, int nSecond);
+	void GetCurrentTim(int* nMinute, int* nSecond);
+
 	virtual CPlayer* GetPlayer(void) { return nullptr; }
 
 	void SetMode(CScene::MODE mode);
@@ -80,6 +85,8 @@ private:
 	CTexture* m_pTexture;
 	CSlow* m_pSlow;
 	bool m_bUse;
+	int m_nCurrentMinute;
+	int m_nCurrentSecond;
 
 	CTitle* m_pTitle;
 	CGame* m_pGame;

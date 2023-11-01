@@ -16,6 +16,7 @@
 #include "object_next_step.h"
 #include "trap_scissors.h"
 
+#include "sound.h"
 #include "renderer.h"
 #include "manager.h"
 #include "input.h"
@@ -37,8 +38,8 @@
 #define ARROW_POS		(70.0f)
 
 //ジャンプ
-#define FILSTJUMP_POWER		(20.4f)			//ジャンプ力
-#define SECONDJUMP_POWER	(20.0f)			//
+#define FILSTJUMP_POWER		(20.0f)			//ジャンプ力
+#define SECONDJUMP_POWER	(15.0f)			//
 
 //===========================================================================================
 // コンストラクタ
@@ -57,6 +58,7 @@ CPlayer::CPlayer(int nPriority)
 	m_pObject2D = nullptr;
 	m_bNormalJump = false;
 	m_bSecondJump = false;
+	m_bJumpFlag = false;
 }
 
 //===========================================================================================
@@ -189,7 +191,7 @@ void CPlayer::Update(void)
 
 	if (m_bSecondJump == false)
 	{
-		//重力
+		//重力を加える
 		m_move.y -= GRAVITY;
 
 		//移動量を更新(減衰させる)
@@ -197,10 +199,34 @@ void CPlayer::Update(void)
 
 		//操作
 		InputMove();
+
+		//ジャンプをまとめた関数
+		NormalJump();
 	}
 
-	//ジャンプをまとめた関数
-	NormalJump();
+	if (m_bSecondJump == true)
+	{
+		m_nSecondJumpCount++;
+
+		if (m_nSecondJumpCount > JUMPEND)
+		{
+			m_bSecondJump = false;
+			m_nSecondJumpCount = 0;
+		}
+	}
+
+	//画面外に出た時の判定
+	if (GetScreenPosition().y > SCREEN_HEIGHT)
+	{
+		Hit(10);
+		return;
+	}
+
+	//if (GetScreenPosition().y < 0)
+	//{
+	//	m_move.y = 0.0f;
+	//	pos.y = SIZE.y + 15.0f;
+	//}
 
 	//移動量の代入
 	pos += m_move;
@@ -210,19 +236,20 @@ void CPlayer::Update(void)
 	{
 		m_bNormalJump = false;
 		m_bSecondJump = false;
-		//m_nNormalJumpCount = 0;
+		m_bJumpFlag = false;
 	}
 	if (CollisionObjectX1(&pos, &m_posOld, &m_move, m_bSecondJump, SIZE.y + 15.0f) == true)
 	{
 		m_bNormalJump = false;
 		m_bSecondJump = false;
-		//m_nNormalJumpCount = 0;
+		m_bJumpFlag = false;
 	}	
 	//崩れるブロックとの当たり判定
 	if (CollisionBreakBlock(&pos, &m_posOld, &m_move, SIZE.y + 15.0f) == true)
 	{
 		m_bNormalJump = false;
 		m_bSecondJump = false;
+		m_bJumpFlag = false;
 	}
 	//ダメージブロックとの当たり判定
 	if (CollisionDamageBlock(pos, SIZE.y + 15.0f) == true)
@@ -233,18 +260,6 @@ void CPlayer::Update(void)
 	//次との当たり判定
 	if (CollisionNextStep(pos, SIZE.y + 15.0f) == true)
 	{
-		return;
-	}
-	//トラばさみとの当たり判定
-	if (CollisionTrapScissors(pos, SIZE.y + 15.0f) == true)
-	{
-		/*Hit(10);
-		return;*/
-	}
-	//画面外に出た時の判定
-	if (GetScreenPosition().y > SCREEN_HEIGHT)
-	{
-		Hit(10);
 		return;
 	}
 
@@ -294,7 +309,8 @@ void CPlayer::Hit(int nDamage)
 		CFadeDeath::Create();
 		m_state = STATE_DEATH;
 		m_nLife = 0;
-		//Release();
+
+		CManager::GetInstance()->GetSound()->Play(CSound::LABEL_SE_DEATH);
 	}
 }
 
@@ -333,41 +349,16 @@ void CPlayer::NormalJump(void)
 		if (pInputKeyboard->GetPress(DIK_SPACE) == true || pInpuJoyPad->GetPress(pInpuJoyPad->BUTTON_RB, 0) == true)
 		{//キーが押された
 
-			//移動量の初期化
-			//m_move.y = 0.0f;
+			CManager::GetInstance()->GetSound()->Play(CSound::LABEL_SE_JUMP);
 
-			/*m_nNormalJumpCount++;
+			m_move.y += FILSTJUMP_POWER;
 
-			if (m_nNormalJumpCount < 10)
-			{*/
-				m_move.y += FILSTJUMP_POWER;
-
-				m_bNormalJump = true;
-			/*}
-			else
-			{
-				m_nNormalJumpCount = 0;
-			}*/
+			m_bNormalJump = true;
 		}
-	/*	else
-		{
-			m_nNormalJumpCount = 0;
-		}*/
 	}
 
 	//ブーストジャンプ
 	SecondJump();
-
-	if (m_bSecondJump == true)
-	{
-		m_nSecondJumpCount++;
-
-		if (m_nSecondJumpCount > JUMPEND)
-		{
-			m_bSecondJump = false;
-			m_nSecondJumpCount = 0;
-		}
-	}
 
 	if (pInpuJoyPad->GetJoyStickLX(0) < 0)
 	{//左
@@ -395,11 +386,13 @@ void CPlayer::SecondJump(void)
 	//プレイヤーのスクリーン座標を取得
 	D3DXVECTOR3 screemPos = GetScreenPosition();
 
-	if (m_bSecondJump == false)
+	if (m_bJumpFlag == false)
 	{//ジャンプしていない状態の場合
 
 		if (pInputMouse->GetTrigger(CInputMouse::MOUSE_LEFT))
 		{//キーが押された
+
+			CManager::GetInstance()->GetSound()->Play(CSound::LABEL_SE_BOOST);
 
 			//プレイヤーからマウスカーソルの角度を算出
 			float fAngle = atan2f((screemPos.x - pInputMouse->GetPoint().x) + D3DX_PI, (screemPos.y - pInputMouse->GetPoint().y) + D3DX_PI);
@@ -411,13 +404,14 @@ void CPlayer::SecondJump(void)
 			//移動量に加える
 			m_move +=
 			{
-				sinf(fAngle + D3DX_PI)* SECONDJUMP_POWER,
-					cosf(fAngle)* SECONDJUMP_POWER,
-					0.0f
+				sinf(fAngle + D3DX_PI) * SECONDJUMP_POWER,
+				cosf(fAngle) * SECONDJUMP_POWER,
+				0.0f
 			};
 
 			m_bNormalJump = true;
 			m_bSecondJump = true;	//二回目のジャンプをしたことにする
+			m_bJumpFlag = true;
 		}
 	}
 }
@@ -588,46 +582,6 @@ bool CPlayer::CollisionNextStep(D3DXVECTOR3 pos, float size)
 			}
 
 			if (pNextStep->Collision(pos, size) == true)
-			{
-				bTouch = true;
-			}
-		}
-	}
-
-	return bTouch;			//bLandの結果を関数に返す
-}
-
-//===========================================================================================
-// トラばさみ
-//===========================================================================================
-bool CPlayer::CollisionTrapScissors(D3DXVECTOR3 pos, float size)
-{
-	bool bTouch = false;	//接触したか
-
-	for (int nCntPriority = 0; nCntPriority < NUM_PRIORITY; nCntPriority++)
-	{
-		for (int nCntObj = 0; nCntObj < MAX_OBJECT; nCntObj++)
-		{
-			CObject* pObject = CObject::GetCObject(nCntPriority, nCntObj);
-
-			if (pObject == nullptr)
-			{
-				continue;
-			}
-
-			if (pObject->GetType() != pObject->TYPE_TRAPSCISSORS)
-			{
-				continue;
-			}
-
-			CTrapScissors* pTrapScissors = pObject->GetTrapScissors();	//子クラス、壊れるブロックの情報取得
-
-			if (pTrapScissors == nullptr)
-			{
-				continue;
-			}
-
-			if (pTrapScissors->Collision(pos, size) == true)
 			{
 				bTouch = true;
 			}

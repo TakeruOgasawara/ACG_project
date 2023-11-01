@@ -33,6 +33,7 @@ public:
 	void SetSize(D3DXVECTOR2 size) { m_size = size; }
 	void SetColor(D3DXCOLOR col) { m_col = col; }
 	void SetLighting(bool bUse) { m_bUseLighting = bUse; }
+	void SetRadius(D3DXVECTOR2 radius);
 
 	//取得用
 	D3DXVECTOR3 GetPosition(void) { return m_pos; }	//位置取得
@@ -53,6 +54,7 @@ private:
 	D3DXVECTOR3 m_move;			//移動
 	D3DXCOLOR m_col;			//色
 	D3DXVECTOR2 m_size;
+
 	bool m_bUseLighting;				//使っているか
 	int m_nTextureIdx;			//テクスチャ番号
 

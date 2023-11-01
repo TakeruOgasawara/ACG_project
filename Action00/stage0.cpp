@@ -18,6 +18,8 @@
 #include "damage_block .h"
 #include "trap_scissors.h"
 
+#include "game.h"
+#include "time.h"
 #include "camera.h"
 #include "player.h"
 #include "edit.h"
@@ -40,7 +42,7 @@ const char* c_stage0FileList[3] =
 //========================================================================
 CStage0::CStage0()
 {
-	m_area = AREA_0;
+	m_area = AREA_2;
 	m_bLoad = false;
 	m_pCamera = nullptr;
 	m_pPlayer = nullptr;
@@ -100,7 +102,12 @@ HRESULT CStage0::Init()
 	m_pNextStep = CNextStep::Create();
 
 	//テキストの読み込み
+	m_area = AREA_0;
+
 	m_pEdit = CEdit::Create();
+	//m_pEdit->CEdit::Load(c_stage0FileList[AREA_2]);
+
+	CDamageBlock::Create(D3DXVECTOR3(-50.0f, 125.0f, 0.0f));
 
 	m_bLoad = true;
 
@@ -116,13 +123,15 @@ void CStage0::Uninit()
 	{
 		m_pPlayer = nullptr;
 	}
+
 	if (m_pCamera != nullptr)
 	{
 		m_pCamera = nullptr;
 	}
+
 	if (m_pEdit != nullptr)
 	{
-		//delete m_pEdit;
+		delete m_pEdit;
 		m_pEdit = nullptr;
 	}
 }
@@ -138,10 +147,11 @@ void CStage0::Update()
 	}
 
 	CInputKeyboard* pInputKeyboard = CManager::GetInstance()->GetInputKeyboard();
+	CInputJoyPad* pInpuJoyPad = CManager::GetInstance()->GetInputJoyPad();
 
 	if (m_pPlayer == nullptr)
 	{
-		if (pInputKeyboard->GetTrigger(DIK_SPACE) == true)
+		if (pInputKeyboard->GetTrigger(DIK_X) == true || pInpuJoyPad->GetTrigger(pInpuJoyPad->BUTTON_A, 0) == true)
 		{
 			m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
@@ -149,13 +159,18 @@ void CStage0::Update()
 		}
 		else
 		{
-			return;
+			//return;
 		}
 	}
 
 	if (m_pEdit != nullptr)
 	{
 		m_pEdit->Update();
+	}
+
+	if (m_pPlayer == nullptr)
+	{
+		return;
 	}
 
 	if (m_pPlayer->GetState() == CPlayer::STATE_DEATH)
@@ -212,7 +227,7 @@ void CStage0::Area0(void)
 		m_pEdit->CEdit::Load(c_stage0FileList[AREA_0]);
 
 		//エリアゴールの位置
-		m_pNextStep->SetPosition(D3DXVECTOR3(640.0f, -0.0f, 0.0f));
+		m_pNextStep->SetPosition(D3DXVECTOR3(640.0f, 0.0f, 0.0f));
 
 		//プレイヤーの初期位置
 		m_pPlayer->SetPosition(D3DXVECTOR3(-400.0f, 25.0f, 0.0f));
@@ -237,6 +252,8 @@ void CStage0::Area0(void)
 
 			//次へ
 			m_bNext = true;
+
+			CGame::GetTime()->SetState(CTime::STATE_COUNT);
 		}
 	}
 }
@@ -257,12 +274,14 @@ void CStage0::Area1(void)
 		m_pEdit->CEdit::Load(c_stage0FileList[AREA_1]);
 
 		//エリアゴールの位置
-		m_pNextStep->SetPosition(D3DXVECTOR3(2940.0f, -125.0f, 0.0f));	
+		m_pNextStep->SetPosition(D3DXVECTOR3(2940.0f, 0.0f, 0.0f));	
 
 		//プレイヤーの初期位置
 		m_pPlayer->SetPosition(D3DXVECTOR3(-400.0f, 25.0f, 0.0f));
 
 		//カメラ設定
+		m_pCamera->SetPosition_V(D3DXVECTOR3(0.0f, 200.0f, -500.0f));
+		m_pCamera->SetPosition_R(D3DXVECTOR3(0.0f, 200.0f, 0.0f));
 		m_pCamera->SetLength(500.0f);
 		m_pCamera->SetHeight(200.0f, 200.0f);
 
@@ -283,16 +302,14 @@ void CStage0::Area1(void)
 	{
 		if (m_pNextStep->GetTach() == true && m_bNext == false)
 		{
-			////エリア番号を変更
-			//m_area = AREA_2;
+			//エリア番号を変更
+			m_area = AREA_2;
 
-			////読み込みを開始状態へ
-			//m_bLoad = true;
+			//読み込みを開始状態へ
+			m_bLoad = true;
 
-			////次へ
-			//m_bNext = true;
-
-			m_bAreaEnd = true;
+			//次へ
+			m_bNext = true;
 		}
 	}
 }
@@ -313,23 +330,27 @@ void CStage0::Area2(void)
 		m_pEdit->CEdit::Load(c_stage0FileList[AREA_2]);
 
 		//エリアゴールの位置
-		m_pNextStep->SetPosition(D3DXVECTOR3(2940.0f, -125.0f, 0.0f));
+		m_pNextStep->SetPosition(D3DXVECTOR3(2800.0f, 0.0f, 0.0f));
 
-		if (m_pPlayer != nullptr)
-		{
-			//プレイヤーの初期位置
-			m_pPlayer->SetPosition(D3DXVECTOR3(-400.0f, 25.0f, 0.0f));
-		}
-
+		//プレイヤーの初期位置
+		m_pPlayer->SetPosition(D3DXVECTOR3(-400.0f, 25.0f, 0.0f));
+	
 		//カメラ設定
+		m_pCamera->SetPosition_V(D3DXVECTOR3(0.0f, 200.0f, -500.0f));
+		m_pCamera->SetPosition_R(D3DXVECTOR3(0.0f, 200.0f, 0.0f));
 		m_pCamera->SetLength(500.0f);
 		m_pCamera->SetHeight(200.0f, 200.0f);
 
-		//CBreakBlock::Create(D3DXVECTOR3(-100.0f, 50.0f, 0.0f));
+		CBreakBlock::Create(D3DXVECTOR3(350.0f, 225.0f, 0.0f));
 
-		//CDamageBlock::Create(D3DXVECTOR3(50.0f, 300.0f, 0.0f));
+		CBreakBlock::Create(D3DXVECTOR3(1275.0f, -100.0f, 0.0f));
 
-		//CTrapScissors::Create(D3DXVECTOR3(0.0f, 20.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		CBreakBlock::Create(D3DXVECTOR3(1600.0f, 225.0f, 0.0f));
+
+		CDamageBlock::Create(D3DXVECTOR3(-50.0f, 125.0f, 0.0f));
+		CDamageBlock::Create(D3DXVECTOR3(0.0f, 125.0f, 1.0f));
+
+		CDamageBlock::Create(D3DXVECTOR3(1100.0f, -100.0f, 0.0f));
 
 		m_bLoad = false;
 	}
@@ -339,25 +360,27 @@ void CStage0::Area2(void)
 		m_bNext = false;
 	}
 
-	if (m_pPlayer != nullptr)
+	if (m_pPlayer->GetPosition().x >= 0.0f && m_pPlayer->GetPosition().x <= 2200.0f)
 	{
-		if (m_pPlayer->GetPosition().x >= 0.0f && m_pPlayer->GetPosition().x <= 2300.0f)
-		{
-			m_pCamera->Follow2D_x_axisDedicated(m_pPlayer->GetPosition());
-		}
+		m_pCamera->Follow2D_x_axisDedicated(m_pPlayer->GetPosition());
 	}
 
 	if (m_pNextStep->GetTach() == true && m_bNext == false)
 	{
-		////エリア番号を変更
-		//m_area = AREA_2;
+		//エリア番号を変更
+		m_area = AREA_2;
 
-		////読み込みを開始状態へ
-		//m_bLoad = true;
+		//読み込みを開始状態へ
+		m_bLoad = true;
 
-		////次へ
-		//m_bNext = true;
+		//次へ
+		m_bNext = true;
 
 		m_bAreaEnd = true;
+
+		//特定のオブジェクトの削除
+		CObject::ReleaseAllSpecified(CObject::TYPE_OBJECTX);
+		CObject::ReleaseAllSpecified(CObject::TYPE_BREAKBLOCK);
+		CObject::ReleaseAllSpecified(CObject::TYPE_DAMAGEBLOCK);
 	}
 }

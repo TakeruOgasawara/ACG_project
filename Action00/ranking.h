@@ -8,11 +8,12 @@
 #define _RANKING_H_
 
 #include "main.h"
+#include "scene.h"
 
 //前方宣言
-class CTime;
+class CScore;
 
-class CRanking
+class CRanking : public CScene
 {
 private:
 	static const int MAX_RANKING = 5;
@@ -31,7 +32,7 @@ public:
 	~CRanking();
 
 	//プロトタイプ宣言
-	void Init(void);
+	HRESULT Init(void);
 	void Uninit(void);
 	void Update(void);
 	void Draw(void);
@@ -41,7 +42,7 @@ private:
 	void Load(int* pTime);
 	void Sort(int* pTime);
 
-	static CTime* m_apTime[MAX_RANKING];
+	static CScore* m_apScore[MAX_RANKING];
 };
 
 #endif

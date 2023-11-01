@@ -31,6 +31,7 @@ CStageManager* CStageManager::m_pStageManager = nullptr;
 CStageManager::CStageManager()
 {
 	m_stage = STAGE_0;
+	m_state = STATE_START;
 	nProgress = 0;
 
 	m_pStage0 = nullptr;
@@ -152,7 +153,7 @@ void CStageManager::Update()
 
 	if (m_bEnd == false)
 	{
-		if (m_pStage0->GetArea() == m_pStage0->AREA_1 && m_pStage0->GetAreaEnd() == true)
+		if (m_pStage0->GetArea() == m_pStage0->AREA_2 && m_pStage0->GetAreaEnd() == true)
 		{
 			CManager::GetInstance()->GetFade()->SetMode(CScene::MODE_RESULT);
 

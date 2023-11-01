@@ -438,6 +438,27 @@ void CObject2D::SetColor(D3DXCOLOR col)
 }
 
 //=======================================================
+// テクスチャの設定
+//=======================================================
+void CObject2D::SetTexture(D3DXVECTOR2 tex)
+{
+	//頂点情報へのポインタ
+	VERTEX_2D* pVtx;
+
+	//頂点バッファをロックし、頂点情報へのポインタを取得
+	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+	//色の設定
+	pVtx[0].tex = tex;
+	pVtx[1].tex = tex;
+	pVtx[2].tex = tex;
+	pVtx[3].tex = tex;
+
+	//頂点バッファをアンロックする
+	m_pVtxBuff->Unlock();
+}
+
+//=======================================================
 // 色の取得
 //=======================================================
 D3DXCOLOR CObject2D::GetColor(void)
